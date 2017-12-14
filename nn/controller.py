@@ -1,0 +1,247 @@
+#!/usr/bin/python
+#Author: Kevin Kipfer
+
+#sys.path.append("C:\ProjectDL")
+
+import tensorflow as tf
+import tensorflow.contrib.slim as slim
+import numpy as np
+import os, sys, math, shutil, time, threading
+
+from utils import *
+from input_pipeline import *
+
+
+#******************************************************************************************************************
+
+from model_cnn_v1 import *
+
+#******************************************************************************************************************
+
+
+ROOT_DIR = './Audio_data'
+
+
+def train(train_data,
+         test_data,
+         num_classes=2,
+         eta=1e-2, #learning rate
+         checkpoint_dir='./checkpoints',
+         batch_size=32,
+         n_producer_threads=4,
+         trainable_scopes=TRAINABLE_SCOPES,
+         log_every_n_steps=100,
+         eval_every_n_steps=100,
+         save_every_n_steps=2000,
+         save_checkpoint=True):
+
+       graph = tf.Graph() 
+       with graph.as_default():
+              #load training data
+              with tf.device("/cpu:0"):
+                        train_runner = CustomRunner(train_data, batch_size=batch_size)
+                        train_batch, train_labels = train_runner.get_inputs()
+
+              #initialize
+              global_step = tf.Variable(0, name='global_step', trainable=False)
+              eta = tf.train.exponential_decay(eta, global_step, 100000, 0.96, staircase=False) 
+              train_op = tf.train.AdamOptimizer(learning_rate=eta) 
+
+              train_loss, preds = build_model(train_batch, train_labels)			
+              tf.summary.scalar('train_loss', train_loss )
+
+              #specify what parameters should be trained
+              params = get_variables_to_train(trainable_scopes) 
+              print ('nr trainable vars: %d'%len(params))  
+
+              #control depenencies for batchnorm, ema, etc. + update global step
+              update_ops = tf.get_collection(tf.GraphKeys.UPDATE_OPS)
+              with tf.control_dependencies(update_ops):
+                        #train_op = train_op.minimize(train_loss, var_list = params, global_step=global_step)
+                        
+                        # Calculate the gradients for the batch of data.
+                        grads = train_op.compute_gradients(train_loss, var_list = params)   
+                        #print ('1)len grads: %d'%len(list(grads))) 
+                        # gradient clipping
+                        grads = clip_grads(grads)
+                        #print ('2)len grads: %d'%len(list(grads)))
+                        # minimize
+                        train_op = train_op.apply_gradients(grads, global_step=global_step)
+                        
+              		       
+              #collect summaries
+              summaries = tf.get_collection(tf.GraphKeys.SUMMARIES)
+              
+              #print ('3)len grads: %d'%len(list(grads)))
+              with tf.variable_scope('gradients'):
+              	for grad, var in grads:
+              		if grad is not None:
+              			summaries.append(tf.summary.histogram(var.op.name, grad))       
+                  
+              summaries.append(tf.summary.scalar('other/learning_rate_enc', eta  ))
+
+              #Merge all train summaries.
+              summary_op = tf.summary.merge(list(summaries), name='summary_op')
+
+              #load Test Data
+              with tf.device("/cpu:0"):
+                      test_runner = CustomRunner(test_data, is_training = False, batch_size=batch_size)
+                      test_batch, test_labels = test_runner.get_inputs()
+
+              #Evaluation
+              test_loss, predictions = build_model(test_batch, test_labels, is_training=False, reuse=True)	
+
+              #Collect test summaries
+              with tf.name_scope('evals' ) as eval_scope:
+                      tf.summary.scalar('test_loss', test_loss )
+
+                      mpc, mpc_update = tf.metrics.mean_per_class_accuracy(predictions=predictions, labels=test_labels, num_classes=num_classes)
+                      tf.summary.scalar('mpc_accuracy', mpc )
+
+                      accuracy, acc_update = tf.metrics.accuracy(predictions=predictions, labels=test_labels)
+                      tf.summary.scalar('accuracy', accuracy )
+
+                      tf.summary.image('test_batch', tf.expand_dims(test_batch, -1))
+                      tf.summary.histogram('predictions', predictions)
+                      tf.summary.histogram('labels', test_labels)
+
+              test_summary_op = tf.summary.merge(list(tf.get_collection(tf.GraphKeys.SUMMARIES, eval_scope)), name='test_summary_op')
+              test_summary_update = tf.group(acc_update, mpc_update)
+
+              #initialize
+              sess = tf.Session(graph=graph,config=tf.ConfigProto(inter_op_parallelism_threads=8))
+              init = tf.group(tf.global_variables_initializer(), tf.local_variables_initializer())
+
+              with sess.as_default():
+                sess.run(init)
+
+              	#checkpoints              
+                saver = load_model(sess, checkpoint_dir)
+
+                # start the tensorflow QueueRunner's
+                tf.train.start_queue_runners(sess=sess)
+
+                # start our custom queue runner's threads
+                train_runner.start_threads(sess, n_threads=n_producer_threads)
+                test_runner.start_threads(sess, n_threads=1)
+
+                #wait for the queues to be filled
+                time.sleep(20) 
+              		    
+                train_writer = tf.summary.FileWriter(checkpoint_dir+"/train", sess.graph)
+                test_writer = tf.summary.FileWriter(checkpoint_dir+"/test")
+
+                #assert that no new tensors get added to the graph after this steps 
+                sess.graph.finalize()
+
+                print ('start learning')
+                try:
+              	        i=0
+              	        while True:
+                                i+=1
+              		        #training
+                                _, step, train_loss_ = sess.run([train_op, global_step, train_loss])
+                                #print ('step: %d, idx: %d, train_loss: %f'% (step, i, train_loss_))
+              			#logging: update training summary
+                                if i >= 300 and i%(log_every_n_steps) == 0:
+                                        summary = sess.run([summary_op])[0]
+                                        #print ('step: %d, idx: %d'% (step, i))
+                                        train_writer.add_summary(summary, step)
+                           
+              			#logging: update training summary
+                                if i >= 300 and i%(eval_every_n_steps) == 0:
+                                        summary, mpc_, accuracy_, _ = sess.run([test_summary_op, mpc, accuracy, test_summary_update])
+                                        print ('EVAL: step: %d, idx: %d, mpc: %f, accuracy: %f'% (step, i,  mpc_, accuracy_))
+                                        test_writer.add_summary(summary, step)
+                           
+                                #save checkpoint
+                                if i%(save_every_n_steps) == save_every_n_steps-1 and save_checkpoint:
+                                        print ('save model (step %d)'%step)
+                                        saver.save(sess,checkpoint_dir+'/checkpoints', global_step=step)
+
+                except KeyboardInterrupt:
+                      	        print("Manual interrupt occurred.")
+                      	        train_runner.close()
+                #finally:
+                      	        mpc_, accuracy_, loss_ = sess.run([mpc, accuracy, test_loss])
+
+                      	        print ('################################################################################')
+                      	        print ('Results - mpca:%f, accuracy:%f, loss:%f'%(mpc_,accuracy_,loss_))
+                      	        print ('################################################################################')
+        
+                      	        sess.close()
+
+
+    
+def main(unused_args):
+
+       listOfParticipantsToExcludeInTrainset = ["p05", "p17", "p34", "p20", "p28", "p09", "p08", "p11", "p31", "p21", "p14"] #participants used in the test-set
+
+       list_of_broken_files = ['04_Coughing/Distant (cd)/p17_rode-108.wav', '04_Coughing/Distant (cd)/p17_htc-108.wav', '04_Coughing/Distant (cd)/p17_tablet-108.wav', \
+                               '04_Coughing/Distant (cd)/p17_iphone-108.wav',  '04_Coughing/Distant (cd)/p17_samsung-108.wav']
+
+       ##
+       # READING COUGH DATA
+       #
+       #
+
+       print ('use data from root path %s'%ROOT_DIR)
+
+       coughAll = find_files(ROOT_DIR + "/04_Coughing", "wav", recursively=True)
+       assert len(coughAll) > 0, 'no cough files found. did you set the correct root path to the data in line 22?'
+
+       #remove broken files
+       for broken_file in list_of_broken_files:
+           broken_file = os.path.join(ROOT_DIR, broken_file)
+           if broken_file in coughAll:
+                 print ( 'file ignored: %s'%broken_file )
+                 coughAll.remove(broken_file)
+
+       #split cough files into test- and training-set
+       testListCough = []
+       trainListCough = coughAll
+       for name in coughAll:
+           for nameToExclude in listOfParticipantsToExcludeInTrainset:
+              if nameToExclude in name:
+                  testListCough.append(name)
+                  trainListCough.remove(name)
+
+       print('nr of samples coughing: %d' % len(testListCough))
+
+       ##
+       # READING OTHER DATA
+       #
+       #
+
+       other = find_files(ROOT_DIR + "/05_Other Control Sounds", "wav", recursively=True)
+
+       testListOther = []
+       trainListOther = other
+       for name in other:
+           for nameToExclude in listOfParticipantsToExcludeInTrainset:
+              if nameToExclude in name:
+                  testListOther.append(name)
+                  trainListOther.remove(name)
+
+       print('nr of samples NOT coughing: %d' % len(testListOther))
+
+
+       train_data = (trainListCough, trainListOther)
+       test_data = (testListCough, testListOther)
+
+
+       ##
+       # START TRAINING
+       #
+       #
+
+       tf.set_random_seed(0)
+       train(train_data, test_data)
+    
+
+
+
+if __name__ == '__main__':
+       tf.app.run()    
+
+

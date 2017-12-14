@@ -58,7 +58,7 @@ def batchnorm_arg_scope(batch_norm_decay=0.997,
         return arg_sc
 
 
-def clip_grads(grads_and_vars, clipper=10., grad_noise=0.001):
+def clip_grads(grads_and_vars, clipper=10., grad_noise=0.):
     with tf.name_scope('clip_gradients'):
          #gradients, variables = zip(*grads)
          #gradients, _ = tf.clip_by_global_norm(gradients, clipper)
@@ -68,7 +68,8 @@ def clip_grads(grads_and_vars, clipper=10., grad_noise=0.001):
          gvs = [(tf.clip_by_norm(grad, clipper), val) for grad,val in grads_and_vars]
 
          #add gradient noise
-         gvs = [(tf.add(grad, tf.random_normal(tf.shape(grad),stddev=grad_noise)), val) for grad,val in gvs]
+         if grad_noise > 0:
+                 gvs = [(tf.add(grad, tf.random_normal(tf.shape(grad),stddev=grad_noise)), val) for grad,val in gvs]
 
          return gvs
 

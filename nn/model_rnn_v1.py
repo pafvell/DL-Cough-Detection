@@ -15,8 +15,8 @@ from utils import simple_arg_scope, batchnorm_arg_scope
 
 def RNN_multicell(inputs, 
 	num_outputs,
-	num_hidden,
-	num_cells=2,
+	num_hidden=1024,
+	num_cells=1,
         activation_fn=None,
         normalizer_fn=None,
         normalizer_params=None,
@@ -28,12 +28,12 @@ def RNN_multicell(inputs,
   with variable_scope.variable_scope(
       			scope, 'rnn_multicell', [inputs],
       			reuse=reuse) as sc:
-	    cell = rnn_cell.LSTMCell(num_hidden, state_is_tuple = True)
-	    cell = rnn_cell.MultiRNNCell([cell] * num_cells)
-	    output, state = tf.nn.dynamic_rnn(cell, inputs, dtype = tf.float32)
-	    output = tf.transpose(output, [1, 0, 2])
-	    last = tf.gather(output, int(output.get_shape()[0]) - 1)
-	    return net = slim.fully_connected(net, 
+            cell = rnn_cell.LSTMCell(num_hidden, state_is_tuple = True)
+            cell = rnn_cell.MultiRNNCell([cell] * num_cells)
+            output, state = tf.nn.dynamic_rnn(cell, inputs, dtype = tf.float32)
+            output = tf.transpose(output, [1, 0, 2])
+            last = tf.gather(output, int(output.get_shape()[0]) - 1)
+            return net = slim.fully_connected(net, 
 					activation_fn=activation_fn, 
 					normalizer_fn=normalizer_fn, 
 					normalizer_params=normalizer_params, 
@@ -54,17 +54,17 @@ def build_model(x,
 
 	CAUTION! controller.py uses a function whith this name and arguments.
 	"""
-	#preprocess
-	y = slim.one_hot_encoding(y, num_classes)
+        #preprocess
+        y = slim.one_hot_encoding(y, num_classes)
 
-	#model
-	logits = RNN_multicell(x, num_outputs=num_classes, reuse=reuse)	
+        #model
+        logits = RNN_multicell(x, num_outputs=num_classes, reuse=reuse)	
 
-	#results
-	loss = tf.reduce_mean(tf.losses.softmax_cross_entropy(logits = logits, onehot_labels = y, label_smoothing=0.05)) 
-	predictions = tf.argmax(slim.softmax(logits),1)
+        #results
+        loss = tf.reduce_mean(tf.losses.softmax_cross_entropy(logits = logits, onehot_labels = y)) 
+        predictions = tf.argmax(slim.softmax(logits),1)
 
-	return loss, predictions 	
+        return loss, predictions 	
 
 
 

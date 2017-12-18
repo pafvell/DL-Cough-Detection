@@ -5,6 +5,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 import tensorflow as tf
 import tensorflow.contrib.slim as slim
+from scipy import signal
+import matplotlib.pyplot as plt
 
 plt.style.use('ggplot')
 
@@ -36,33 +38,31 @@ def augment_sound(signal):
 
 
 
-def standardize(signal):
+def standardize(timeSignal):
 
 	#TODO
 
-	
+         maxValue = np.max(timeSignal)
+         minValue = np.min(timeSignal)
+
+         timeSignal = (timeSignal - minValue)/(maxValue - minValue)
+         return timeSignal
 
 
-
-        print ( 'max signal: %d'%np.max(signal))
-
-
-	
-	return signal
-
-
-def extract_Signal_Of_Importance(signal, frames, augmentation_factor=0, sample_rate=22050, hop_length=512):
+def extract_Signal_Of_Importance(signal, frames, sample_rate, augmentation_factor=0, hop_length=176):
         """
 	extract a window around the maximum of the signal
 	input: 	signal
 		frames -> nr of frames gives the size of the window
 		avg_t_cough -> average time of a cough
         """
-        window_size = hop_length * (frames - 1) 
-        start = max(0, np.argmax(np.abs(signal)) - window_size // 2 + augmentation_factor)
+
+        window_size = int(0.16 * sample_rate)#hop_length * (frames - 1)
+
+        start = max(0, np.argmax(np.abs(signal)) - (window_size // 2))
         end = min(np.size(signal), start + window_size)
-        start = max(0, end - window_size)
         signal = signal[start:end]
+
         length = np.size(signal)
         assert length <= window_size, 'extracted signal is longer than the allowed window size'
         if length < window_size:
@@ -73,8 +73,8 @@ def extract_Signal_Of_Importance(signal, frames, augmentation_factor=0, sample_r
 
 def fetch_samples(files, 
 		  is_training=True, 
-		  bands = 20, 
-		  frames = 41):
+		  bands = 16,
+		  frames = 64):
 	"""
 	load, preprocess, normalize a sample
 	input: a list of strings
@@ -83,18 +83,20 @@ def fetch_samples(files,
 	batch_features = []
 	for f in files:
                 try:
-                       signal, sample_rate = librosa.load(f, mono=True, res_type='kaiser_fast')
+                       timeSignal, sample_rate = librosa.load(f, mono=True, res_type='kaiser_fast')
                 except ValueError as e:
                        print ('!!!!!!! librosa failed to load file: %s !!!!!!!!!'%f)
                        raise e
-                signal = extract_Signal_Of_Importance(signal, frames, sample_rate)
+                timeSignal = extract_Signal_Of_Importance(timeSignal, frames, sample_rate)
                 if is_training:
-                      augment_sound(signal)
-                mfcc = librosa.feature.mfcc(y=signal, sr=sample_rate, n_mfcc = bands).T.flatten()[:, np.newaxis].T
-                mfcc = standardize(mfcc)
+                      augment_sound(timeSignal)
+                timeSignal = standardize(timeSignal)
+
+                mfcc = librosa.feature.melspectrogram(y=timeSignal, sr=sample_rate, n_mels=bands, power=1, hop_length=120)
+
                 batch_features.append(mfcc)
 
-	batch_features = np.asarray(batch_features).reshape(len(files),frames,bands)
+	#batch_features = np.asarray(batch_features).reshape(len(files),frames,bands)
 	return np.array(batch_features)
 
 

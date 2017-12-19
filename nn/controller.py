@@ -19,17 +19,20 @@ from model_cnn_v1 import *
 #******************************************************************************************************************
 
 
-ROOT_DIR = './Audio_data'
+ROOT_DIR = '../../project/Audio_data'
 
 
 def train(train_data,
          test_data,
          num_classes=2,
-         eta=1e-2, #learning rate
+         eta=5e-3, #learning rate
+         grad_noise=1e-3,
          checkpoint_dir='./checkpoints',
          batch_size=32,
-         n_producer_threads=4,
+         n_producer_threads=3,
          trainable_scopes=TRAINABLE_SCOPES,
+         train_capacity=1500,
+         test_capacity=1000,
          log_every_n_steps=100,
          eval_every_n_steps=100,
          save_every_n_steps=2000,
@@ -39,7 +42,7 @@ def train(train_data,
        with graph.as_default():
               #load training data
               with tf.device("/cpu:0"):
-                        train_runner = CustomRunner(train_data, batch_size=batch_size)
+                        train_runner = CustomRunner(train_data, batch_size=batch_size, capacity=train_capacity)
                         train_batch, train_labels = train_runner.get_inputs()
 
               #initialize
@@ -47,9 +50,9 @@ def train(train_data,
               eta = tf.train.exponential_decay(eta, global_step, 100000, 0.96, staircase=False) 
               train_op = tf.train.AdamOptimizer(learning_rate=eta) 
 
-              train_loss, preds = build_model(train_batch, train_labels)			
-              tf.summary.scalar('train_loss', train_loss )
-
+              train_loss, preds = build_model(train_batch, train_labels)
+              tf.summary.scalar('training/train_loss', train_loss )
+	
               #specify what parameters should be trained
               params = get_variables_to_train(trainable_scopes) 
               print ('nr trainable vars: %d'%len(params))  
@@ -57,42 +60,42 @@ def train(train_data,
               #control depenencies for batchnorm, ema, etc. + update global step
               update_ops = tf.get_collection(tf.GraphKeys.UPDATE_OPS)
               with tf.control_dependencies(update_ops):
-                        #train_op = train_op.minimize(train_loss, var_list = params, global_step=global_step)
-                        
                         # Calculate the gradients for the batch of data.
                         grads = train_op.compute_gradients(train_loss, var_list = params)   
-                        #print ('1)len grads: %d'%len(list(grads))) 
                         # gradient clipping
                         grads = clip_grads(grads)
-                        #print ('2)len grads: %d'%len(list(grads)))
+                        # add noise
+                        if grad_noise > 0:
+                                grad_noise = tf.train.exponential_decay(grad_noise, global_step, 10000, 0.96, staircase=False) 
+                                grads = add_grad_noise(grads, grad_noise)
                         # minimize
                         train_op = train_op.apply_gradients(grads, global_step=global_step)
-                        
-              		       
-              #collect summaries
-              summaries = tf.get_collection(tf.GraphKeys.SUMMARIES)
+                      
+              #some summaries
+              tf.summary.scalar('other/learning_rate', eta  )
+              tf.summary.scalar('other/gradient_noise', grad_noise  )
               
-              #print ('3)len grads: %d'%len(list(grads)))
               with tf.variable_scope('gradients'):
               	for grad, var in grads:
               		if grad is not None:
-              			summaries.append(tf.summary.histogram(var.op.name, grad))       
-                  
-              summaries.append(tf.summary.scalar('other/learning_rate_enc', eta  ))
+              			tf.summary.histogram(var.op.name, grad)    
+  		       
+              #collect summaries
+              summaries = tf.get_collection(tf.GraphKeys.SUMMARIES)
 
               #Merge all train summaries.
               summary_op = tf.summary.merge(list(summaries), name='summary_op')
 
               #load Test Data
               with tf.device("/cpu:0"):
-                      test_runner = CustomRunner(test_data, is_training = False, batch_size=batch_size)
+                      test_runner = CustomRunner(test_data, is_training = False, batch_size=batch_size, capacity=test_capacity)
                       test_batch, test_labels = test_runner.get_inputs()
 
               #Evaluation
               test_loss, predictions = build_model(test_batch, test_labels, is_training=False, reuse=True)	
 
               #Collect test summaries
-              with tf.name_scope('evals' ) as eval_scope:
+              with tf.name_scope('evaluation' ) as eval_scope:
                       tf.summary.scalar('test_loss', test_loss )
 
                       mpc, mpc_update = tf.metrics.mean_per_class_accuracy(predictions=predictions, labels=test_labels, num_classes=num_classes)
@@ -148,7 +151,7 @@ def train(train_data,
                                         #print ('step: %d, idx: %d'% (step, i))
                                         train_writer.add_summary(summary, step)
                            
-              			#logging: update training summary
+              			#logging: update testing summary
                                 if i >= 300 and i%(eval_every_n_steps) == 0:
                                         summary, mpc_, accuracy_, _ = sess.run([test_summary_op, mpc, accuracy, test_summary_update])
                                         print ('EVAL: step: %d, idx: %d, mpc: %f, accuracy: %f'% (step, i,  mpc_, accuracy_))

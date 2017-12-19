@@ -10,7 +10,8 @@ import matplotlib.pyplot as plt
 
 plt.style.use('ggplot')
 
-
+maxValue = 1.7
+minValue = -1.8
 
 #########################################################################################
 #
@@ -36,28 +37,42 @@ def augment_sound(signal):
 #
 #########################################################################################
 
+'''
+def fit_scale(timeSignal):
+         global maxValue
+         global minValue
 
+         maxValue_ = np.max(timeSignal)
+         minValue_ = np.min(timeSignal)
+         if maxValue_ > maxValue:
+               print ( 'new max: %f vs %f'%(maxValue_, maxValue))
+               maxValue = maxValue_
+         if minValue_ < minValue:
+               minValue = minValue_
+               print ( 'new min: %f vs %f'%(minValue_, minValue))
+'''
 
 def standardize(timeSignal):
 
-	#TODO
+	 #TODO
+         maxValue_ = np.max(timeSignal)
+         minValue_ = np.min(timeSignal)
+         timeSignal = (timeSignal - minValue)/(maxValue - minValue) 
 
-         maxValue = np.max(timeSignal)
-         minValue = np.min(timeSignal)
-
-         timeSignal = (timeSignal - minValue)/(maxValue - minValue)
+         #but since timeSignal is in [-1.8,1.7]
+         #timeSignal /= 1.8
          return timeSignal
 
 
-def extract_Signal_Of_Importance(signal, frames, sample_rate, augmentation_factor=0, hop_length=176):
+def extract_Signal_Of_Importance(signal, window, sample_rate ):
         """
 	extract a window around the maximum of the signal
 	input: 	signal
-		frames -> nr of frames gives the size of the window
-		avg_t_cough -> average time of a cough
+                window -> size of a window
+		sample_rate 
         """
 
-        window_size = int(0.16 * sample_rate)#hop_length * (frames - 1)
+        window_size = int(window * sample_rate)			
 
         start = max(0, np.argmax(np.abs(signal)) - (window_size // 2))
         end = min(np.size(signal), start + window_size)
@@ -66,15 +81,16 @@ def extract_Signal_Of_Importance(signal, frames, sample_rate, augmentation_facto
         length = np.size(signal)
         assert length <= window_size, 'extracted signal is longer than the allowed window size'
         if length < window_size:
-                #pad zeros to the signal if 
+                #pad zeros to the signal if too short
                 signal = np.concatenate((signal, np.zeros(window_size-length))) 
         return signal
 
 
 def fetch_samples(files, 
 		  is_training=True, 
+                  hop_length=120,
 		  bands = 16,
-		  frames = 64):
+		  window = 0.16):
 	"""
 	load, preprocess, normalize a sample
 	input: a list of strings
@@ -87,12 +103,16 @@ def fetch_samples(files,
                 except ValueError as e:
                        print ('!!!!!!! librosa failed to load file: %s !!!!!!!!!'%f)
                        raise e
-                timeSignal = extract_Signal_Of_Importance(timeSignal, frames, sample_rate)
+
+                timeSignal = extract_Signal_Of_Importance(timeSignal, window, sample_rate)
+
                 if is_training:
                       augment_sound(timeSignal)
+
+                #fit_scale(timeSignal)
                 timeSignal = standardize(timeSignal)
 
-                mfcc = librosa.feature.melspectrogram(y=timeSignal, sr=sample_rate, n_mels=bands, power=1, hop_length=120)
+                mfcc = librosa.feature.melspectrogram(y=timeSignal, sr=sample_rate, n_mels=bands, power=1, hop_length=hop_length)
 
                 batch_features.append(mfcc)
 

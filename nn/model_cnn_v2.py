@@ -34,9 +34,9 @@ def classify(inputs,
                                         net = tf.expand_dims(inputs, -1) #input needs to be in the format NHWC!! if there is only one channel, expand it by 1 dimension
                                         print ('model input shape: %s'%net.get_shape())
 
-                                        net = slim.repeat(net, 2, slim.conv2d, 64, [5, 3], scope='conv1')
+                                        net = slim.repeat(net, 2, slim.conv2d, 64, [9, 3], scope='conv1')
                                         net = slim.max_pool2d(net, [2, 1], scope='pool1')
-                                        net = slim.repeat(net, 3, slim.conv2d, 128, [3, 3], scope='conv2')
+                                        net = slim.repeat(net, 3, slim.conv2d, 128, [5, 3], scope='conv2')
                                         net = slim.max_pool2d(net, [2, 1], scope='pool2')
                                         net = slim.repeat(net, 3, slim.conv2d, 256, [3, 3], scope='conv3')
                                         net = slim.max_pool2d(net, [2, 1], scope='pool3')

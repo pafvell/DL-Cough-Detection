@@ -15,7 +15,8 @@ from utils import simple_arg_scope, batchnorm_arg_scope
 
 def classify(inputs, 
 	     num_classes,
-             dropout_keep_prob=0.5,
+             dropout_keep_prob=0.4,
+             middle_size=4,
 	     scope=None,
 	     reuse=None,
              is_training=True 
@@ -34,20 +35,20 @@ def classify(inputs,
                                       net = tf.expand_dims(inputs, -1) #input needs to be in the format NHWC!! if there is only one channel, expand it by 1 dimension
                                       print ('model input shape: %s'%net.get_shape())
 
-                                      with tf.variable_scope(scope, 'bottom'):
-                                                net = slim.conv2d(net, 64, [9, 3], scope='convB1')
+                                      with tf.variable_scope('bottom'):
+                                                net = slim.conv2d(net, 64, [5, 3], rate=2, scope='convB1')
                                                 net = slim.max_pool2d(net, [2, 1], scope='poolB1')
 
 				      #random block
-                                      with tf.variable_scope(scope, 'middle'):
-                                                for i in range(4):
+                                      with tf.variable_scope('middle'):
+                                                for i in range(middle_size):
                                                 	net = slim.conv2d(net, 64, [3, 3], scope='convM', reuse=i>0)
                                                 net = slim.max_pool2d(net, [2, 1], scope='poolM')
 
 				      # Use conv2d instead of fully_connected layers.
-                                      with tf.variable_scope(scope, 'top'):
+                                      with tf.variable_scope('top'):
                                                 net = slim.flatten(net)
-                                                net = slim.fully_connected(net, 256, scope='fc1')
+                                                net = slim.fully_connected(net, 128, scope='fc1')
                                                 net = slim.dropout(net, dropout_keep_prob, is_training=is_training, scope='dropout1')
                                                 logits = slim.fully_connected(net, num_classes, scope='fc2', activation_fn=None)
                                       return logits
@@ -56,7 +57,7 @@ def classify(inputs,
 def build_model(x, 
 		y,
 	        num_classes=2,
-		num_estimator=100,
+		num_estimator=10,
                 is_training=True,
 		reuse=None
 		):
@@ -78,7 +79,7 @@ def build_model(x,
         for i in range(num_estimator):
                 eta = 2 / (i+1)
                 predictions = classify(x, num_classes=num_classes, is_training=is_training, reuse=reuse, scope='c%d'%i)
-                logits = (1-eta) * logits + eta * prediction
+                logits = (1-eta) * logits + eta * predictions
     
 
         #results

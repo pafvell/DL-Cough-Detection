@@ -14,8 +14,9 @@ from utils import simple_arg_scope, batchnorm_arg_scope
 
 
 def classify(inputs, 
+             num_estimator,
 	     num_classes,
-             dropout_keep_prob=0.4,
+             dropout_keep_prob=0.5,
              middle_size=4,
 	     scope=None,
 	     reuse=None,
@@ -33,7 +34,6 @@ def classify(inputs,
                              with tf.variable_scope(scope, 'model_v1', [inputs], reuse=reuse) as scope:
 
                                       net = tf.expand_dims(inputs, -1) #input needs to be in the format NHWC!! if there is only one channel, expand it by 1 dimension
-                                      print ('model input shape: %s'%net.get_shape())
 
                                       with tf.variable_scope('bottom'):
                                                 net = slim.conv2d(net, 64, [5, 3], rate=2, scope='convB1')
@@ -51,7 +51,9 @@ def classify(inputs,
                                                 net = slim.fully_connected(net, 128, scope='fc1')
                                                 net = slim.dropout(net, dropout_keep_prob, is_training=is_training, scope='dropout1')
                                                 logits = slim.fully_connected(net, num_classes, scope='fc2', activation_fn=None)
-                                      return logits
+                                                gamma = tf.Variable(1./(num_estimator), name='gamma')
+
+                                      return logits, gamma
 
 
 def build_model(x, 
@@ -77,9 +79,9 @@ def build_model(x,
         #model	
         logits = 0 
         for i in range(num_estimator):
-                eta = 2 / (i+1)
-                predictions = classify(x, num_classes=num_classes, is_training=is_training, reuse=reuse, scope='c%d'%i)
-                logits = (1-eta) * logits + eta * predictions
+                predictions, gamma = classify(x, num_estimator=num_estimator, num_classes=num_classes, is_training=is_training, reuse=reuse, scope='c%d'%i)
+                zeta = 2 / (i+1) * gamma
+                logits = (1-zeta) * logits + zeta * predictions
     
 
         #results
@@ -92,7 +94,7 @@ def build_model(x,
 
 
 #Parameters
-TRAINABLE_SCOPES = ['bottom','top'] #bottom + top are trainable
+TRAINABLE_SCOPES = ['bottom', 'top'] #bottom + top are trainable
 
 
 

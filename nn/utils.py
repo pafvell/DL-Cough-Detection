@@ -80,7 +80,7 @@ class HiddenPrints:
         sys.stdout = self._original_stdout
 
  
-def get_variables_to_train(trainable_scopes=None):
+def get_variables_to_train(trainable_scopes=None, show_variables=False):
     """Returns a list of variables to train.
 
       Returns:
@@ -91,13 +91,16 @@ def get_variables_to_train(trainable_scopes=None):
         return trainable_variables
 
     variables_to_train = []
-    print ('*********************************************************************')
-    print ('trainable variables: ')
+
+    if show_variables:
+           print ('*********************************************************************')
+           print ('trainable variables: ')
     for s in trainable_scopes:
            for v in trainable_variables:
               if s in v.name:
                         variables_to_train.append(v)
-                        print (v.name)
+                        if show_variables:
+                               print (v.name)
 
     print ('*********************************************************************')
 

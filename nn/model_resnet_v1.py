@@ -13,36 +13,53 @@ from utils import simple_arg_scope, batchnorm_arg_scope
 
 def classify(x, 
 	     num_classes,
-             num_blocks=4,
-	     scope='model_v1',
+             num_layers=[2,2,2],#,2],
+	     scope='resnet_18_v1',
 	     reuse=None,
-             is_training=True 
+             is_training=True
 	):
 	"""
-	 model used to make predictions
-	 input: x -> shape=[None,bands,frames,num_channels]
-	 output: logits -> shape=[None,num_labels]
+	 resnet-18 used to make predictions
 	"""
 	with slim.arg_scope(simple_arg_scope()): 
-        	with slim.arg_scope(batchnorm_arg_scope()): 
-		    	with slim.arg_scope([slim.batch_norm, slim.dropout],
+		with slim.arg_scope(batchnorm_arg_scope()): 
+			with slim.arg_scope([slim.batch_norm, slim.dropout],
 		                	is_training=is_training):
-  				with slim.arg_scope([slim.conv2d], weights_initializer= slim.variance_scaling_initializer(seed=seed)):
+  				with slim.arg_scope([slim.conv2d], weights_initializer= slim.variance_scaling_initializer(seed=0)):
 		                     with tf.variable_scope(scope, [x], reuse=reuse) as sc:
-						net = tf.expand_dims(x, -1) #input needs to be in the format NHWC!! if there is only one channel, expand it by 1 dimension
-						for i in range(num_blocks):
-							with tf.variable_scope("block%d"%i):
-								depth = 2**(i+6)
-								residual = slim.conv2d(x, depth, [3,3], scope='convA%d'%i)
-								residual = slim.conv2d(residual, depth, [3,3], stride=stride, activation_fn=None, scope='convB%d'%i)
-								x = tf.nn.relu(x + residual)
-                                                                if i < num_blocks-1:
-									x = slim.max_pool2d(x, [1, 2], stride=2, scope='pool%d'%i)
 
-						x = tf.reduce_mean(x, [1, 2], name='global_pool')
-						#x = slim.flatten(x)
-						logits = slim.fully_connected(net, num_classes, scope='fc', activation_fn=None)
-						return logits
+                                                x = tf.expand_dims(x, -1) #input needs to be in the format NHWC!! if there is only one channel, expand it by 1 dimension
+                                                num_blocks = len(num_layers)
+                                                stride=1
+
+                                                # initial convolution
+                                                with tf.variable_scope('bottom', [x]):
+                                                     shortcut = x = slim.conv2d(x, 64, [3,7], scope='convInit')
+                                                     #shortcut = x = slim.avg_pool2d(x, [1,2], 2)
+
+                                                #resnet blocks
+                                                for i in range(num_blocks):
+                                                         with tf.variable_scope("block%d"%i):
+                                                                depth = 2**(i+6) #64,128,256,512
+
+                                                                for j in range(num_layers[i]):
+                                                                      residual = slim.conv2d(x, depth, [3,3], stride, scope='convA%d.%d'%(i,j))
+                                                                      residual = slim.conv2d(residual, depth, [3,3], activation_fn=None, scope='convB%d.%d'%(i,j))
+                                                                      shortcut = x = tf.nn.relu(shortcut + residual)
+                                                                      stride=1
+
+                                                                if i+1 < num_blocks:
+                                                                      shortcut = slim.conv2d(x,  2**(i+6+1), 1, stride=2, scope='convS.%d'%i)
+                                                                      stride=2
+
+                                                #print (x.get_shape())
+
+                                                # initial convolution
+                                                with tf.variable_scope('top', [x]):
+                                                     x = tf.reduce_mean(x, [1, 2], name='global_pool')
+                                                     logits = slim.fully_connected(x, num_classes, scope='logits', activation_fn=None)
+
+                                                return logits
 
 
 def build_model(x, 

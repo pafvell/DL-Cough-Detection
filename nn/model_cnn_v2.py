@@ -16,7 +16,7 @@ from utils import simple_arg_scope, batchnorm_arg_scope
 def classify(inputs, 
 	     num_classes,
              dropout_keep_prob=0.5,
-	     scope=None,
+	     scope='cnn_v2',
 	     reuse=None,
              is_training=True 
 	):
@@ -29,7 +29,7 @@ def classify(inputs,
         	#with slim.arg_scope(batchnorm_arg_scope()): 
 		    	with slim.arg_scope([slim.batch_norm, slim.dropout],
 		                	is_training=is_training):
-				with tf.variable_scope(scope, 'model_v1', [x], reuse=reuse) as scope:
+				with tf.variable_scope(scope, [x], reuse=reuse) as scope:
 
                                         net = tf.expand_dims(inputs, -1) #input needs to be in the format NHWC!! if there is only one channel, expand it by 1 dimension
                                         print ('model input shape: %s'%net.get_shape())

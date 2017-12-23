@@ -21,7 +21,7 @@ def _conv(inputs, num_filters, kernel_size, stride=1, dropout_rate=None,
     net = slim.conv2d(net, num_filters, kernel_size)
 
     if dropout_rate:
-      net = tf.nn.dropout(net)
+      net = slim.dropout(net, dropout_rate)
 
 
   return net
@@ -72,23 +72,21 @@ def densenet(inputs,
                   reduction=0.5,
                   growth_rate=32,
                   num_filters=64,
-                  num_layers=[6,12],#,24,16],
+                  num_layers=[6,6],#,24,16],
                   dropout_rate=0.2,
                   is_training=True,
                   reuse=None,
-                  scope=None)
+                  scope='densenet121'):
 
   compression = 1.0 - reduction
   num_dense_blocks = len(num_layers)
 
-  with tf.variable_scope(scope, 'densenet121', [inputs, num_classes],
+  with tf.variable_scope(scope, [inputs, num_classes],
                          reuse=reuse) as sc:
     with slim.arg_scope([_conv], dropout_rate=dropout_rate):
-      net = inputs
-
       # initial convolution
       with tf.variable_scope('bottom', [inputs]):
-        net = slim.conv2d(net, num_filters, [3,7], scope='conv1')
+        net = slim.conv2d(inputs, num_filters, [3,7], scope='conv1')
 
       # blocks
       for i in range(num_dense_blocks - 1):
@@ -112,14 +110,15 @@ def densenet(inputs,
 
         net = slim.batch_norm(net)
         net = tf.nn.relu(net)
-        net = tf.reduce_mean(net, [1,2], name='global_avg_pool', keep_dims=True)
+        net = tf.reduce_mean(net, [1,2], name='global_avg_pool')
 
-        net = slim.fully_connected(net, 1, activation_fn=None, biases_initializer=tf.zeros_initializer(), scope='logits')
+        net = slim.fully_connected(net, num_classes, activation_fn=None, biases_initializer=tf.zeros_initializer(), scope='logits')
 
       return net
 
 
 def densenet_arg_scope(is_training,
+                       seed=12,
                        weight_decay=1e-4,
                        batch_norm_decay=0.99,
                        batch_norm_epsilon=1.1e-5):
@@ -157,8 +156,8 @@ def build_model(x,
 
 	#model
 	with slim.arg_scope(densenet_arg_scope(is_training)): 
-             net = tf.expand_dims(x, -1) 
-             densenet(x, num_classes, reuse=reuse)
+             x = tf.expand_dims(x, -1) 
+             logits = densenet(x, num_classes, reuse=reuse)
 
 	#results
 	loss = tf.reduce_mean(tf.losses.softmax_cross_entropy(logits = logits, onehot_labels = y)) 

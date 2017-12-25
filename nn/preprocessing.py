@@ -79,7 +79,7 @@ def denoise_spectrogram(spect, threshold=1, filter_size = (2,2)):
   input:
     spectrogram, matrix
   output:
-    denoised spectrogram, binary matrix, as in bird singing paper
+    denoised spectrogram, ~ as in bird singing paper
   """
 
   # map to [0,1]

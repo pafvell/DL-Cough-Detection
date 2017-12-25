@@ -16,18 +16,88 @@ minValue = -1.8
 #########################################################################################
 #
 # Data Augmentation
+# z.B. http://ofai.at/~jan.schlueter/code/augment/
 #
 #########################################################################################
 
 
-def augment_sound(signal):
+def pitch_shift(signal, sr, n_steps=5):
+  '''
+  
+  '''
+  # as in https://librosa.github.io/librosa/generated/librosa.effects.pitch_shift.html#librosa.effects.pitch_shift
 
-	#TODO augment
-	
-	# z.B. http://ofai.at/~jan.schlueter/code/augment/
+  signal = librosa.effects.pitch_shift(y=signal, sr=sr, n_steps=n_steps)
 
-	return signal
+  return signal
 
+
+def time_stretch(signal, rate):
+  '''
+  Input:
+    signal; sound signal to be stretched
+    rate; stretch factor: if rate < 1 then signal is slowed down, otherwise sped up
+  Output:
+    stretched/compressed signal
+  CAUTION: changes time length of signal -> apply this before extract_signal_of_importance, consider cough window size
+  '''
+  # as in https://librosa.github.io/librosa/generated/librosa.effects.time_stretch.html#librosa.effects.time_stretch
+  
+  signal = librosa.effects.time_stretch(y=signal, rate=rate)
+  
+  return signal
+
+
+def time_shift(spect):
+  '''
+  Input:
+    Spectrogram to be augmented
+  Output:
+    Spectrogram cut into two pieces along time dimension. Then second part is placed before the first
+  '''
+  spect_length = spect.shape[1]
+  idx = np.random.randint(int(spect_length*0.1), int(spect_length*0.9))
+  spect_ = np.hstack([spect[:,idx:], spect[:,:idx]])
+
+  return spect_
+
+
+def add_noise(signal):
+  '''
+  Input:
+    sound signal; time series vector, standardized
+  Output:
+    sound signal + gaussian noise
+  '''
+  std = 0.05 * np.max(signal)
+  noise_mat = np.random.randn(signal.shape[0])*std
+  return signal + noise_mat
+
+
+def denoise_spectrogram(spect, threshold=1, filter_size = (2,2)):
+  """
+  input:
+    spectrogram, matrix
+  output:
+    denoised spectrogram, binary matrix, as in bird singing paper
+  """
+
+  # map to [0,1]
+  minVal = np.min(spect)
+  maxVal = np.max(spect)
+  spect = (spect - minVal)/(maxVal - minVal)
+
+  # convert to binary
+  row_medians = np.tile(np.median(spect, axis=1, keepdims=True), (1, spect.shape[1]))
+  col_medians = np.tile(np.median(spect, axis=0, keepdims=True), (spect.shape[0], 1))
+  spect_ = spect * (spect > threshold * row_medians).astype('int') * (spect > threshold * col_medians).astype('int')
+  
+  # apply erosion + dilation
+  structure_filter = np.ones(filter_size)
+  spect_ = binary_erosion(spect_, structure=structure_filter)
+  spect_ = binary_dilation(spect_, structure=structure_filter)
+
+  return spect_
 
 
 
@@ -41,7 +111,6 @@ def augment_sound(signal):
 def fit_scale(timeSignal):
          global maxValue
          global minValue
-
          maxValue_ = np.max(timeSignal)
          minValue_ = np.min(timeSignal)
          if maxValue_ > maxValue:
@@ -118,6 +187,4 @@ def fetch_samples(files,
 
 	#batch_features = np.asarray(batch_features).reshape(len(files),frames,bands)
 	return np.array(batch_features)
-
-
 

@@ -6,6 +6,7 @@ import numpy as np
 import tensorflow as tf
 import tensorflow.contrib.slim as slim
 from scipy import signal
+from scipy.ndimage.morphology import binary_erosion, binary_dilation
 import matplotlib.pyplot as plt
 
 plt.style.use('ggplot')
@@ -79,7 +80,7 @@ def denoise_spectrogram(spect, threshold=1, filter_size = (2,2)):
   input:
     spectrogram, matrix
   output:
-    denoised spectrogram, ~ as in bird singing paper
+    denoised spectrogram, binary matrix as in bird singing paper
   """
 
   # map to [0,1]
@@ -90,7 +91,7 @@ def denoise_spectrogram(spect, threshold=1, filter_size = (2,2)):
   # convert to binary
   row_medians = np.tile(np.median(spect, axis=1, keepdims=True), (1, spect.shape[1]))
   col_medians = np.tile(np.median(spect, axis=0, keepdims=True), (spect.shape[0], 1))
-  spect_ = spect * (spect > threshold * row_medians).astype('int') * (spect > threshold * col_medians).astype('int')
+  spect_ = (spect > threshold * row_medians).astype('int') * (spect > threshold * col_medians).astype('int')
   
   # apply erosion + dilation
   structure_filter = np.ones(filter_size)
@@ -157,9 +158,10 @@ def extract_Signal_Of_Importance(signal, window, sample_rate ):
 
 def fetch_samples(files, 
 		  is_training=True, 
-                  hop_length=120,
+      hop_length=120,
 		  bands = 16,
-		  window = 0.16):
+		  window = 0.16,
+      do_denoise=False):
 	"""
 	load, preprocess, normalize a sample
 	input: a list of strings
@@ -175,16 +177,34 @@ def fetch_samples(files,
 
                 timeSignal = extract_Signal_Of_Importance(timeSignal, window, sample_rate)
 
-                if is_training:
-                      augment_sound(timeSignal)
-
                 #fit_scale(timeSignal)
                 timeSignal = standardize(timeSignal)
 
                 mfcc = librosa.feature.melspectrogram(y=timeSignal, sr=sample_rate, n_mels=bands, power=1, hop_length=hop_length)
 
+                if do_denoise:
+                  mfcc = denoise_spectrogram(mfcc)
+
                 batch_features.append(mfcc)
 
 	#batch_features = np.asarray(batch_features).reshape(len(files),frames,bands)
 	return np.array(batch_features)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

@@ -79,7 +79,7 @@ class CustomRunner(object):
        	is_training = True,
        	capacity=1000,
        	min_after_dequeue=500,
-        show_input_shape=True):
+        show_input_shape=False):
 
        self.batch_size = batch_size
        self.load_batch_size = load_batch_size

@@ -34,10 +34,10 @@ def classify(x,
                                         net = tf.expand_dims(x, -1) #input needs to be in the format NHWC!! if there is only one channel, expand it by 1 dimension
                                         print ('model input shape: %s'%net.get_shape())
 
-                                        net = slim.conv2d(net, 64, [9, 3], scope='conv1')
-                                        net = slim.max_pool2d(net, [2, 1], scope='pool1')
-                                        net = slim.conv2d(net, 128, [5, 3], scope='conv2')
-                                        net = slim.max_pool2d(net, [2, 1], scope='pool2')
+                                        net = slim.conv2d(net, 64, [3, 9], scope='conv1')
+                                        net = slim.max_pool2d(net, [1, 2], scope='pool1')
+                                        net = slim.conv2d(net, 128, [3, 5], scope='conv2')
+                                        net = slim.max_pool2d(net, [1, 2], scope='pool2')
                                         net = slim.flatten(net)
                                         net = slim.fully_connected(net, 256, scope='fc1')
                                         net = slim.dropout(net, dropout_keep_prob, is_training=is_training, scope='dropout1')

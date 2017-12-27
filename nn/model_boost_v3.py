@@ -17,7 +17,7 @@ def classify(inputs,
              num_estimator,
 	     num_classes,
              dropout_keep_prob=0.5,
-             middle_size=4,
+             middle_size=3,
 	     scope=None,
 	     reuse=None,
              is_training=True 
@@ -36,12 +36,12 @@ def classify(inputs,
                                       net = tf.expand_dims(inputs, -1) #input needs to be in the format NHWC!! if there is only one channel, expand it by 1 dimension
 
                                       with tf.variable_scope('bottom'):
-                                                net = slim.conv2d(net, 64, [5, 3], rate=2, scope='convB1')
-                                                net = slim.max_pool2d(net, [2, 1], scope='poolB1')
+                                                net = slim.conv2d(net, 32, [3, 3], rate=2, scope='convB1')
+                                                net = slim.max_pool2d(net, [2, 2], scope='poolB1')
 
 				      #random block
                                       with tf.variable_scope('middle'):
-                                                net = slim.repeat(net, middle_size, slim.conv2d, 64, [3, 3], scope='convM') #, reuse=i>0
+                                                net = slim.repeat(net, middle_size, slim.conv2d, 32, [3, 3], scope='convM') #, reuse=i>0
                                                 net = slim.max_pool2d(net, [2, 1], scope='poolM')
 
 				      # Use conv2d instead of fully_connected layers.
@@ -74,19 +74,26 @@ def build_model(x,
         """
         #preprocess
         y = slim.one_hot_encoding(y, num_classes)
-
+        print( x.get_shape())
         #model	
         logits = 0 
         offset = 30 // num_estimator
-        for i in range(num_estimator):
+
+        predictions, gamma = classify(x, num_estimator=num_estimator, num_classes=num_classes, is_training=is_training, reuse=reuse, scope='H0')
+        logits = gamma * predictions
+        loss = tf.reduce_mean(tf.losses.softmax_cross_entropy(logits = logits, onehot_labels = y, label_smoothing=0.05)) 
+
+        for i in range(1,num_estimator):
                 #x = tf.image.crop_to_bounding_box(x, 0, offset * i, 16, 16)
-                predictions, gamma = classify(x, num_estimator=num_estimator, num_classes=num_classes, is_training=is_training, reuse=reuse, scope='c%d'%i)
-                zeta = gamma * 2 / (i+1) 
+                x = tf.random_crop(x, [x.get_shape()[0].value, 16, 16])
+                logits = tf.stop_gradient(logits)
+                predictions, gamma = classify(x, num_estimator=num_estimator, num_classes=num_classes, is_training=is_training, reuse=reuse, scope='H%d'%(i+1))
+                zeta = gamma * 2. / (i+2) 
                 logits = (1-zeta) * logits + zeta * predictions
+                loss += tf.reduce_mean(tf.losses.softmax_cross_entropy(logits = logits, onehot_labels = y, label_smoothing=0.05)) 
     
 
         #results
-        loss = tf.reduce_mean(tf.losses.softmax_cross_entropy(logits = logits, onehot_labels = y, label_smoothing=0.05)) 
         predictions = tf.argmax(slim.softmax(logits),1)
 
         return loss, predictions 	
@@ -95,7 +102,7 @@ def build_model(x,
 
 
 #Parameters
-TRAINABLE_SCOPES = ['bottom', 'top'] #bottom + top are trainable
+TRAINABLE_SCOPES = ['bottom','top'] #bottom + top are trainable
 
 
 

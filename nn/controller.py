@@ -14,7 +14,7 @@ from input_pipeline import *
 
 #******************************************************************************************************************
 
-from model_cnn_v1 import *
+from model_boost_v3 import *
 
 #******************************************************************************************************************
 
@@ -28,7 +28,7 @@ def train(train_data,
          eta=5e-3, #learning rate
          grad_noise=1e-3,
          checkpoint_dir='./checkpoints',
-         batch_size=32,
+         batch_size=64,
          n_producer_threads=3,
          trainable_scopes=TRAINABLE_SCOPES,
          train_capacity=1500,

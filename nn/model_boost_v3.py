@@ -18,6 +18,8 @@ def classify(inputs,
 	     num_classes,
              dropout_keep_prob=0.5,
              middle_size=3,
+             gamma_decay = 0.001,
+             weight_decay = 0.0005,
 	     scope=None,
 	     reuse=None,
              is_training=True 
@@ -27,7 +29,7 @@ def classify(inputs,
 	 input: x -> shape=[None,bands,frames,num_channels]
 	 output: logits -> shape=[None,num_labels]
         """
-        with slim.arg_scope(simple_arg_scope()): 
+        with slim.arg_scope(simple_arg_scope(weight_decay=weight_decay)): 
         	#with slim.arg_scope(batchnorm_arg_scope()): 
                       with slim.arg_scope([slim.batch_norm, slim.dropout],
 		                	is_training=is_training):
@@ -47,18 +49,23 @@ def classify(inputs,
 				      # Use conv2d instead of fully_connected layers.
                                       with tf.variable_scope('top'):
                                                 net = slim.flatten(net)
-                                                net = slim.fully_connected(net, 128, scope='fc1')
+                                                net = slim.fully_connected(net, 64, scope='fc1')
                                                 net = slim.dropout(net, dropout_keep_prob, is_training=is_training, scope='dropout1')
                                                 logits = slim.fully_connected(net, num_classes, scope='fc2', activation_fn=None)
                                                 gamma = tf.Variable(1./(num_estimator), name='gamma')
-
+                                                tf.losses.add_loss( tf.nn.l2_loss(gamma), loss_collection=tf.GraphKeys.REGULARIZATION_LOSSES )
                                       return logits, gamma
+
+
+def loss_fkt(logits, y):
+        return tf.reduce_mean(tf.losses.softmax_cross_entropy(logits = logits, onehot_labels = y, label_smoothing=0.1)) 
+
 
 
 def build_model(x, 
 		y,
 	        num_classes=2,
-		num_estimator=10,
+		num_estimator=25,
                 is_training=True,
 		reuse=None
 		):
@@ -74,25 +81,25 @@ def build_model(x,
         """
         #preprocess
         y = slim.one_hot_encoding(y, num_classes)
-        print( x.get_shape())
+        
         #model	
-        logits = 0 
-        offset = 30 // num_estimator
-
         predictions, gamma = classify(x, num_estimator=num_estimator, num_classes=num_classes, is_training=is_training, reuse=reuse, scope='H0')
         logits = gamma * predictions
-        loss = tf.reduce_mean(tf.losses.softmax_cross_entropy(logits = logits, onehot_labels = y, label_smoothing=0.05)) 
+        loss = loss_fkt(logits, y)
+        gs = [gamma]
 
         for i in range(1,num_estimator):
-                #x = tf.image.crop_to_bounding_box(x, 0, offset * i, 16, 16)
-                x = tf.random_crop(x, [x.get_shape()[0].value, 16, 16])
+                #x = tf.random_crop(x, [x.get_shape()[0].value, 16, 16])
                 logits = tf.stop_gradient(logits)
                 predictions, gamma = classify(x, num_estimator=num_estimator, num_classes=num_classes, is_training=is_training, reuse=reuse, scope='H%d'%(i+1))
                 zeta = gamma * 2. / (i+2) 
                 logits = (1-zeta) * logits + zeta * predictions
-                loss += tf.reduce_mean(tf.losses.softmax_cross_entropy(logits = logits, onehot_labels = y, label_smoothing=0.05)) 
-    
+                loss += loss_fkt(logits, y)
+                gs += gamma
 
+        tf.summary.histogram('training/gamma', tf.stack(gs) )
+                
+   
         #results
         predictions = tf.argmax(slim.softmax(logits),1)
 
@@ -102,7 +109,7 @@ def build_model(x,
 
 
 #Parameters
-TRAINABLE_SCOPES = ['bottom','top'] #bottom + top are trainable
+TRAINABLE_SCOPES = ['top'] #bottom + top are trainable
 
 
 

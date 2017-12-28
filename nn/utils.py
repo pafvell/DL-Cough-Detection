@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import tensorflow as tf
 import tensorflow.contrib.slim as slim
-import os, fnmatch
+import os, fnmatch, sys
 plt.style.use('ggplot')
 
 
@@ -128,11 +128,11 @@ def load_model(sess,
         
         if show_cp_content:
                 print ()
-                print ('----------------------------------------------------------------------------------')
+                print ('------------------------------------------------------------------------------')
                 print ('variables stored in checkpoint:')
                 from tensorflow.python.tools.inspect_checkpoint import print_tensors_in_checkpoint_file
                 print_tensors_in_checkpoint_file(latest_ckpt, '', False)
-                print ('----------------------------------------------------------------------------------')
+                print ('------------------------------------------------------------------------------')
        	
         if ignore_missing_vars:
        		reader = tf.train.NewCheckpointReader(latest_ckpt)

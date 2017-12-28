@@ -25,9 +25,9 @@ ROOT_DIR = '../../project/Audio_data'
 def train(train_data,
          test_data,
          num_classes=2,
-         eta=5e-3, #learning rate
+         eta=7e-3, #learning rate
          grad_noise=1e-3,
-         checkpoint_dir='./checkpoints',
+         checkpoint_dir='./checkpoints/boost_v8',
          batch_size=64,
          n_producer_threads=3,
          trainable_scopes=TRAINABLE_SCOPES,
@@ -53,6 +53,12 @@ def train(train_data,
               train_loss, preds = build_model(train_batch, train_labels)
               tf.summary.scalar('training/train_loss', train_loss )
 	
+              #add regularization
+              regularization_loss = tf.losses.get_regularization_losses() #use tf.losses.get_regularization_loss instead?
+              if regularization_loss: 
+                        train_loss += tf.add_n(regularization_loss)
+                        tf.summary.scalar('training/total_loss', train_loss )
+             
               #specify what parameters should be trained
               params = get_variables_to_train(trainable_scopes) 
               print ('nr trainable vars: %d'%len(params))  

@@ -14,12 +14,12 @@ from input_pipeline import *
 
 #******************************************************************************************************************
 
-from model_boost_v3 import *
+from model_cnn_v1 import *
 
 #******************************************************************************************************************
 
 
-ROOT_DIR = '../../project/Audio_data'
+ROOT_DIR = './Audio_Data'
 
 
 def train(train_data,
@@ -27,12 +27,13 @@ def train(train_data,
          num_classes=2,
          eta=7e-3, #learning rate
          grad_noise=1e-3,
-         checkpoint_dir='./checkpoints/boost_v8',
-         batch_size=64,
+         checkpoint_dir='./checkpoints/cnn_v1.1',
+         batch_size=128,
          n_producer_threads=3,
          trainable_scopes=TRAINABLE_SCOPES,
-         train_capacity=1500,
+         train_capacity=3500,
          test_capacity=1000,
+         max_steps = 100000,
          log_every_n_steps=100,
          eval_every_n_steps=100,
          save_every_n_steps=2000,
@@ -42,8 +43,8 @@ def train(train_data,
        with graph.as_default():
               #load training data
               with tf.device("/cpu:0"):
-                        train_runner = CustomRunner(train_data, batch_size=batch_size, capacity=train_capacity)
-                        train_batch, train_labels = train_runner.get_inputs()
+                    train_runner = CustomRunner(train_data, batch_size=batch_size, capacity=train_capacity)
+                    train_batch, train_labels = train_runner.get_inputs()
 
               #initialize
               global_step = tf.Variable(0, name='global_step', trainable=False)
@@ -94,8 +95,8 @@ def train(train_data,
 
               #load Test Data
               with tf.device("/cpu:0"):
-                      test_runner = CustomRunner(test_data, is_training = False, batch_size=batch_size, capacity=test_capacity)
-                      test_batch, test_labels = test_runner.get_inputs()
+                   test_runner = CustomRunner(test_data, is_training = False, batch_size=batch_size, capacity=test_capacity)
+                   test_batch, test_labels = test_runner.get_inputs()
 
               #Evaluation
               test_loss, predictions = build_model(test_batch, test_labels, is_training=False, reuse=True)	
@@ -145,9 +146,9 @@ def train(train_data,
 
                 print ('start learning')
                 try:
-              	        i=0
-              	        while True:
-                                i+=1
+              	        #i=0
+              	        for i in range(max_steps): #while True:
+                                #i+=1
               		        #training
                                 _, step, train_loss_ = sess.run([train_op, global_step, train_loss])
                                 #print ('step: %d, idx: %d, train_loss: %f'% (step, i, train_loss_))
@@ -178,6 +179,7 @@ def train(train_data,
                       	        print ('Results - mpca:%f, accuracy:%f, loss:%f'%(mpc_,accuracy_,loss_))
                       	        print ('################################################################################')
         
+                      	        test_runner.close()
                       	        sess.close()
 
 

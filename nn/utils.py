@@ -1,12 +1,12 @@
 #Author: Kevin Kipfer
 
 import librosa
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 import numpy as np
 import tensorflow as tf
 import tensorflow.contrib.slim as slim
 import os, fnmatch, sys
-plt.style.use('ggplot')
+#plt.style.use('ggplot')
 
 
 

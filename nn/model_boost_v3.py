@@ -18,8 +18,8 @@ def classify(inputs,
 	     num_classes,
              dropout_keep_prob=0.5,
              middle_size=3,
-             gamma_decay = 0.001,
-             weight_decay = 0.0005,
+             gamma_decay = 1e-6,
+             weight_decay = 0.,
 	     scope=None,
 	     reuse=None,
              is_training=True 
@@ -58,14 +58,14 @@ def classify(inputs,
 
 
 def loss_fkt(logits, y):
-        return tf.reduce_mean(tf.losses.softmax_cross_entropy(logits = logits, onehot_labels = y, label_smoothing=0.1)) 
+        return tf.reduce_mean(tf.losses.softmax_cross_entropy(logits = logits, onehot_labels = y, label_smoothing=0.05)) 
 
 
 
 def build_model(x, 
 		y,
 	        num_classes=2,
-		num_estimator=25,
+		num_estimator=15,
                 is_training=True,
 		reuse=None
 		):

@@ -17,6 +17,7 @@ def RNN_multicell(inputs,
 	num_outputs,
 	num_hidden=1024,
 	num_cells=1,
+	attn_length=3,
         activation_fn=None,
         normalizer_fn=None,
         normalizer_params=None,
@@ -29,6 +30,9 @@ def RNN_multicell(inputs,
       			scope, 'rnn_multicell', [inputs],reuse=reuse) as sc:
 				cell = rnn_cell.LSTMCell(num_hidden, state_is_tuple = True)
 				cell = rnn_cell.MultiRNNCell([cell] * num_cells)
+				#cell = tf.contrib.rnn.DropoutWrapper(cell, 0.5)
+				#cell = tf.contrib.rnn.AttentionCellWrapper(
+				#	cell, attn_length, state_is_tuple=True)
 				output, state = tf.nn.dynamic_rnn(cell, inputs, dtype = tf.float32)
 				output = tf.transpose(output, [1, 0, 2])
 				last = tf.gather(output, int(output.get_shape()[0]) - 1)

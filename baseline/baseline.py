@@ -16,7 +16,7 @@ test accuracy: 0.833697234352
 '''
 
 # hyperparams
-pca_components = 10
+pca_components = 15
 n_trees = 500
 test_size = 0.2
 n_freq = 1025

@@ -13,7 +13,7 @@ from utils import simple_arg_scope, batchnorm_arg_scope
 
 def classify(x, 
 	     num_classes,
-             num_layers=[2,2,2],#,2],
+             num_layers=[2,2,2,2],
 	     scope='resnet_18_v1',
 	     reuse=None,
              is_training=True
@@ -54,7 +54,7 @@ def classify(x,
 
                                                 #print (x.get_shape())
 
-                                                # initial convolution
+                                                # final layer - fc
                                                 with tf.variable_scope('top', [x]):
                                                      x = tf.reduce_mean(x, [1, 2], name='global_pool')
                                                      logits = slim.fully_connected(x, num_classes, scope='logits', activation_fn=None)
@@ -68,24 +68,24 @@ def build_model(x,
                 is_training=True,
 		reuse=None
 		):
-	"""
+        """
 	 handle model. calculate the loss and the prediction for some input x and the corresponding labels y
 	 input: x shape=[None,bands,frames,num_channels], y shape=[None]
 	 output: loss shape=(1), prediction shape=[None]
 
 	CAUTION! controller.py uses a function whith this name and arguments.
-	"""
+        """
 	#preprocess
-	y = slim.one_hot_encoding(y, num_classes)
+        y = slim.one_hot_encoding(y, num_classes)
 
 	#model
-	logits = classify(x, num_classes=num_classes, is_training=is_training, reuse=reuse)	
+        logits = classify(x, num_classes=num_classes, is_training=is_training, reuse=reuse)	
 
 	#results
-	loss = tf.reduce_mean(tf.losses.softmax_cross_entropy(logits = logits, onehot_labels = y)) 
-	predictions = tf.argmax(slim.softmax(logits),1)
+        loss = tf.reduce_mean(tf.losses.softmax_cross_entropy(logits = logits, onehot_labels = y)) 
+        predictions = tf.argmax(slim.softmax(logits),1)
 
-	return loss, predictions 	
+        return loss, predictions 	
 
 
 

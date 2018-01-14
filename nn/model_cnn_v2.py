@@ -25,21 +25,21 @@ def classify(inputs,
 	 input: x -> shape=[None,bands,frames,num_channels]
 	 output: logits -> shape=[None,num_labels]
 	"""
-        with slim.arg_scope(simple_arg_scope()): 
+	with slim.arg_scope(simple_arg_scope()): 
         	#with slim.arg_scope(batchnorm_arg_scope()): 
 		    	with slim.arg_scope([slim.batch_norm, slim.dropout],
 		                	is_training=is_training):
-				with tf.variable_scope(scope, [x], reuse=reuse) as scope:
+                             with tf.variable_scope(scope, [inputs], reuse=reuse) as scope:
 
                                         net = tf.expand_dims(inputs, -1) #input needs to be in the format NHWC!! if there is only one channel, expand it by 1 dimension
                                         print ('model input shape: %s'%net.get_shape())
 
                                         net = slim.repeat(net, 2, slim.conv2d, 64, [3, 9], scope='conv1')
-                                        net = slim.max_pool2d(net, [2, 1], scope='pool1')
+                                        net = slim.max_pool2d(net, [2, 2], scope='pool1')
                                         net = slim.repeat(net, 3, slim.conv2d, 128, [3, 5], scope='conv2')
-                                        net = slim.max_pool2d(net, [2, 1], scope='pool2')
+                                        net = slim.max_pool2d(net, [2, 2], scope='pool2')
                                         net = slim.repeat(net, 3, slim.conv2d, 256, [3, 3], scope='conv3')
-                                        net = slim.max_pool2d(net, [2, 1], scope='pool3')
+                                        net = slim.max_pool2d(net, [2, 2], scope='pool3')
                                         net = slim.flatten(net)
                                         net = slim.fully_connected(net, 4096, scope='fc1')
                                         net = slim.dropout(net, dropout_keep_prob, is_training=is_training,
@@ -58,13 +58,13 @@ def build_model(x,
                 is_training=True,
 		reuse=None
 		):
-	"""
+        """
 	 handle model. calculate the loss and the prediction for some input x and the corresponding labels y
 	 input: x shape=[None,bands,frames,num_channels], y shape=[None]
 	 output: loss shape=(1), prediction shape=[None]
 
 	CAUTION! controller.py uses a function whith this name and arguments.
-	"""
+        """
         #preprocess
         y = slim.one_hot_encoding(y, num_classes)
 

@@ -65,7 +65,7 @@ def loss_fkt(logits, y):
 def build_model(x, 
 		y,
 	        num_classes=2,
-		num_estimator=15,
+		num_estimator=30,
                 is_training=True,
 		reuse=None
 		):

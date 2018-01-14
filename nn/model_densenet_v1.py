@@ -62,7 +62,7 @@ def transition_block(inputs, num_filters, compression=1.0,
     net = inputs
     net = _conv(net, num_filters, 1, scope='blk')
 
-    net = slim.avg_pool2d(net, [1,2])
+    net = slim.max_pool2d(net, [2,2])
 
   return net, num_filters
 
@@ -72,7 +72,7 @@ def densenet(inputs,
                   reduction=0.5,
                   growth_rate=32,
                   num_filters=64,
-                  num_layers=[6,6],#,24,16],
+                  num_layers=[6,6,24,16],
                   dropout_rate=0.2,
                   is_training=True,
                   reuse=None,
@@ -144,26 +144,26 @@ def build_model(x,
                 is_training=True,
 		reuse=None
 		):
-	"""
+        """
 	 handle model. calculate the loss and the prediction for some input x and the corresponding labels y
 	 input: x shape=[None,bands,frames,num_channels], y shape=[None]
 	 output: loss shape=(1), prediction shape=[None]
 
 	CAUTION! controller.py uses a function whith this name and arguments.
-	"""
+        """
 	#preprocess
-	y = slim.one_hot_encoding(y, num_classes)
+        y = slim.one_hot_encoding(y, num_classes)
 
 	#model
-	with slim.arg_scope(densenet_arg_scope(is_training)): 
+        with slim.arg_scope(densenet_arg_scope(is_training)): 
              x = tf.expand_dims(x, -1) 
              logits = densenet(x, num_classes, reuse=reuse)
 
 	#results
-	loss = tf.reduce_mean(tf.losses.softmax_cross_entropy(logits = logits, onehot_labels = y)) 
-	predictions = tf.argmax(slim.softmax(logits),1)
+        loss = tf.reduce_mean(tf.losses.softmax_cross_entropy(logits = logits, onehot_labels = y)) 
+        predictions = tf.argmax(slim.softmax(logits),1)
 
-	return loss, predictions 	
+        return loss, predictions 	
 
 
 

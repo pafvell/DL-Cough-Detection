@@ -42,8 +42,8 @@ def data_iterator(data,
        data_augmenting_factor = 1
        if is_training and augment_data:
           data_augmenting_factor = 4
-          
-       print('data augmenting factor: %d, test mode: %b'%(data_augmenting_factor, is_training))
+          print('data augmenting enabled. Factor: %d'%(data_augmenting_factor))
+
        #sample balanced batches
        load_batch_size_half = load_batch_size // (2 * data_augmenting_factor)
        #create label dummy: 1st half true, 2nd half false

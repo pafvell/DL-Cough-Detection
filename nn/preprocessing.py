@@ -176,7 +176,7 @@ def fetch_samples(files,
                        print ('!!!!!!! librosa failed to load file: %s !!!!!!!!!'%f)
                        raise e
 
-                if augment_data:
+                if augment_data and is_training:
 
                   # pitch shift
                   timeSignal_pitch_shift = pitch_shift(timeSignal, sr=sample_rate)
@@ -203,7 +203,7 @@ def fetch_samples(files,
                 timeSignal = standardize(timeSignal)
                 mfcc = librosa.feature.melspectrogram(y=timeSignal, sr=sample_rate, n_mels=bands, power=1, hop_length=hop_length)
                 
-                if augment_data:
+                if augment_data and is_training:
                   # time shift
                   mfcc_time_shift = time_shift(mfcc)
 
@@ -217,7 +217,7 @@ def fetch_samples(files,
 
                 batch_features.append(mfcc)
 
-                if augment_data:
+                if augment_data and is_training:
                   batch_features.append(mfcc_pitch_shift)
                   # batch_features.append(mfcc_stretched)
                   batch_features.append(mfcc_addnoise)

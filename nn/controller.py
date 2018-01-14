@@ -13,8 +13,8 @@ from input_pipeline import *
 #******************************************************************************************************************
 
 #from model_cnn_v1 import *
-from model_cnn_v2 import *
-#from model_cnn_v3 import *
+#from model_cnn_v2 import *
+from model_cnn_v3 import *
 #from model_cnn_v4 import *
 #from model_resnet_v1 import *
 #from model_densenet_v1 import *
@@ -23,7 +23,7 @@ from model_cnn_v2 import *
 #******************************************************************************************************************
 
 
-ROOT_DIR = './Audio_Data'
+ROOT_DIR = '../../Audio_Data'
 
 
 def train(train_data,
@@ -32,7 +32,7 @@ def train(train_data,
          eta=2e-3, #learning rate
          grad_noise=1e-3,
          #checkpoint_dir='./checkpoints/cnn_v1.0',
-         checkpoint_dir='./checkpoints/cnn_v2.0',
+         checkpoint_dir='./checkpoints/cnn_v3.0',
          #checkpoint_dir='./checkpoints/cnn_v3.0',
          #checkpoint_dir='./checkpoints/cnn_v4.0',
          #checkpoint_dir='./checkpoints/resnet_v1.0',

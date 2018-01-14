@@ -1,8 +1,6 @@
 #!/usr/bin/python
 #Author: Kevin Kipfer
 
-#sys.path.append("C:\ProjectDL")
-
 import tensorflow as tf
 import tensorflow.contrib.slim as slim
 import numpy as np
@@ -14,7 +12,13 @@ from input_pipeline import *
 
 #******************************************************************************************************************
 
-from model_cnn_v1 import *
+#from model_cnn_v1 import *
+from model_cnn_v2 import *
+#from model_cnn_v3 import *
+#from model_cnn_v4 import *
+#from model_resnet_v1 import *
+#from model_densenet_v1 import *
+#from model_boost_v5 import *
 
 #******************************************************************************************************************
 
@@ -25,19 +29,28 @@ ROOT_DIR = './Audio_Data'
 def train(train_data,
          test_data,
          num_classes=2,
-         eta=7e-3, #learning rate
+         eta=2e-3, #learning rate
          grad_noise=1e-3,
-         checkpoint_dir='./checkpoints/cnn_v1.1',
-         batch_size=128,
-         n_producer_threads=3,
+         #checkpoint_dir='./checkpoints/cnn_v1.0',
+         checkpoint_dir='./checkpoints/cnn_v2.0',
+         #checkpoint_dir='./checkpoints/cnn_v3.0',
+         #checkpoint_dir='./checkpoints/cnn_v4.0',
+         #checkpoint_dir='./checkpoints/resnet_v1.0',
+         #checkpoint_dir='./checkpoints/dense_v1.0',
+         #checkpoint_dir='./checkpoints/boost_v5.0',
+         batch_size=64,
+         n_producer_threads=8,
          trainable_scopes=TRAINABLE_SCOPES,
          train_capacity=3500,
          test_capacity=1000,
-         max_steps = 100000,
+         max_steps = 150000,
          log_every_n_steps=100,
          eval_every_n_steps=100,
          save_every_n_steps=2000,
          save_checkpoint=True):
+
+
+       print ('save checkpoints to: %s'%checkpoint_dir)
 
        graph = tf.Graph() 
        with graph.as_default():
@@ -111,12 +124,22 @@ def train(train_data,
                       accuracy, acc_update = tf.metrics.accuracy(predictions=predictions, labels=test_labels)
                       tf.summary.scalar('accuracy', accuracy )
 
+                      auc, auc_update = tf.metrics.auc(labels=test_labels, predictions=predictions)
+                      tf.summary.scalar('AUC', auc )
+                      
+                      precision, prec_update = tf.metrics.precision(labels=test_labels, predictions=predictions)
+                      tf.summary.scalar('precision', precision )
+                      
+                      recall, rec_update = tf.metrics.recall(labels=test_labels, predictions=predictions)
+                      tf.summary.scalar('recall', recall )
+                      
+
                       tf.summary.image('test_batch', tf.expand_dims(test_batch, -1))
                       tf.summary.histogram('predictions', predictions)
                       tf.summary.histogram('labels', test_labels)
 
               test_summary_op = tf.summary.merge(list(tf.get_collection(tf.GraphKeys.SUMMARIES, eval_scope)), name='test_summary_op')
-              test_summary_update = tf.group(acc_update, mpc_update)
+              test_summary_update = tf.group(acc_update, mpc_update, auc_update, prec_update, rec_update)
 
               #initialize
               sess = tf.Session(graph=graph,config=tf.ConfigProto(inter_op_parallelism_threads=8))

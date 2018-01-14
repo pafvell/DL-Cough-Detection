@@ -23,7 +23,7 @@ def find_files(root, fntype, recursively=False):
 	return matches
 
 
-def split_train_test_list():
+def split_train_test_list(n_samples=-1):
 
 
 	#participants used in the test-set
@@ -78,13 +78,13 @@ def split_train_test_list():
 
 	print('nr of test samples NOT coughing: %d' % len(testListOther))
 
-	trainListCough.extend(trainListOther)
-	testListCough.extend(testListOther)
+	if n_samples > 0:
+		trainListCough = trainListCough[0:n_samples]
+		trainListOther = trainListOther[0:n_samples]
+		testListCough = testListCough[0:(n_samples // 5)]
+		testListOther = testListOther[0:(n_samples // 5)]
 
-	trainFileNames = trainListCough
-	testFileNames = testListCough
-
-	return trainFileNames, testFileNames
+	return trainListCough, trainListOther, testListCough, testListOther
 
 
 

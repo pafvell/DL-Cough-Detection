@@ -16,7 +16,7 @@ test accuracy: 0.833697234352
 '''
 
 # hyperparams
-pca_components = 15
+pca_components = 10
 n_trees = 500
 test_size = 0.2
 n_freq = 1025
@@ -71,7 +71,7 @@ def generate_cough_model(train_filenames, test_filenames):
 
 
 	## load data
-	print("Reading Data...")
+	print("Processing Data...")
 	labels_train, X_train = stack_spectrograms(train_filenames)
 	print("shape of training features: ", np.shape(X_train))
 	labels_test, X_test = stack_spectrograms(test_filenames)
@@ -135,7 +135,7 @@ def generate_cough_model(train_filenames, test_filenames):
 if __name__ == "__main__":
 
 	# get lists for datafiles; split into training and test sets
-	trainList, testList = split_train_test_list(TEST_RATIO = test_size, SAMPLE_SIZE = max_samples)
+	trainList, testList = split_train_test_list()
 
 	# compute cough model
 	y_train, X_train, y_test, X_test = generate_cough_model(trainList, testList)

@@ -21,9 +21,8 @@ from utils import find_files
 
 
 def data_iterator(data, 
-        load_batch_size,
-       	is_training,
-        augment_data=False): 		
+                  load_batch_size,
+       	  is_training): 		
        """ iterate through the data
        	input: data (list with paths), 
        	       load_batch size (integer - how many should be loaded at once)
@@ -32,11 +31,13 @@ def data_iterator(data,
        batch_idx = 0
        assert load_batch_size % 2 == 0
 
-       data_augmenting_factor = 1
-       if is_training and augment_data:
-          data_augmenting_factor = 4
-          print('data augmenting enabled. Factor: %d'%(data_augmenting_factor))
-
+       '''
+       	idxs = np.arange(0, len(data))
+       	np.random.shuffle(idxs)
+       	shuf_paths = data[idxs]
+       	shuf_labels = labels[idxs]
+       '''
+       
        #sample balanced batches
        load_batch_size_half = load_batch_size // 2
        #create label dummy: 1st half true, 2nd half false
@@ -46,7 +47,7 @@ def data_iterator(data,
        while True:
 	       	shuf_cough = data[0]
 	       	shuf_other = data[1]
-	       	np.random.shuffle(shuf_cough)
+	       	np.random.shuffle(shuf_cough) 
 	       	np.random.shuffle(shuf_other)
 	       	for batch_idx in range(0, batches_per_epoch, load_batch_size_half):
 	       	    end = batch_idx + load_batch_size_half

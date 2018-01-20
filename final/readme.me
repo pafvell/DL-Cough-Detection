@@ -1,0 +1,20 @@
+This code requires python3, librosa and tensorflow
+
+controller.py gathers all the data and runs the experiment. It contains all the important setups
+input_pipeline.py contains code necessary to proparly feed the networks with data
+preprocessing.py contains code for data augmentation, denoising, standardizing, signal extraction and other preprocessing
+utils.py contains some helper functions
+
+In order to run the code do the following:
+1) import the correct model in controller.py, lines 15-21
+	- model: model_cnn_v1.py contains the deep cough CNN like in the paper http://ieeexplore.ieee.org/document/7570164/
+	- model: model_cnn_v2.py contains VGG-16 D (train the entire network)
+        - model: model_cnn_v3.py contains VGG-16 D (train only 'conv1','fc1', 'fc2','fc3')
+        - model: model_cnn_v4.py contains VGG-16 D (train only the top layers 'fc1', 'fc2','fc3')
+        - model: model_resnet_v1.py contains Resnet-18 like in paper https://arxiv.org/abs/1512.03385
+        - model: model_densenet_v1.py contains DenseNet-121 like in paper https://arxiv.org/abs/1608.06993
+        - model: model_rnn_v1.py contains an rnn with but 1 LSTM and 1024 hidden states
+        - model: model_rnn_v2.py contains the deep cough RNN implementation in the paper http://ieeexplore.ieee.org/document/7570164/
+2) choose a location for the checkpoints and the tensorboard event files by setting checkpoint_dir in line 35 in controller.py
+3) set all the important parameters (learning rate eta, batch size, amount of gradient noise, etc...) for the experiment in lines 31-51 in controller.py
+4) run python3 controller.py

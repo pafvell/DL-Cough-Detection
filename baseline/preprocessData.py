@@ -1,93 +1,90 @@
 import glob
 import random
-import copy
+import os, fnmatch, sys
 
 import numpy as np
 import pandas as pd
 import librosa
 
+ROOT_DIR = '../../Audio_Data'
 
 
-def split_train_test_list(TEST_RATIO=0.2, SAMPLE_SIZE=1000):
+def find_files(root, fntype, recursively=False):
+	fntype = '*.'+fntype
 
-	# generate random list of test participants
-	testParticipants = []
-	for i in np.random.choice(range(1,48), int(47*TEST_RATIO), replace=False):
-		if i < 10:
-			testParticipants.append("p0" + str(i))
-		else:
-			testParticipants.append("p" + str(i))
+	if not recursively:
+		return glob.glob(os.path.join(root, fntype))
+
+	matches = []
+	for dirname, subdirnames, filenames in os.walk(root):
+		for filename in fnmatch.filter(filenames, fntype):
+			matches.append(os.path.join(dirname, filename))
+	
+	return matches
 
 
-	# read cough data
-	coughCloseList = glob.glob("./AudioData/Coughing/Close (cc)/*.wav")
-	coughDistantList = glob.glob("./AudioData/Coughing/Distant (cd)/*.wav")
-	coughAll = coughCloseList
-	coughAll.extend(coughDistantList)
+def split_train_test_list(n_samples=-1):
 
+
+	#participants used in the test-set
+	listOfParticipantsToExcludeInTrainset = ["p05", "p17", "p34", "p20", "p28", "p09", "p08", "p11", "p31", "p21", "p14"] 
+	list_of_broken_files = ['04_Coughing/Distant (cd)/p17_rode-108.wav', '04_Coughing/Distant (cd)/p17_htc-108.wav', '04_Coughing/Distant (cd)/p17_tablet-108.wav', \
+							'04_Coughing/Distant (cd)/p17_iphone-108.wav',  '04_Coughing/Distant (cd)/p17_samsung-108.wav']
+
+	##
+	# READING COUGH DATA
+	#
+	#
+
+	print ('use data from root path %s'%ROOT_DIR)
+
+	coughAll = find_files(ROOT_DIR + "/04_Coughing", "wav", recursively=True)
+	assert len(coughAll) > 0, 'no cough files found. did you set the correct root path to the data in line 22?'
+
+
+	#remove broken files
+	for broken_file in list_of_broken_files:
+		broken_file = os.path.join(ROOT_DIR, broken_file)
+		if broken_file in coughAll:
+			print ( 'file ignored: %s'%broken_file )
+			coughAll.remove(broken_file)
+
+
+	#split cough files into test- and training-set
 	testListCough = []
-	trainListCough = coughAll[:]
+	trainListCough = coughAll
 	for name in coughAll:
-	    for nameToExclude in testParticipants:
-	        if nameToExclude in name:
-	            
-	            testListCough.append(name)
-	            trainListCough.remove(name)
+		for nameToExclude in listOfParticipantsToExcludeInTrainset:
+			if nameToExclude in name:
+				testListCough.append(name)
+				trainListCough.remove(name)
 
+	print('nr of test samples coughing: %d' % len(testListCough))
 
+	##
+	# READING OTHER DATA
+	#
+	#
 
-	# read other data
-	throat = glob.glob("./AudioData/Other Control Sounds/01_Throat Clearing/*.wav")
-	laughing =  glob.glob("./AudioData/Other Control Sounds/02_Laughing/*.wav")
-	speaking = glob.glob("./AudioData/Other Control Sounds/03_Speaking/*.wav")
-
-	other = throat[:]
-	other.extend(laughing)
-	other.extend(speaking)
+	other = find_files(ROOT_DIR + "/05_Other Control Sounds", "wav", recursively=True)
 
 	testListOther = []
-	trainListOther = other[:]
-
+	trainListOther = other
 	for name in other:
-		for nameToExclude in testParticipants:
+		for nameToExclude in listOfParticipantsToExcludeInTrainset:
 			if nameToExclude in name:
-				
 				testListOther.append(name)
 				trainListOther.remove(name)
 
-	# train and test on subset
+	print('nr of test samples NOT coughing: %d' % len(testListOther))
 
+	if n_samples > 0:
+		trainListCough = trainListCough[0:n_samples]
+		trainListOther = trainListOther[0:n_samples]
+		testListCough = testListCough[0:(n_samples // 5)]
+		testListOther = testListOther[0:(n_samples // 5)]
 
-
-	if SAMPLE_SIZE > 0:
-
-
-		TRAIN_SIZE = (1 - TEST_RATIO) * SAMPLE_SIZE
-		TEST_SIZE = TEST_RATIO * SAMPLE_SIZE
-
-		random.seed(42)
-		train_random_coughs_numbers = random.sample(range(0,np.size(trainListCough)), int(TRAIN_SIZE/2))
-		train_random_other_numbers = random.sample(range(0,np.size(trainListOther)), int(TRAIN_SIZE/2))
-
-		test_random_coughs_numbers = random.sample(range(0,np.size(testListCough)), int(TEST_SIZE/2))
-		test_random_other_numbers = random.sample(range(0,np.size(testListOther)), int(TEST_SIZE/2))
-
-		trainFileNames = [trainListCough[x] for x in train_random_coughs_numbers]
-		trainFileNames.extend([trainListOther[x] for x in train_random_other_numbers])
-		
-		testFileNames = [testListCough[x] for x in test_random_coughs_numbers]
-		testFileNames.extend([testListOther[x] for x in test_random_other_numbers])
-
-	else:
-
-		trainFileNames = trainListCough
-		trainFileNames.extend(trainListOther)
-
-		testFileNames = testListCough
-		testFileNames.extend(testListOther)
-
-	return trainFileNames, testFileNames
-
+	return trainListCough, trainListOther, testListCough, testListOther
 
 
 
@@ -201,11 +198,11 @@ def store_features(labels, Xmfccs, Xchroma, Xmel, Xcontrast, Xtonnetz):
 
 
 if __name__ == "__main__":
-	
 
-	trainListOther, testListOther, trainListCough, testListCough = split_train_test_list()
+	trainList, testList = split_train_test_list()
 
-	compute_features_matrix(testListCough)
+	print('train list length: %d'%len(trainList))
+	print('test list length: %d'%len(testList))
 
 
 

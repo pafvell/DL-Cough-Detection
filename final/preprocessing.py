@@ -57,7 +57,7 @@ def time_shift(spect):
     Spectrogram cut into two pieces along time dimension. Then second part is placed before the first
   '''
   spect_length = spect.shape[1]
-  idx = np.random.randint(int(spect_length*0.4), int(spect_length*0.6))
+  idx = np.random.randint(int(spect_length*0.1), int(spect_length*0.9))
   spect_ = np.hstack([spect[:,idx:], spect[:,:idx]])
 
   return spect_
@@ -70,9 +70,9 @@ def add_noise(signal):
   Output:
     sound signal + gaussian noise
   '''
-  std = 0.025 * np.max(signal)
-  noise_vec = np.random.randn(signal.shape[0])*std
-  return signal + noise_vec
+  std = 0.05 * np.max(signal)
+  noise_mat = np.random.randn(signal.shape[0])*std
+  return signal + noise_mat
 
 
 def denoise_spectrogram(spect, threshold=1, filter_size = (2,2)):
@@ -162,7 +162,6 @@ def fetch_samples(files,
 		  bands = 16,
 		  window = 0.16,
       do_denoise=False):
-
 	"""
 	load, preprocess, normalize a sample
 	input: a list of strings
@@ -176,52 +175,17 @@ def fetch_samples(files,
                        print ('!!!!!!! librosa failed to load file: %s !!!!!!!!!'%f)
                        raise e
 
-                if augment_data and is_training:
-
-                  # pitch shift
-                  timeSignal_pitch_shift = pitch_shift(timeSignal, sr=sample_rate)
-                  timeSignal_pitch_shift = extract_Signal_Of_Importance(timeSignal_pitch_shift, window, sample_rate)
-                  timeSignal_pitch_shift = standardize(timeSignal_pitch_shift)
-                  mfcc_pitch_shift = librosa.feature.melspectrogram(y=timeSignal_pitch_shift, sr=sample_rate, n_mels=bands, power=1, hop_length=hop_length)
-
-                  # # stretch signal
-                  # timeSignal_stretched = time_stretch(timeSignal, rate=1.2)
-                  # timeSignal_stretched = extract_Signal_Of_Importance(timeSignal_stretched, window, sample_rate)
-                  # timeSignal_stretched = standardize(timeSignal_stretched)
-                  # mfcc_stretched = librosa.feature.melspectrogram(y=timeSignal_stretched, sr=sample_rate, n_mels=bands, power=1, hop_length=hop_length)
-                  
-                  # add noise
-                  timeSignal_addnoise = add_noise(timeSignal)
-                  timeSignal_addnoise = extract_Signal_Of_Importance(timeSignal_addnoise, window, sample_rate)
-                  timeSignal_addnoise = standardize(timeSignal_addnoise)
-                  mfcc_addnoise = librosa.feature.melspectrogram(y=timeSignal_addnoise, sr=sample_rate, n_mels=bands, power=1, hop_length=hop_length)
-                  
-
-                #fit_scale(timeSignal)
                 timeSignal = extract_Signal_Of_Importance(timeSignal, window, sample_rate)
 
+                #fit_scale(timeSignal)
                 timeSignal = standardize(timeSignal)
+
                 mfcc = librosa.feature.melspectrogram(y=timeSignal, sr=sample_rate, n_mels=bands, power=1, hop_length=hop_length)
-                
-                if augment_data and is_training:
-                  # time shift
-                  mfcc_time_shift = time_shift(mfcc)
 
                 if do_denoise:
                   mfcc = denoise_spectrogram(mfcc)
-                  mfcc_pitch_shift = denoise_spectrogram(mfcc_pitch_shift)
-                  # mfcc_stretched = denoise_spectrogram(mfcc_stretched)
-                  mfcc_addnoise = denoise_spectrogram(mfcc_addnoise)
-                  mfcc_time_shift = denoise_spectrogram(mfcc_time_shift)
-
 
                 batch_features.append(mfcc)
-
-                if augment_data and is_training:
-                  batch_features.append(mfcc_pitch_shift)
-                  # batch_features.append(mfcc_stretched)
-                  batch_features.append(mfcc_addnoise)
-                  batch_features.append(mfcc_time_shift)
 
 	#batch_features = np.asarray(batch_features).reshape(len(files),frames,bands)
 	return np.array(batch_features)

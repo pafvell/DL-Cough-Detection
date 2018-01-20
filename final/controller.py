@@ -23,7 +23,7 @@ from model_cnn_v3 import *
 #******************************************************************************************************************
 
 
-ROOT_DIR = '../../Audio_Data'
+ROOT_DIR = './Audio_Data'
 
 
 def train(train_data,
@@ -36,9 +36,6 @@ def train(train_data,
          #checkpoint_dir='./checkpoints/cnn_v2.9',
          checkpoint_dir='./checkpoints/cnn_v3.05',
          #checkpoint_dir='./checkpoints/cnn_v4.04',
-         checkpoint_dir='./checkpoints/cnn_v3.0',
-         #checkpoint_dir='./checkpoints/cnn_v3.0',
-         #checkpoint_dir='./checkpoints/cnn_v4.0',
          #checkpoint_dir='./checkpoints/resnet_v1.0',
          #checkpoint_dir='./checkpoints/dense_v1.0',
          #checkpoint_dir='./checkpoints/boost_v4.0',
@@ -47,7 +44,7 @@ def train(train_data,
          trainable_scopes=TRAINABLE_SCOPES,
          train_capacity=3500,
          test_capacity=1000,
-         max_steps = 100000,
+         max_steps = 150000,
          log_every_n_steps=100,
          eval_every_n_steps=100,
          save_every_n_steps=2000,

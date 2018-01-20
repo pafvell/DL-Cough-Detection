@@ -38,20 +38,14 @@ def classify(inputs,
                                         net = tf.expand_dims(inputs, -1) #input needs to be in the format NHWC!! if there is only one channel, expand it by 1 dimension
 
 
-                                        net = slim.repeat(net, 2, slim.conv2d, 64, [3, 9], scope='conv1')
-                                        net = slim.max_pool2d(net, [2, 1], scope='pool1')
-                                        net = slim.repeat(net, 3, slim.conv2d, 128, [3, 5], scope='conv2')
-                                        net = slim.max_pool2d(net, [2, 1], scope='pool2')
-                                        net = slim.repeat(net, 3, slim.conv2d, 256, [3, 3], scope='conv3')
-                                        net = slim.max_pool2d(net, [2, 1], scope='pool3')
+                                        net = slim.conv2d(net, 64, [3, 9], scope='conv1')
+                                        net = slim.max_pool2d(net, [1, 2], scope='pool1')
+                                        net = slim.conv2d(net, 128, [3, 5], scope='conv2')
+                                        net = slim.max_pool2d(net, [1, 2], scope='pool2')
                                         net = slim.flatten(net)
-                                        net = slim.fully_connected(net, 4096, scope='fc1')
-                                        net = slim.dropout(net, dropout_keep_prob, is_training=is_training,
-								 scope='dropout1')
-                                        net = slim.fully_connected(net, 4096, scope='fc2')
-                                        net = slim.dropout(net, dropout_keep_prob, is_training=is_training,
-								 scope='dropout2')
-                                        logits = slim.fully_connected(net, num_classes, scope='fc3', activation_fn=None)
+                                        net = slim.fully_connected(net, 256, scope='fc1')
+                                        net = slim.dropout(net, dropout_keep_prob, is_training=is_training, scope='dropout1')
+                                        logits = slim.fully_connected(net, num_classes, scope='fc2', activation_fn=None)
 
                                         return logits
 
@@ -84,29 +78,25 @@ def build_model(x,
         y = slim.one_hot_encoding(y, num_classes)
         
         loss = 0
-        predictions=[]
+        predictions=y * 0
         batch_size = x.get_shape()[0].value
-        bx = x 
-        by = y
 
         #models
         for i in range(num_estimator):
-                if is_training:
-                   #sample from minibatch - instead of bootstrap / TODO something better?
-                   idx = np.random.randint(batch_size, size=(int(round(batch_size * subsample)),))
-                   bx = gather(x,idx)
-                   by = gather(y,idx)
+                #sample from minibatch - instead of bootstrap / TODO something better?
+                idx = np.random.randint(batch_size, size=(int(round(batch_size * subsample)),))
+                bx = gather(x,idx)
+                by = gather(y,idx)
 
                 logits = classify(bx, num_estimator=num_estimator, num_classes=num_classes, is_training=is_training, reuse=reuse, scope='H%d'%i)
                 loss += loss_fkt(logits, by)
-                predictions.append(tf.argmax(slim.softmax(logits),1))
 
-        with tf.name_scope('majority_vote' ):
-             predictions = tf.stack(predictions, 1)
-             predictions = tf.expand_dims(predictions, -1)
-             predictions = tf.expand_dims(predictions, -1)
-             predictions = slim.max_pool2d(predictions, [num_estimator, 1], num_estimator, scope='majority')
-             predictions = tf.squeeze(predictions)
+                #majority vote
+                if not is_training:
+                      logits = classify(x, num_estimator=num_estimator, num_classes=num_classes, is_training=is_training, reuse=True, scope='H%d'%i)
+                      predictions+=slim.one_hot_encoding(tf.argmax(slim.softmax(logits),1), num_classes)
+
+        predictions = tf.argmax(predictions)
 
         return loss, predictions 	
 

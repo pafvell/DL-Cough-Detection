@@ -158,10 +158,10 @@ def extract_Signal_Of_Importance(signal, window, sample_rate ):
 
 def fetch_samples(files, 
 		  is_training=True, 
-		  hop_length=120,
+      hop_length=120,
 		  bands = 16,
 		  window = 0.16,
-		  do_denoise=False):
+      do_denoise=False):
 	"""
 	load, preprocess, normalize a sample
 	input: a list of strings

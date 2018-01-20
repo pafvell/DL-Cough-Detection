@@ -22,13 +22,13 @@ def simple_arg_scope(weight_decay=0.0005,
   Returns:
     An arg_scope.
   """
+  
+
   with slim.arg_scope([slim.conv2d, slim.fully_connected],
-       	      
              	      #weights_initializer= slim.variance_scaling_initializer(seed=seed),
              	      weights_initializer= tf.contrib.layers.xavier_initializer(seed=seed),# this is actually not needed
-
              	      activation_fn=activation_fn,
-                      weights_regularizer=slim.l2_regularizer(weight_decay),
+                      weights_regularizer= slim.l2_regularizer(weight_decay) if weight_decay is not None else None,
                       biases_initializer=tf.zeros_initializer()):
            with slim.arg_scope([slim.conv2d], padding='SAME') as arg_sc:
              	return arg_sc

@@ -37,14 +37,13 @@ def data_iterator(data,
        	shuf_paths = data[idxs]
        	shuf_labels = labels[idxs]
        '''
-
-       data_augmenting_factor = 1
+       
        #sample balanced batches
-       load_batch_size_half = load_batch_size // (2 * data_augmenting_factor)
+       load_batch_size_half = load_batch_size // 2
        #create label dummy: 1st half true, 2nd half false
-       labels_batch = np.array([1 if x < load_batch_size_half else 0 for x in range(load_batch_size)])
+       labels_batch = np.array([1 if x < load_batch_size_half else 0 for x in range(load_batch_size)]) 
        #max samples per epoch: assumption data[0] (true) and data[1] (false) are similarly large
-       batches_per_epoch = min(len(data[0]),len(data[1])) - load_batch_size_half - 1
+       batches_per_epoch = min(len(data[0]),len(data[1])) - load_batch_size_half - 1 
        while True:
 	       	shuf_cough = data[0]
 	       	shuf_other = data[1]
@@ -58,8 +57,8 @@ def data_iterator(data,
 	       	    data_batch = fetch_samples(cough_batch, is_training)
 	       	    data_batch = data_batch.astype("float32")
 	       	    #print ('next batch')
-	       	    if data_batch.shape[0] !=  load_batch_size: # factor describes the degree of data augmentation
-                         raise ValueError('the data_iterator produced a batch of size [%d]; expecteds size [%d]; ( out batch shape: %s; length of inputs to fetch_samples: %d)' \
+	       	    if data_batch.shape[0] != load_batch_size:
+                          raise ValueError('the data_iterator produced a batch of size [%d]; expecteds size [%d]; ( out batch shape: %s; length of inputs to fetch_samples: %d)' \
                                                %(data_batch.shape[0],load_batch_size, str(data_batch.shape), len(cough_batch)))
 	       	    yield data_batch, labels_batch
 

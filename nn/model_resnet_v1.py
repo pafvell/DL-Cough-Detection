@@ -13,7 +13,7 @@ from utils import simple_arg_scope, batchnorm_arg_scope
 
 def classify(x, 
 	     num_classes,
-             num_layers=[2,2,2,2],
+             num_layers=[2,2,2],#,2],
 	     scope='resnet_18_v1',
 	     reuse=None,
              is_training=True
@@ -54,7 +54,7 @@ def classify(x,
 
                                                 #print (x.get_shape())
 
-                                                # final layer - fc
+                                                # initial convolution
                                                 with tf.variable_scope('top', [x]):
                                                      x = tf.reduce_mean(x, [1, 2], name='global_pool')
                                                      logits = slim.fully_connected(x, num_classes, scope='logits', activation_fn=None)

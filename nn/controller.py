@@ -13,12 +13,12 @@ from input_pipeline import *
 #******************************************************************************************************************
 
 #from model_cnn_v1 import *
-from model_cnn_v2 import *
-#from model_cnn_v3 import *
+#from model_cnn_v2 import *
+from model_cnn_v3 import *
 #from model_cnn_v4 import *
 #from model_resnet_v1 import *
 #from model_densenet_v1 import *
-#from model_boost_v5 import *
+#from model_boost_v4 import *
 
 #******************************************************************************************************************
 
@@ -31,13 +31,14 @@ def train(train_data,
          num_classes=2,
          eta=2e-3, #learning rate
          grad_noise=1e-3,
+         clipper=10.,
          #checkpoint_dir='./checkpoints/cnn_v1.0',
-         checkpoint_dir='./checkpoints/cnn_v2.0',
-         #checkpoint_dir='./checkpoints/cnn_v3.0',
-         #checkpoint_dir='./checkpoints/cnn_v4.0',
+         #checkpoint_dir='./checkpoints/cnn_v2.9',
+         checkpoint_dir='./checkpoints/cnn_v3.05',
+         #checkpoint_dir='./checkpoints/cnn_v4.04',
          #checkpoint_dir='./checkpoints/resnet_v1.0',
          #checkpoint_dir='./checkpoints/dense_v1.0',
-         #checkpoint_dir='./checkpoints/boost_v5.0',
+         #checkpoint_dir='./checkpoints/boost_v4.0',
          batch_size=64,
          n_producer_threads=8,
          trainable_scopes=TRAINABLE_SCOPES,
@@ -61,7 +62,7 @@ def train(train_data,
 
               #initialize
               global_step = tf.Variable(0, name='global_step', trainable=False)
-              eta = tf.train.exponential_decay(eta, global_step, 100000, 0.96, staircase=False) 
+              eta = tf.train.exponential_decay(eta, global_step, 80000, 0.96, staircase=False) 
               train_op = tf.train.AdamOptimizer(learning_rate=eta) 
 
               train_loss, preds = build_model(train_batch, train_labels)
@@ -83,7 +84,7 @@ def train(train_data,
                         # Calculate the gradients for the batch of data.
                         grads = train_op.compute_gradients(train_loss, var_list = params)   
                         # gradient clipping
-                        grads = clip_grads(grads)
+                        grads = clip_grads(grads, clipper=clipper)
                         # add noise
                         if grad_noise > 0:
                                 grad_noise = tf.train.exponential_decay(grad_noise, global_step, 10000, 0.96, staircase=False) 
@@ -134,9 +135,9 @@ def train(train_data,
                       tf.summary.scalar('recall', recall )
                       
 
-                      tf.summary.image('test_batch', tf.expand_dims(test_batch, -1))
-                      tf.summary.histogram('predictions', predictions)
-                      tf.summary.histogram('labels', test_labels)
+                      #tf.summary.image('test_batch', tf.expand_dims(test_batch, -1))
+                      #tf.summary.histogram('predictions', predictions)
+                      #tf.summary.histogram('labels', test_labels)
 
               test_summary_op = tf.summary.merge(list(tf.get_collection(tf.GraphKeys.SUMMARIES, eval_scope)), name='test_summary_op')
               test_summary_update = tf.group(acc_update, mpc_update, auc_update, prec_update, rec_update)

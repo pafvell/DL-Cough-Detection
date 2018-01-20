@@ -62,7 +62,7 @@ def transition_block(inputs, num_filters, compression=1.0,
     net = inputs
     net = _conv(net, num_filters, 1, scope='blk')
 
-    net = slim.max_pool2d(net, [2,2])
+    net = slim.max_pool2d(net, [1,2])
 
   return net, num_filters
 
@@ -72,7 +72,7 @@ def densenet(inputs,
                   reduction=0.5,
                   growth_rate=32,
                   num_filters=64,
-                  num_layers=[6,6,24,16],
+                  num_layers=[6,6,24],#,16],
                   dropout_rate=0.2,
                   is_training=True,
                   reuse=None,

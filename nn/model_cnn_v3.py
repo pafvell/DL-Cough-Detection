@@ -13,7 +13,7 @@ from utils import simple_arg_scope, batchnorm_arg_scope
 """
 
 
-def classify(x,
+def classify(inputs, 
 	     num_classes,
              dropout_keep_prob=0.5,
 	     scope='cnn_v3',
@@ -31,7 +31,7 @@ def classify(x,
 		                	is_training=is_training):
                            with tf.variable_scope(scope, [inputs], reuse=reuse) as scope:
 
-                                        net = tf.expand_dims(x, -1) #input needs to be in the format NHWC!! if there is only one channel, expand it by 1 dimension
+                                        net = tf.expand_dims(inputs, -1) #input needs to be in the format NHWC!! if there is only one channel, expand it by 1 dimension
                                         print ('model input shape: %s'%net.get_shape())
 
                                         net = slim.repeat(net, 2, slim.conv2d, 64, [3, 9], scope='conv1')
@@ -81,7 +81,7 @@ def build_model(x,
 
 
 #Parameters
-TRAINABLE_SCOPES = ['conv1','fc2','fc1'] #bottom + top 2 layers are trainable
+TRAINABLE_SCOPES = ['conv1','fc1', 'fc2','fc3'] #bottom + top 3 layers are trainable
 
 
 

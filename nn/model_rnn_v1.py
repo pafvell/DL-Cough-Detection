@@ -4,7 +4,7 @@ import tensorflow as tf
 import tensorflow.contrib.slim as slim
 import numpy as np
 import os, sys, math, shutil, time, threading
-from tensorflow.python.ops import rnn, rnn_cell
+
 from utils import simple_arg_scope, batchnorm_arg_scope
 
 
@@ -17,39 +17,34 @@ def RNN_multicell(inputs,
 	num_outputs,
 	num_hidden=1024,
 	num_cells=1,
-	attn_length=3,
         activation_fn=None,
         normalizer_fn=None,
         normalizer_params=None,
-        weights_initializer=tf.contrib.layers.xavier_initializer(),
+        weights_initializer=initializers.xavier_initializer(),
         weights_regularizer=None,
-	scope='model_v10',
+	scope=None,
 	reuse=None
 	):
-  with tf.variable_scope(
-      			scope, 'rnn_multicell', [inputs],reuse=reuse) as sc:
-				cell = rnn_cell.LSTMCell(num_hidden, state_is_tuple = True)
-				cell = rnn_cell.MultiRNNCell([cell] * num_cells)
-				#cell = tf.contrib.rnn.DropoutWrapper(cell, 0.5)
-				#cell = tf.contrib.rnn.AttentionCellWrapper(
-				#	cell, attn_length, state_is_tuple=True)
-				output, state = tf.nn.dynamic_rnn(cell, inputs, dtype = tf.float32)
-				output = tf.transpose(output, [1, 0, 2])
-				last = tf.gather(output, int(output.get_shape()[0]) - 1)
-				net = slim.fully_connected(last,num_outputs,
-								activation_fn=activation_fn,
-								normalizer_fn=normalizer_fn,
-								normalizer_params=normalizer_params,
-								weights_initializer=weights_initializer,
-								weights_regularizer=weights_regularizer)
-				return net
-
+  with variable_scope.variable_scope(
+      			scope, 'rnn_multicell', [inputs],
+      			reuse=reuse) as sc:
+            cell = rnn_cell.LSTMCell(num_hidden, state_is_tuple = True)
+            cell = rnn_cell.MultiRNNCell([cell] * num_cells)
+            output, state = tf.nn.dynamic_rnn(cell, inputs, dtype = tf.float32)
+            output = tf.transpose(output, [1, 0, 2])
+            last = tf.gather(output, int(output.get_shape()[0]) - 1)
+            return net = slim.fully_connected(last, 2,
+					activation_fn=activation_fn, 
+					normalizer_fn=normalizer_fn, 
+					normalizer_params=normalizer_params, 
+					weights_initializer=weights_initializer, 
+					weights_regularizer=weights_regularizer)
 
 
 def build_model(x, 
 		y,
-	   		 num_classes=2,
-      	     is_training=True,
+	        num_classes=2,
+                is_training=True,
 		reuse=None
 		):
 	"""
@@ -60,16 +55,16 @@ def build_model(x,
 	CAUTION! controller.py uses a function whith this name and arguments.
 	"""
         #preprocess
-	y = slim.one_hot_encoding(y, num_classes)
+        y = slim.one_hot_encoding(y, num_classes)
 
-	#model
-	logits = RNN_multicell(x, num_outputs=num_classes, reuse=reuse)
+        #model
+        logits = RNN_multicell(x, num_outputs=num_classes, reuse=reuse)	
 
-	#results
-	loss = tf.reduce_mean(tf.losses.softmax_cross_entropy(logits = logits, onehot_labels = y))
-	predictions = tf.argmax(slim.softmax(logits),1)
+        #results
+        loss = tf.reduce_mean(tf.losses.softmax_cross_entropy(logits = logits, onehot_labels = y)) 
+        predictions = tf.argmax(slim.softmax(logits),1)
 
-	return loss, predictions
+        return loss, predictions 	
 
 
 

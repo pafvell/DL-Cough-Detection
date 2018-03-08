@@ -22,7 +22,8 @@ from utils import find_files
 
 def data_iterator(data, 
                   load_batch_size,
-       	  is_training): 		
+       	  is_training,
+          data_augment=True): 		
        """ iterate through the data
        	input: data (list with paths), 
        	       load_batch size (integer - how many should be loaded at once)
@@ -37,9 +38,15 @@ def data_iterator(data,
        	shuf_paths = data[idxs]
        	shuf_labels = labels[idxs]
        '''
+
+       data_augmenting_factor = 1
+       if is_training and data_augment:
+          data_augmenting_factor = 4
+          print('data augmenting enabled. Factor: %d'%(data_augmenting_factor))
+
        
        #sample balanced batches
-       load_batch_size_half = load_batch_size // 2
+       load_batch_size_half = load_batch_size // (2 * data_augmenting_factor)
        #create label dummy: 1st half true, 2nd half false
        labels_batch = np.array([1 if x < load_batch_size_half else 0 for x in range(load_batch_size)]) 
        #max samples per epoch: assumption data[0] (true) and data[1] (false) are similarly large

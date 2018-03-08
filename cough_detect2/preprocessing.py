@@ -161,7 +161,8 @@ def fetch_samples(files,
                   hop_length=56,#224,#112,#56,
 		  bands = 16,
 		  window = 0.16,
-                  do_denoise=False):
+                  do_denoise=False,
+                  data_augment=True):
 	"""
 	load, preprocess, normalize a sample
 	input: a list of strings
@@ -180,12 +181,44 @@ def fetch_samples(files,
                 #fit_scale(timeSignal)
                 timeSignal = standardize(timeSignal)
 
+                # data augmentation
+                if data_augment and is_training:
+
+                  # pitch shift
+                  timeSignal_pitch_shift = pitch_shift(timeSignal, sr=sample_rate)
+                  timeSignal_pitch_shift = extract_Signal_Of_Importance(timeSignal_pitch_shift, window, sample_rate)
+                  timeSignal_pitch_shift = standardize(timeSignal_pitch_shift)
+                  mfcc_pitch_shift = librosa.feature.melspectrogram(y=timeSignal_pitch_shift, sr=sample_rate, n_mels=bands, power=1, hop_length=hop_length)
+
+                  # # stretch signal
+                  # timeSignal_stretched = time_stretch(timeSignal, rate=1.2)
+                  # timeSignal_stretched = extract_Signal_Of_Importance(timeSignal_stretched, window, sample_rate)
+                  # timeSignal_stretched = standardize(timeSignal_stretched)
+                  # mfcc_stretched = librosa.feature.melspectrogram(y=timeSignal_stretched, sr=sample_rate, n_mels=bands, power=1, hop_length=hop_length)
+                  
+                  # add noise
+                  timeSignal_addnoise = add_noise(timeSignal)
+                  timeSignal_addnoise = extract_Signal_Of_Importance(timeSignal_addnoise, window, sample_rate)
+                  timeSignal_addnoise = standardize(timeSignal_addnoise)
+                  mfcc_addnoise = librosa.feature.melspectrogram(y=timeSignal_addnoise, sr=sample_rate, n_mels=bands, power=1, hop_length=hop_length)
+
+
                 mfcc = librosa.feature.melspectrogram(y=timeSignal, sr=sample_rate, n_mels=bands, power=1, hop_length=hop_length)
+
+                if data_augment and is_training:
+                  # time shift
+                  mfcc_time_shift = time_shift(mfcc)
 
                 if do_denoise:
                   mfcc = denoise_spectrogram(mfcc)
 
                 batch_features.append(mfcc)
+
+                if data_augment and is_training:
+                  batch_features.append(mfcc_pitch_shift)
+                  # batch_features.append(mfcc_stretched)
+                  batch_features.append(mfcc_addnoise)
+                  batch_features.append(mfcc_time_shift)
 
 	#batch_features = np.asarray(batch_features).reshape(len(files),frames,bands)
 	return np.array(batch_features)

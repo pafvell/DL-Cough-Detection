@@ -23,7 +23,7 @@ from utils import find_files
 def data_iterator(data, 
                   load_batch_size,
        	  is_training,
-          data_augment=True): 		
+          data_augment=False): 		
        """ iterate through the data
        	input: data (list with paths), 
        	       load_batch size (integer - how many should be loaded at once)

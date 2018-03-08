@@ -162,7 +162,7 @@ def fetch_samples(files,
 		  bands = 16,
 		  window = 0.16,
                   do_denoise=False,
-                  data_augment=True):
+                  data_augment=False):
 	"""
 	load, preprocess, normalize a sample
 	input: a list of strings

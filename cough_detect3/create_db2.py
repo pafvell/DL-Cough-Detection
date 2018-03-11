@@ -17,7 +17,7 @@ from utils import *
 
 
 
-ROOT_DIR = '../cough_detect2/Audio_Data'
+ROOT_DIR = './Audio_Data'
 
 HOP=56 #224,#112,#56,
 VERSION='2'
@@ -61,6 +61,18 @@ def extract_Signal_Of_Importance(signal, window, sample_rate ):
         return signal
 
 
+def add_noise(signal, sigma=0.05):
+        '''
+        Input:
+        sound signal; time series vector, standardized
+        Output:
+        sound signal + gaussian noise
+        '''
+        std = sigma * np.max(signal)
+        noise_mat = np.random.randn(signal.shape[0])*std
+        return signal + noise_mat
+
+
 def _int64_feature(value):
         return tf.train.Feature(int64_list=tf.train.Int64List(value=[value]))
 
@@ -76,11 +88,12 @@ def _floats_feature(value):
 
             
 def create_dataset(files1, files0, db_name, 
-                  db_full_path='Audio_Data',
+                  db_full_path='../cough_detect2/Audio_Data',
                   hop_length=HOP,
 		  bands = 16,
 		  window = 0.16,
-                  do_denoise=False):
+                  do_denoise=False,
+                  data_augment=False):
         """
 	load, preprocess, normalize a sample
 	input: a list of strings
@@ -89,7 +102,10 @@ def create_dataset(files1, files0, db_name,
 
         print ('save %s samples'%db_name)
         db_filename = os.path.join(db_full_path, db_name + VERSION + '_%d.tfrecords'%HOP)
+        print(db_filename)
         writer = tf.python_io.TFRecordWriter(db_filename)
+        if data_augment:
+          print('data augmentation enabled')
 
         def store_example(files, label):
             for f in tqdm(files):
@@ -100,9 +116,14 @@ def create_dataset(files1, files0, db_name,
                        raise e
 
                 timeSignal = extract_Signal_Of_Importance(timeSignal, window, sample_rate)
+                if data_augment:
+                  timeSignal_noise = add_noise(timeSignal)
+                  timeSignal_noise = standardize(timeSignal_noise)
+
 
                 #fit_scale(timeSignal)
                 timeSignal = standardize(timeSignal)
+
 
                 mfcc = librosa.feature.melspectrogram(y=timeSignal, sr=sample_rate, n_mels=bands, power=1, hop_length=hop_length)
 
@@ -115,7 +136,22 @@ def create_dataset(files1, files0, db_name,
                                                                         'data': _floats_feature(mfcc),
                                                                         'label': _int64_feature(label),
                                                                         }))
+
                 writer.write(example.SerializeToString())
+
+                if data_augment:
+                  mfcc_noise = librosa.feature.melspectrogram(y=timeSignal_noise, sr = sample_rate, n_mels=bands, power=1, hop_length=hop_length)
+                  size_cub_noise = mfcc_noise.shape[1]
+                  example_noise = tf.train.Example(features=tf.train.Features(feature={
+                                                                        'height': _int64_feature(size_cub_noise),
+                                                                        'width': _int64_feature(size_cub_noise),
+                                                                        'depth': _int64_feature(1),
+                                                                        'data': _floats_feature(mfcc_noise),
+                                                                        'label': _int64_feature(label),
+                                                                        }))
+                  writer.write(example_noise.SerializeToString())
+
+
                 
 
         store_example(files1, 1)

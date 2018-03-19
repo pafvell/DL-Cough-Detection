@@ -125,7 +125,7 @@ def create_dataset(files1, files0, db_name,
                 timeSignal = standardize(timeSignal)
 
 
-                mfcc = librosa.feature.melspectrogram(y=timeSignal, sr=sample_rate, n_mels=bands, power=1, hop_length=hop_length)
+                mfcc = librosa.feature.melspectrogram(y=timeSignal, sr=sample_rate, n_mels=bands, power=1, hop_length=hop_length, n_fft=512)
 
                 size_cub=mfcc.shape[1]
                 
@@ -140,7 +140,7 @@ def create_dataset(files1, files0, db_name,
                 writer.write(example.SerializeToString())
 
                 if data_augment:
-                  mfcc_noise = librosa.feature.melspectrogram(y=timeSignal_noise, sr = sample_rate, n_mels=bands, power=1, hop_length=hop_length)
+                  mfcc_noise = librosa.feature.melspectrogram(y=timeSignal_noise, sr = sample_rate, n_mels=bands, power=1, hop_length=hop_length, n_fft=512)
                   size_cub_noise = mfcc_noise.shape[1]
                   example_noise = tf.train.Example(features=tf.train.Features(feature={
                                                                         'height': _int64_feature(size_cub_noise),

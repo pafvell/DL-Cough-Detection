@@ -188,22 +188,22 @@ def fetch_samples(files,
                   timeSignal_pitch_shift = pitch_shift(timeSignal, sr=sample_rate)
                   timeSignal_pitch_shift = extract_Signal_Of_Importance(timeSignal_pitch_shift, window, sample_rate)
                   timeSignal_pitch_shift = standardize(timeSignal_pitch_shift)
-                  mfcc_pitch_shift = librosa.feature.melspectrogram(y=timeSignal_pitch_shift, sr=sample_rate, n_mels=bands, power=1, hop_length=hop_length)
+                  mfcc_pitch_shift = librosa.feature.melspectrogram(y=timeSignal_pitch_shift, sr=sample_rate, n_mels=bands, power=1, hop_length=hop_length, n_fft=512)
 
                   # # stretch signal
                   # timeSignal_stretched = time_stretch(timeSignal, rate=1.2)
                   # timeSignal_stretched = extract_Signal_Of_Importance(timeSignal_stretched, window, sample_rate)
                   # timeSignal_stretched = standardize(timeSignal_stretched)
-                  # mfcc_stretched = librosa.feature.melspectrogram(y=timeSignal_stretched, sr=sample_rate, n_mels=bands, power=1, hop_length=hop_length)
+                  # mfcc_stretched = librosa.feature.melspectrogram(y=timeSignal_stretched, sr=sample_rate, n_mels=bands, power=1, hop_length=hop_length, n_fft=512)
                   
                   # add noise
                   timeSignal_addnoise = add_noise(timeSignal)
                   timeSignal_addnoise = extract_Signal_Of_Importance(timeSignal_addnoise, window, sample_rate)
                   timeSignal_addnoise = standardize(timeSignal_addnoise)
-                  mfcc_addnoise = librosa.feature.melspectrogram(y=timeSignal_addnoise, sr=sample_rate, n_mels=bands, power=1, hop_length=hop_length)
+                  mfcc_addnoise = librosa.feature.melspectrogram(y=timeSignal_addnoise, sr=sample_rate, n_mels=bands, power=1, hop_length=hop_length, n_fft=512)
 
 
-                mfcc = librosa.feature.melspectrogram(y=timeSignal, sr=sample_rate, n_mels=bands, power=1, hop_length=hop_length)
+                mfcc = librosa.feature.melspectrogram(y=timeSignal, sr=sample_rate, n_mels=bands, power=1, hop_length=hop_length, n_fft=512)
 
                 if data_augment and is_training:
                   # time shift

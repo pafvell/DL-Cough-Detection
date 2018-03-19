@@ -73,6 +73,18 @@ def add_noise(signal, sigma=0.05):
         return signal + noise_mat
 
 
+def apply_augment(signal, method=None):
+
+        if method == None:
+          return signal
+
+        elif method == "add_noise":
+          return add_noise(signal)
+
+        else:
+          raise NotImplementedError("augmentation method \"%s\" has not been implemented yet"%method)
+
+
 def _int64_feature(value):
         return tf.train.Feature(int64_list=tf.train.Int64List(value=[value]))
 
@@ -88,12 +100,14 @@ def _floats_feature(value):
 
             
 def create_dataset(files1, files0, db_name, 
-                  db_full_path='../cough_detect2/Audio_Data',
+                  db_full_path='./Audio_Data',
                   hop_length=HOP,
-		  bands = 16,
-		  window = 0.16,
+		              bands = 16,
+		              window = 0.16,
                   do_denoise=False,
-                  data_augment=False):
+                  data_augment=False,
+                  augment_method=None,
+                  create_n_samples=100):
         """
 	load, preprocess, normalize a sample
 	input: a list of strings
@@ -104,55 +118,50 @@ def create_dataset(files1, files0, db_name,
         db_filename = os.path.join(db_full_path, db_name + VERSION + '_%d.tfrecords'%HOP)
         print(db_filename)
         writer = tf.python_io.TFRecordWriter(db_filename)
+        
+        create_n_samples = (1 - data_augment) + data_augment * create_n_samples
+
         if data_augment:
-          print('data augmentation enabled')
+          print("data augmenting: %s"%data_augment)
+          print("number of samples %d"%create_n_samples)
+          print("method: %s"%augment_method)
+        else:
+          augment_method = None
+
 
         def store_example(files, label):
+
             for f in tqdm(files):
+
                 try:
-                       timeSignal, sample_rate = librosa.load(f, mono=True, res_type='kaiser_fast')
+                       timeSignal_raw, sample_rate = librosa.load(f, mono=True, res_type='kaiser_fast')
                 except ValueError as e:
                        print ('!!!!!!! librosa failed to load file: %s !!!!!!!!!'%f)
                        raise e
 
-                timeSignal = extract_Signal_Of_Importance(timeSignal, window, sample_rate)
-                if data_augment:
-                  timeSignal_noise = add_noise(timeSignal)
-                  timeSignal_noise = standardize(timeSignal_noise)
+                timeSignal_raw = extract_Signal_Of_Importance(timeSignal_raw, window, sample_rate)
 
+                for _ in range(create_n_samples):
 
-                #fit_scale(timeSignal)
-                timeSignal = standardize(timeSignal)
+                  timeSignal = apply_augment(signal=timeSignal_raw, method=augment_method)
 
+                  #fit_scale(timeSignal)
+                  timeSignal = standardize(timeSignal)
 
-                mfcc = librosa.feature.melspectrogram(y=timeSignal, sr=sample_rate, n_mels=bands, power=1, hop_length=hop_length, n_fft=512)
+                  mfcc = librosa.feature.melspectrogram(y=timeSignal, sr=sample_rate, n_mels=bands, power=1, hop_length=hop_length, n_fft=512)
 
-                size_cub=mfcc.shape[1]
-                
-                example = tf.train.Example(features=tf.train.Features(feature={
-                                                                        'height': _int64_feature(size_cub),
-                                                                        'width': _int64_feature(size_cub),
-                                                                        'depth': _int64_feature(1),
-                                                                        'data': _floats_feature(mfcc),
-                                                                        'label': _int64_feature(label),
-                                                                        }))
+                  size_cub=mfcc.shape[1]
+                  
+                  example = tf.train.Example(features=tf.train.Features(feature={
+                                                                          'height': _int64_feature(size_cub),
+                                                                          'width': _int64_feature(size_cub),
+                                                                          'depth': _int64_feature(1),
+                                                                          'data': _floats_feature(mfcc),
+                                                                          'label': _int64_feature(label),
+                                                                          }))
 
-                writer.write(example.SerializeToString())
-
-                if data_augment:
-                  mfcc_noise = librosa.feature.melspectrogram(y=timeSignal_noise, sr = sample_rate, n_mels=bands, power=1, hop_length=hop_length, n_fft=512)
-                  size_cub_noise = mfcc_noise.shape[1]
-                  example_noise = tf.train.Example(features=tf.train.Features(feature={
-                                                                        'height': _int64_feature(size_cub_noise),
-                                                                        'width': _int64_feature(size_cub_noise),
-                                                                        'depth': _int64_feature(1),
-                                                                        'data': _floats_feature(mfcc_noise),
-                                                                        'label': _int64_feature(label),
-                                                                        }))
-                  writer.write(example_noise.SerializeToString())
-
-
-                
+                  writer.write(example.SerializeToString())
+            
 
         store_example(files1, 1)
         store_example(files0, 0)
@@ -220,7 +229,7 @@ def main(unused_args):
 
        tf.set_random_seed(0)
 
-       create_dataset(trainListCough, trainListOther, 'train')
+       create_dataset(trainListCough, trainListOther, 'train', data_augment=True, augment_method="add_noise")
        create_dataset(testListCough, testListOther, 'test')
 
 

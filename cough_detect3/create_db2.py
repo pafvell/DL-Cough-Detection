@@ -15,17 +15,24 @@ import librosa
 from utils import *
 
 
-
-
 ROOT_DIR = './Audio_Data'
 
+# data load params
 HOP=56 #224,#112,#56,
+N_FFT=512
 VERSION='2'
+
+DO_DATA_AUGMENT = True
+DATA_AUGMENT_METHOD = "add_noise"
+NOISE_STDEV = 2e-1
+NOISE_CREATE_N_SAMPLES = 2
+
+AUGM_LIST = [None, 'add_noise', 'pitch_shift', 'time_stretch']
 
 
 def standardize(timeSignal):
 
-	 #TODO
+	       #TODO
          maxValue = np.max(timeSignal)
          minValue = np.min(timeSignal)
 
@@ -61,7 +68,7 @@ def extract_Signal_Of_Importance(signal, window, sample_rate ):
         return signal
 
 
-def add_noise(signal, sigma=0.05):
+def add_noise(signal, sigma=NOISE_STDEV):
         '''
         Input:
         sound signal; time series vector, standardized
@@ -73,16 +80,41 @@ def add_noise(signal, sigma=0.05):
         return signal + noise_mat
 
 
-def apply_augment(signal, method=None):
+def pitch_shift(signal, sample_rate, n_steps=5):
 
-        if method == None:
-          return signal
+        # as in https://librosa.github.io/librosa/generated/librosa.effects.pitch_shift.html#librosa.effects.pitch_shift
 
-        elif method == "add_noise":
-          return add_noise(signal)
+        return librosa.effects.pitch_shift(y=signal, sr=sample_rate, n_steps=n_steps)
+
+def time_stretch(signal, sample_rate, window_size, stretch_factor=1.2):
+
+        # as in https://librosa.github.io/librosa/generated/librosa.effects.time_stretch.html#librosa.effects.time_stretch
+
+        signal = librosa.effects.time_stretch(y=signal, rate=stretch_factor)
+
+        return extract_Signal_Of_Importance(signal=signal, window=window_size, sample_rate=sample_rate)
+
+
+def apply_augment(signal, sample_rate, window_size, method=None):
+
+        if method not in AUGM_LIST:
+          raise NotImplementedError("augmentation method \"%s\" has not been implemented yet"%method)
 
         else:
-          raise NotImplementedError("augmentation method \"%s\" has not been implemented yet"%method)
+
+          if method == None:
+            return signal
+
+          elif method == "add_noise":
+            return add_noise(signal=signal)
+
+          elif method == "pitch_shift":
+            return pitch_shift(signal=signal, sample_rate=sample_rate)
+
+          elif method == "time_stretch":
+            return time_stretch(signal=signal, sample_rate=sample_rate, window_size=window_size)
+
+
 
 
 def _int64_feature(value):
@@ -100,14 +132,14 @@ def _floats_feature(value):
 
             
 def create_dataset(files1, files0, db_name, 
-                  db_full_path='./Audio_Data',
+                  db_full_path=ROOT_DIR,
                   hop_length=HOP,
 		              bands = 16,
 		              window = 0.16,
                   do_denoise=False,
                   data_augment=False,
                   augment_method=None,
-                  create_n_samples=100):
+                  create_n_samples=NOISE_CREATE_N_SAMPLES):
         """
 	load, preprocess, normalize a sample
 	input: a list of strings
@@ -143,10 +175,10 @@ def create_dataset(files1, files0, db_name,
 
                 for _ in range(create_n_samples):
 
-                  timeSignal = apply_augment(signal=timeSignal_raw, method=augment_method)
-
                   #fit_scale(timeSignal)
-                  timeSignal = standardize(timeSignal)
+                  timeSignal = standardize(timeSignal_raw)
+
+                  timeSignal = apply_augment(signal=timeSignal, sample_rate=sample_rate, window_size=window, method=augment_method)
 
                   mfcc = librosa.feature.melspectrogram(y=timeSignal, sr=sample_rate, n_mels=bands, power=1, hop_length=hop_length, n_fft=512)
 
@@ -229,7 +261,7 @@ def main(unused_args):
 
        tf.set_random_seed(0)
 
-       create_dataset(trainListCough, trainListOther, 'train', data_augment=True, augment_method="add_noise")
+       create_dataset(trainListCough, trainListOther, 'train', data_augment=DO_DATA_AUGMENT, augment_method=DATA_AUGMENT_METHOD)
        create_dataset(testListCough, testListOther, 'test')
 
 

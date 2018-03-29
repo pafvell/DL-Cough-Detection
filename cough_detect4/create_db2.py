@@ -17,7 +17,8 @@ from utils import *
 
 
 
-ROOT_DIR = '../cough_detect2/Audio_Data'
+ROOT_DIR = 'SETPATH'
+DB_ROOT_DIR = 'SETPATH'
 
 HOP=112 #61 #56 #224,#112,#56,
 WINDOW=0.65
@@ -27,7 +28,7 @@ BAND=16
 VERSION='650_112'
 
 
-CREATE_DB = False
+CREATE_DB = True
 
 
 
@@ -40,9 +41,6 @@ NOISE_STDEV = 2e-1
 CREATE_N_SAMPLES = 5
 
 AUGM_LIST = [None, 'add_noise', 'pitch_shift', 'time_stretch']
-
-
-
 
 
 
@@ -76,16 +74,9 @@ def time_stretch(signal, sample_rate, window_size, stretch_factor=1.2):
 
 def apply_augment(signal, sample_rate, window_size, method=DATA_AUGMENT_METHOD):
 
-
-
-
         #TODO
         #https://www.kaggle.com/CVxTz/audio-data-augmentation
         #https://www.kaggle.com/huseinzol05/sound-augmentation-librosa
-
-
-
-
 
         if method not in AUGM_LIST:
           raise NotImplementedError("augmentation method \"%s\" has not been implemented yet"%method)
@@ -152,21 +143,16 @@ def _floats_feature(value):
 
             
 def create_dataset(files1, files0, db_name, 
-                  db_full_path='Audio_Data',
+                  db_full_path=DB_ROOT_DIR,
                   hop_length=HOP,
-		  bands = BAND,
-		  window = WINDOW, #0.16
-                  
-
-
+		              bands = BAND,
+		              window = WINDOW, #0.16
                   do_augmentation=False,
-                  create_n_samples=CREATE_N_SAMPLES
-
-        ):
+                  create_n_samples=CREATE_N_SAMPLES):
         """
-	load, preprocess, normalize a sample
-	input: a list of strings
-	output: the processed features from each sample path in the input
+	     load, preprocess, normalize a sample
+	     input: a list of strings
+	     output: the processed features from each sample path in the input
         """
 
         print ('save %s samples'%db_name)
@@ -174,18 +160,13 @@ def create_dataset(files1, files0, db_name,
         writer = tf.python_io.TFRecordWriter(db_filename)
 
 
-
-
-
-        if data_augment:
-          print("data augmenting: %s"%data_augment)
+        if do_augmentation:
+          print("data augmenting: %s"%do_augmentation)
           print("number of samples %d"%create_n_samples)
 
 
+        def store_example(files, label, create_n_samples=CREATE_N_SAMPLES):
 
-
-
-        def store_example(files, label):
             for f in tqdm(files):
                 try:
                        time_signal, sample_rate = librosa.load(f, mono=True, res_type='kaiser_fast')
@@ -197,25 +178,13 @@ def create_dataset(files1, files0, db_name,
                 time_signal = standardize(time_signal)
 
 
-
-		if not do_augmentation:
-                    create_n_samples=1
-
-
-
+                if not do_augmentation:
+                  create_n_samples=1
 
                 for j in range(create_n_samples):
 
-
-
-
-
                       if j>=1:
-                              time_signal = augment(time_signal, sample_rate=sample_rate, window_size=window)
-
-
-
-
+                          time_signal = apply_augment(time_signal, sample_rate=sample_rate, window_size=window)
 
                       mfcc = librosa.feature.melspectrogram(y=time_signal, sr=sample_rate, n_mels=bands, power=1, hop_length=hop_length)
                       #mfcc = normalize(mfcc)
@@ -230,17 +199,16 @@ def create_dataset(files1, files0, db_name,
                                                                         }))
                       writer.write(example.SerializeToString())
                 
-
         store_example(files1, 1)
         store_example(files0, 0)
         writer.close()
 
             
 def test_shape(files1, 
-                  db_full_path='Audio_Data',
+                  db_full_path=DB_ROOT_DIR,
                   hop_length=HOP,
-		  bands = BAND,
-		  window = WINDOW, 
+		              bands = BAND,
+		              window = WINDOW, 
                   do_denoise=False):
 
             for f in files1:

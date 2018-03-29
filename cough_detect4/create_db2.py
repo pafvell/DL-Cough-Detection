@@ -34,7 +34,7 @@ CREATE_DB = False
 ###################################################################################################################################################################
 
 #Data Augmentation Parameters
-DO_DATA_AUGMENT = True
+DO_DATA_AUGMENTATION = True
 DATA_AUGMENT_METHOD = "add_noise"
 NOISE_STDEV = 2e-1
 CREATE_N_SAMPLES = 5
@@ -323,7 +323,7 @@ def main(unused_args):
 
        tf.set_random_seed(0)
        if CREATE_DB:
-          create_dataset(trainListCough, trainListOther, 'train', do_augmentation=True)
+          create_dataset(trainListCough, trainListOther, 'train', do_augmentation=DO_DATA_AUGMENTATION)
           create_dataset(testListCough, testListOther, 'test')
        else:
           test_shape(trainListCough)

@@ -30,19 +30,88 @@ VERSION='650_112'
 CREATE_DB = False
 
 
-def standardize(timeSignal):
 
-	 #TODO
+###################################################################################################################################################################
+
+#Data Augmentation Parameters
+DO_DATA_AUGMENT = True
+DATA_AUGMENT_METHOD = "add_noise"
+NOISE_STDEV = 2e-1
+CREATE_N_SAMPLES = 5
+
+AUGM_LIST = [None, 'add_noise', 'pitch_shift', 'time_stretch']
+
+
+
+
+
+
+def add_noise(signal, sigma=NOISE_STDEV):
+        '''
+        Input:
+        sound signal; time series vector, standardized
+        Output:
+        sound signal + gaussian noise
+        '''
+        std = sigma * np.max(signal)
+        noise_mat = np.random.randn(signal.shape[0])*std
+        return signal + noise_mat
+
+
+def pitch_shift(signal, sample_rate, n_steps=5):
+
+        # as in https://librosa.github.io/librosa/generated/librosa.effects.pitch_shift.html#librosa.effects.pitch_shift
+
+        return librosa.effects.pitch_shift(y=signal, sr=sample_rate, n_steps=n_steps)
+
+def time_stretch(signal, sample_rate, window_size, stretch_factor=1.2):
+
+        # as in https://librosa.github.io/librosa/generated/librosa.effects.time_stretch.html#librosa.effects.time_stretch
+
+        signal = librosa.effects.time_stretch(y=signal, rate=stretch_factor)
+
+        return extract_Signal_Of_Importance(signal=signal, window=window_size, sample_rate=sample_rate)
+
+
+
+def apply_augment(signal, sample_rate, window_size, method=DATA_AUGMENT_METHOD):
+
+
+
+
+        #TODO
+        #https://www.kaggle.com/CVxTz/audio-data-augmentation
+        #https://www.kaggle.com/huseinzol05/sound-augmentation-librosa
+
+
+
+
+
+        if method not in AUGM_LIST:
+          raise NotImplementedError("augmentation method \"%s\" has not been implemented yet"%method)
+
+        else:
+
+          if method == None:
+            return signal
+
+          elif method == "add_noise":
+            return add_noise(signal=signal)
+
+          elif method == "pitch_shift":
+            return pitch_shift(signal=signal, sample_rate=sample_rate)
+
+          elif method == "time_stretch":
+            return time_stretch(signal=signal, sample_rate=sample_rate, window_size=window_size)
+
+
+###################################################################################################################################################################
+
+
+def standardize(timeSignal):
          maxValue = np.max(timeSignal)
          minValue = np.min(timeSignal)
-
-         #maxValue = 1.7
-         #minValue = -1.8
-
          timeSignal = (timeSignal - minValue)/(maxValue - minValue) 
-
-         #but since timeSignal is in [-1.8,1.7]
-         #timeSignal /= 1.8
          return timeSignal
 
 
@@ -87,7 +156,13 @@ def create_dataset(files1, files0, db_name,
                   hop_length=HOP,
 		  bands = BAND,
 		  window = WINDOW, #0.16
-                  do_denoise=False):
+                  
+
+
+                  do_augmentation=False,
+                  create_n_samples=CREATE_N_SAMPLES
+
+        ):
         """
 	load, preprocess, normalize a sample
 	input: a list of strings
@@ -98,31 +173,62 @@ def create_dataset(files1, files0, db_name,
         db_filename = os.path.join(db_full_path, db_name + VERSION + '.tfrecords')
         writer = tf.python_io.TFRecordWriter(db_filename)
 
+
+
+
+
+        if data_augment:
+          print("data augmenting: %s"%data_augment)
+          print("number of samples %d"%create_n_samples)
+
+
+
+
+
         def store_example(files, label):
             for f in tqdm(files):
                 try:
-                       timeSignal, sample_rate = librosa.load(f, mono=True, res_type='kaiser_fast')
+                       time_signal, sample_rate = librosa.load(f, mono=True, res_type='kaiser_fast')
                 except ValueError as e:
                        print ('!!!!!!! librosa failed to load file: %s !!!!!!!!!'%f)
                        raise e
 
-                timeSignal = extract_Signal_Of_Importance(timeSignal, window, sample_rate)
+                time_signal = extract_Signal_Of_Importance(time_signal, window, sample_rate)
+                time_signal = standardize(time_signal)
 
-                timeSignal = standardize(timeSignal)
 
-                mfcc = librosa.feature.melspectrogram(y=timeSignal, sr=sample_rate, n_mels=bands, power=1, hop_length=hop_length)
 
-                size_cub=mfcc.shape[1]
-                #print ('mfcc shape: '+str(mfcc.shape))
-                #break
-                example = tf.train.Example(features=tf.train.Features(feature={
+		if not do_augmentation:
+                    create_n_samples=1
+
+
+
+
+                for j in range(create_n_samples):
+
+
+
+
+
+                      if j>=1:
+                              time_signal = augment(time_signal, sample_rate=sample_rate, window_size=window)
+
+
+
+
+
+                      mfcc = librosa.feature.melspectrogram(y=time_signal, sr=sample_rate, n_mels=bands, power=1, hop_length=hop_length)
+                      #mfcc = normalize(mfcc)
+
+                      size_cub=mfcc.shape[1]
+                      example = tf.train.Example(features=tf.train.Features(feature={
                                                                         'height': _int64_feature(bands),
                                                                         'width': _int64_feature(size_cub),
                                                                         'depth': _int64_feature(1),
                                                                         'data': _floats_feature(mfcc),
                                                                         'label': _int64_feature(label),
                                                                         }))
-                writer.write(example.SerializeToString())
+                      writer.write(example.SerializeToString())
                 
 
         store_example(files1, 1)
@@ -217,7 +323,7 @@ def main(unused_args):
 
        tf.set_random_seed(0)
        if CREATE_DB:
-          create_dataset(trainListCough, trainListOther, 'train')
+          create_dataset(trainListCough, trainListOther, 'train', do_augmentation=True)
           create_dataset(testListCough, testListOther, 'test')
        else:
           test_shape(trainListCough)

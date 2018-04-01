@@ -1,5 +1,6 @@
 {
   "ROOT_DIR" : "../../Audio_Data",
+  "DB_ROOT_DIR": "/cluster/scratch/<nethz-username>",
   "DB_version" : "650_112",
 
   "controller" : {

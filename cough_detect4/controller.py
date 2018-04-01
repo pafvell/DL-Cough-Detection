@@ -1,23 +1,24 @@
 #!/usr/bin/python
-#Author: Kevin Kipfer
+#Authors: Kevin Kipfer
 
 import tensorflow as tf
 import tensorflow.contrib.slim as slim
 import numpy as np
 import os, sys, math, shutil, time, threading
-
+import importlib
+import json
 from utils import *
 
 
 #******************************************************************************************************************
-
+#possible models
 #from model_cnn_weak import *
 #from model_cnn_v1 import *
 #from model_cnn_v3_3 import *
 #from model_cnn_v4 import *
 #from model_resnet_v1 import *
 #from model_densenet_v1 import *
-from model_boost_v9 import *
+#from model_boost_v9 import *
 #from model_boost_v6 import *
 #from model_bag_v1 import *
 #from model_boost_v1 import *
@@ -25,12 +26,19 @@ from model_boost_v9 import *
 #from model_rnn_v1 import *
 
 #******************************************************************************************************************
+#loading configuration
+with open('config.json') as json_data_file:
+    config = json.load(json_data_file)
 
+control_config = config["controller"] # reads the config for the controller file
+MODEL = importlib.import_module(control_config["model"]) #loads the model specified in the config file
+config_train = control_config["train"]
 
-ROOT_DIR = './Audio_Data'
-NUM_CLASSES = 2
-SPEC_SIZE=128
-DB_VERSION  = '650_112' #'175_61'
+ROOT_DIR = config["ROOT_DIR"]
+NUM_CLASSES = control_config["num_classes"]
+SPEC_SIZE= control_config["spec_size"]
+DB_VERSION  = config["DB_version"] #'175_61'
+
 
 def get_imgs(db_name, batch_size, buffer_size=10000, prefetch_batchs=3000, num_epochs=1000):
   size_cub=SPEC_SIZE
@@ -64,20 +72,21 @@ def get_imgs(db_name, batch_size, buffer_size=10000, prefetch_batchs=3000, num_e
 
 
 def train(
-         eta=2e-3, #learning rate
-         grad_noise=9e-4,
-         clipper=10.,
-         checkpoint_dir='./checkpoints/boost_v9b6_2',
-         batch_size=64,
-         trainable_scopes=TRAINABLE_SCOPES,
-         train_capacity=9500,
-         test_capacity=5000,
-         num_epochs = 100000,
-         gpu_fraction=0.9,
-         log_every_n_steps=1000,
-         eval_every_n_steps=1000,
-         save_every_n_steps=10000,
-         save_checkpoint=True):
+
+         eta= config_train["eta"], #learning rate
+         grad_noise = config_train["grad_noise"],
+         clipper=config_train["clipper"],
+         checkpoint_dir=config_train["checkpoint_dir"],
+         batch_size=config_train["batch_size"],
+         trainable_scopes=config_train["trainable_scopes"],
+         train_capacity=config_train["train_capacity"],
+         test_capacity=config_train["test_capacity"],
+         num_epochs = config_train["num_epochs"],
+         gpu_fraction=config_train["gpu_fraction"],
+         log_every_n_steps=config_train["log_every_n_steps"],
+         eval_every_n_steps=config_train["eval_every_n_steps"],
+         save_every_n_steps=config_train["save_every_n_steps"],
+         save_checkpoint=config_train["save_checkpoint"]):
 
 
        print ('save checkpoints to: %s'%checkpoint_dir)
@@ -96,7 +105,7 @@ def train(
               train_op = tf.train.AdamOptimizer(learning_rate=eta) #, epsilon=1e-5 
               eta = train_op._lr
 
-              train_loss, preds = build_model(train_batch, train_labels)
+              train_loss, preds = MODEL.build_model(train_batch, train_labels)
               tf.summary.scalar('training/loss', train_loss )
               train_acc, train_acc_update = tf.metrics.accuracy(predictions=preds, labels=train_labels)
               tf.summary.scalar('training/accuracy', train_acc )
@@ -146,7 +155,7 @@ def train(
 
 
               #Evaluation
-              test_loss, predictions = build_model(test_batch, test_labels, is_training=False, reuse=True)	
+              test_loss, predictions = MODEL.build_model(test_batch, test_labels, is_training=False, reuse=True)
 
               #Collect test summaries
               with tf.name_scope('evaluation' ) as eval_scope:

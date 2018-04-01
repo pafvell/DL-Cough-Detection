@@ -97,8 +97,5 @@ def build_model(x,
 
 
 
-#Parameters
-TRAINABLE_SCOPES = None #everything is trainable
-
 
 

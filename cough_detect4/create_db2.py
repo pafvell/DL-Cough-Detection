@@ -7,6 +7,7 @@ import tensorflow as tf
 from tqdm import tqdm
 import argparse
 from collections import defaultdict
+import json
 
 import numpy as np
 import os, sys, math, shutil, time, threading
@@ -15,32 +16,35 @@ import librosa
 from utils import *
 
 
+#loading configuration
+with open('config.json') as json_data_file:
+    config = json.load(json_data_file)
+
+ROOT_DIR = config["ROOT_DIR"]
+config_db = config["create_db2"]
+DB_ROOT_DIR = config_db["DB_ROOT_DIR"]
+
+HOP=config_db["HOP"] #61 #56 #224,#112,#56,
+WINDOW=config_db["WINDOW"]
+BAND=config_db["BAND"]
 
 
-ROOT_DIR = 'SETPATH'
-DB_ROOT_DIR = 'SETPATH'
-
-HOP=112 #61 #56 #224,#112,#56,
-WINDOW=0.65
-BAND=16
+VERSION=config["DB_version"]
 
 
-VERSION='650_112'
-
-
-CREATE_DB = True
+CREATE_DB = config_db["CREATE_DB"]
 
 
 
 ###################################################################################################################################################################
 
 #Data Augmentation Parameters
-DO_DATA_AUGMENTATION = True
-DATA_AUGMENT_METHOD = "add_noise"
-NOISE_STDEV = 2e-1
-CREATE_N_SAMPLES = 5
+DO_DATA_AUGMENTATION = config_db["DO_DATA_AUGMENTATION"]
+DATA_AUGMENT_METHOD = config_db["DATA_AUGMENT_METHOD"]
+NOISE_STDEV = config_db["NOISE_STDEV"]
+CREATE_N_SAMPLES = config_db["CREATE_N_SAMPLES"]
 
-AUGM_LIST = [None, 'add_noise', 'pitch_shift', 'time_stretch']
+AUGM_LIST = config_db["AUGM_LIST"]
 
 
 

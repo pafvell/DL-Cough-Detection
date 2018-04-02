@@ -215,6 +215,9 @@ def test_shape(files1,
 		              window = WINDOW, 
                   do_denoise=False):
 
+            import matplotlib.pyplot as plt
+            import librosa.display
+
             for f in files1:
                 try:
                        timeSignal, sample_rate = librosa.load(f, mono=True, res_type='kaiser_fast')
@@ -227,9 +230,18 @@ def test_shape(files1,
                 timeSignal = standardize(timeSignal)
 
                 mfcc = librosa.feature.melspectrogram(y=timeSignal, sr=sample_rate, n_mels=bands, power=1, hop_length=hop_length)
+                #mfcc = librosa.feature.delta(mfcc)
 
                 size_cub=mfcc.shape[1]
                 print ('mfcc shape: '+str(mfcc.shape))
+                print ('mfcc max: '+str(np.max(mfcc)))
+
+                plt.figure(figsize=(10, 4))
+                librosa.display.specshow(mfcc, x_axis='time')
+                plt.colorbar()
+                plt.title('MFCC')
+                plt.tight_layout()
+                plt.show()
                 break
 
 

@@ -4,7 +4,7 @@ import librosa
 import numpy as np
 import tensorflow as tf
 import tensorflow.contrib.slim as slim
-import os, fnmatch, sys
+import os, fnmatch, sys, random
 
 from shutil import copyfile
 
@@ -130,13 +130,17 @@ class HiddenPrints:
         sys.stdout = self._original_stdout
 
  
-def get_variables_to_train(trainable_scopes=None, show_variables=False):
+def get_variables_to_train(trainable_scopes=None, show_variables=False, sample_rate=-1):
     """Returns a list of variables to train.
 
       Returns:
         A list of variables to train by the optimizer.
     """
     trainable_variables = tf.get_collection(tf.GraphKeys.TRAINABLE_VARIABLES) 
+
+    if sample_rate>0:
+       trainable_variables = random.sample(trainable_variables, int(round(len(trainable_variables)*sample_rate)))
+
     if trainable_scopes is None:
         return trainable_variables
 

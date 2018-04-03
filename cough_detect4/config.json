@@ -32,9 +32,10 @@
     "BAND": 16,
     "CREATE_DB": true,
     "DO_DATA_AUGMENTATION" : true,
-    "DATA_AUGMENT_METHOD" : "add_noise",
+    "DATA_AUGMENT_METHOD" : "pitch_shift",
     "NOISE_STDEV" : 2e-1,
-    "CREATE_N_SAMPLES" : 5,
-    "AUGM_LIST" : [null, "add_noise", "pitch_shift", "time_stretch"]
+    "CREATE_N_SAMPLES" : 4,
+    "AUGM_LIST" : [null, "add_noise", "pitch_shift", "time_stretch"],
+    "PITCH_SHIFT":[-2,-1,1,2]
   }
 }

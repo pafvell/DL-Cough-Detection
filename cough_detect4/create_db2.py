@@ -60,7 +60,7 @@ def add_noise(signal, sigma=NOISE_STDEV):
         return signal + noise_mat
 
 
-def pitch_shift(signal, sample_rate, n_steps=5):
+def pitch_shift(signal, sample_rate, n_steps):
 
         # as in https://librosa.github.io/librosa/generated/librosa.effects.pitch_shift.html#librosa.effects.pitch_shift
 
@@ -76,7 +76,7 @@ def time_stretch(signal, sample_rate, window_size, stretch_factor=1.2):
 
 
 
-def apply_augment(signal, sample_rate, window_size, method=DATA_AUGMENT_METHOD):
+def apply_augment(signal, sample_rate, window_size, n_samples, method=DATA_AUGMENT_METHOD):
 
         #TODO
         #https://www.kaggle.com/CVxTz/audio-data-augmentation
@@ -94,7 +94,8 @@ def apply_augment(signal, sample_rate, window_size, method=DATA_AUGMENT_METHOD):
             return add_noise(signal=signal)
 
           elif method == "pitch_shift":
-            return pitch_shift(signal=signal, sample_rate=sample_rate)
+            n_steps = config_db["PITCH_SHIFT"][n_samples]
+            return pitch_shift(signal=signal, sample_rate=sample_rate, n_steps = n_steps)
 
           elif method == "time_stretch":
             return time_stretch(signal=signal, sample_rate=sample_rate, window_size=window_size)
@@ -187,8 +188,8 @@ def create_dataset(files1, files0, db_name,
 
                 for j in range(create_n_samples):
 
-                      if j>=1:
-                          time_signal = apply_augment(time_signal, sample_rate=sample_rate, window_size=window)
+                      #if j>=1:
+                      time_signal = apply_augment(time_signal, sample_rate=sample_rate, window_size=window, n_samples=j)
 
                       mfcc = librosa.feature.melspectrogram(y=time_signal, sr=sample_rate, n_mels=bands, power=1, hop_length=hop_length)
                       #mfcc = normalize(mfcc)

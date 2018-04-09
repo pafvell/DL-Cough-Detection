@@ -66,6 +66,17 @@ def pitch_shift(signal, sample_rate, n_steps):
 
         return librosa.effects.pitch_shift(y=signal, sr=sample_rate, n_steps=n_steps)
 
+
+def pitch_shift2(signal, sample_rate, bins_per_octave=24, pitch_pm=4):
+
+        pitch_change =  pitch_pm * 2*(np.random.uniform()-0.5)   
+        y_pitch = librosa.effects.pitch_shift(signal.astype('float64'), 
+                                              sample_rate, 
+                                              n_steps=pitch_change, 
+                                              bins_per_octave=bins_per_octave)
+        return y_pitch
+
+
 def time_stretch(signal, sample_rate, window_size, stretch_factor=1.2):
 
         # as in https://librosa.github.io/librosa/generated/librosa.effects.time_stretch.html#librosa.effects.time_stretch
@@ -96,6 +107,9 @@ def apply_augment(signal, sample_rate, window_size, n_samples, method=DATA_AUGME
           elif method == "pitch_shift":
             n_steps = config_db["PITCH_SHIFT"][n_samples]
             return pitch_shift(signal=signal, sample_rate=sample_rate, n_steps = n_steps)
+
+          elif method == "pitch_shift2":
+            return pitch_shift2(signal=signal, sample_rate=sample_rate)
 
           elif method == "time_stretch":
             return time_stretch(signal=signal, sample_rate=sample_rate, window_size=window_size)

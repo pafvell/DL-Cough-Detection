@@ -37,5 +37,8 @@
     "CREATE_N_SAMPLES" : 4,
     "AUGM_LIST" : [null, "add_noise", "pitch_shift", "time_stretch", "pitch_shift2"],
     "PITCH_SHIFT":[-2,-1,1,2]
-  }
+  },
+
+  "validation":["p12", "p38", "p07","p31", "p46","p06"],
+  "test":["p34", "p30", "p42", "p08", "p15", "p19"]
 }

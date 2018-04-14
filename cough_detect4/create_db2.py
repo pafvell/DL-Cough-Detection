@@ -162,7 +162,7 @@ def _floats_feature(value):
 
             
 def create_dataset(files1, files0, db_name, 
-                  db_full_path=DB_ROOT_DIR,
+                  db_full_path=ROOT_DIR,
                   hop_length=HOP,
 		              bands = BAND,
 		              window = WINDOW, #0.16
@@ -200,18 +200,16 @@ def create_dataset(files1, files0, db_name,
                 if not do_augmentation:
                   create_n_samples=1
 
-                for j in range(create_n_samples):
+                for j in range(create_n_samples+1):
 
-                      #if j>=1:
-                      time_signal = apply_augment(time_signal, sample_rate=sample_rate, window_size=window, n_samples=j)
+                      if j>=1:
+                         time_signal = apply_augment(time_signal, sample_rate=sample_rate, window_size=window, n_samples=(j-1))
 
                       mfcc = librosa.feature.melspectrogram(y=time_signal, sr=sample_rate, n_mels=bands, power=1, hop_length=hop_length)
-                      #mfcc = normalize(mfcc)
 
-                      size_cub=mfcc.shape[1]
                       example = tf.train.Example(features=tf.train.Features(feature={
                                                                         'height': _int64_feature(bands),
-                                                                        'width': _int64_feature(size_cub),
+                                                                        'width': _int64_feature(mfcc.shape[1]),
                                                                         'depth': _int64_feature(1),
                                                                         'data': _floats_feature(mfcc),
                                                                         'label': _int64_feature(label),
@@ -224,7 +222,6 @@ def create_dataset(files1, files0, db_name,
 
             
 def test_shape(files1, 
-                  db_full_path=DB_ROOT_DIR,
                   hop_length=HOP,
 		              bands = BAND,
 		              window = WINDOW, 
@@ -264,9 +261,11 @@ def test_shape(files1,
     
 def main(unused_args):
 
-       listOfParticipantsToExcludeInTrainset = ["p05", "p17", "p34", "p20", "p28", "p09", "p08", "p11", "p31", "p21", "p14"] #participants used in the test-set
+       listOfParticipantsInTrainset=config["testing"]
+       listOfParticipantsInValidationset=config["validation"]
 
-       list_of_broken_files = ['04_Coughing/Distant (cd)/p17_rode-108.wav', '04_Coughing/Distant (cd)/p17_htc-108.wav', '04_Coughing/Distant (cd)/p17_tablet-108.wav', \
+       list_of_broken_files = ['04_Coughing/Distant (cd)/p17_rode-108.wav', '04_Coughing/Distant (cd)/p17_htc-108.wav', \
+                               '04_Coughing/Distant (cd)/p17_tablet-108.wav', \
                                '04_Coughing/Distant (cd)/p17_iphone-108.wav',  '04_Coughing/Distant (cd)/p17_samsung-108.wav']
 
        ##
@@ -274,45 +273,54 @@ def main(unused_args):
        #
        #
 
-       print ('use data from root path %s'%ROOT_DIR)
+       print ('use data from root path %s'%DB_ROOT_DIR)
 
-       coughAll = find_files(ROOT_DIR + "/04_Coughing", "wav", recursively=True)
+       coughAll = find_files(DB_ROOT_DIR + "/04_Coughing", "wav", recursively=True)
        assert len(coughAll) > 0, 'no cough files found. did you set the correct root path to the data in line 22?'
 
        #remove broken files
        for broken_file in list_of_broken_files:
-           broken_file = os.path.join(ROOT_DIR, broken_file)
+           broken_file = os.path.join(DB_ROOT_DIR, broken_file)
            if broken_file in coughAll:
                  print ( 'file ignored: %s'%broken_file )
                  coughAll.remove(broken_file)
 
+
        #split cough files into test- and training-set
-       testListCough = []
+       testListCough, validationListCough= [], []
        trainListCough = coughAll
        for name in coughAll:
-           for nameToExclude in listOfParticipantsToExcludeInTrainset:
+           for nameToExclude in listOfParticipantsInTrainset:
               if nameToExclude in name:
                   testListCough.append(name)
                   trainListCough.remove(name)
+           for nameToExclude in listOfParticipantsInValidationset:
+              if nameToExclude in name:
+                  validationListCough.append(name)
+                  trainListCough.remove(name)
 
-       print('nr of samples coughing: %d' % len(testListCough))
+       print('nr of samples coughing (test): %d' % len(testListCough))
 
        ##
        # READING OTHER DATA
        #
        #
 
-       other = find_files(ROOT_DIR + "/05_Other Control Sounds", "wav", recursively=True)
+       other = find_files(DB_ROOT_DIR + "/05_Other Control Sounds", "wav", recursively=True)
 
-       testListOther = []
+       testListOther,  validationListOther = [], []
        trainListOther = other
        for name in other:
-           for nameToExclude in listOfParticipantsToExcludeInTrainset:
+           for nameToExclude in listOfParticipantsInTrainset:
               if nameToExclude in name:
                   testListOther.append(name)
                   trainListOther.remove(name)
+           for nameToExclude in listOfParticipantsInValidationset:
+              if nameToExclude in name:
+                  validationListOther.append(name)
+                  trainListOther.remove(name)
 
-       print('nr of samples NOT coughing: %d' % len(testListOther))
+       print('nr of samples NOT coughing (test): %d' % len(testListOther))
 
 
        ##
@@ -324,6 +332,7 @@ def main(unused_args):
        if CREATE_DB:
           create_dataset(trainListCough, trainListOther, 'train', do_augmentation=DO_DATA_AUGMENTATION)
           create_dataset(testListCough, testListOther, 'test')
+          create_dataset(testListCough, validationListOther, 'validation')
        else:
           test_shape(trainListCough)
 

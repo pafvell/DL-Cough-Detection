@@ -11,12 +11,17 @@ from utils import softmax_cross_entropy_v2 as softmax_cross_entropy
 #from tensorflow.losses import softmax_cross_entropy
 
 
+"""
+	larger conv net - Train top + bottom + keep the rest at random 
+"""
+
 
 def classify(inputs, 
 	     num_classes,
              dropout_keep_prob=0.5,
-             weight_decay = 1e-3,
-             num_filter=32,
+             weight_decay = 1e-4,
+             fc_size=16,
+             num_filter=128,
 	     scope=None,
 	     reuse=None,
              is_training=True,
@@ -28,6 +33,7 @@ def classify(inputs,
 	 output: logits -> shape=[None,num_labels]
         """
         with slim.arg_scope(simple_arg_scope(weight_decay=weight_decay)): 
+        	#with slim.arg_scope(batchnorm_arg_scope()): 
                       with slim.arg_scope([slim.batch_norm, slim.dropout],
 		                	is_training=is_training):
                              with tf.variable_scope(scope, 'weak_learner', [inputs], reuse=reuse) as scope:
@@ -43,7 +49,7 @@ def classify(inputs,
 
                                                 for i in range(route):
                                                       net = slim.max_pool2d(net, [1, 2], stride=[1, 2], scope='pool%d'%(i+2))
-                                                      net += slim.conv2d(net, num_filter, [3, 3], scope='conv3x3_%d'%(i+2))
+                                                      net += slim.conv2d(net, num_filter, [3, 3], activation_fn=None, scope='conv3x3_%d'%(i+2))
 
                                                 net = tf.reduce_max(net, 2) 
 
@@ -53,6 +59,8 @@ def classify(inputs,
                                                 logits = slim.fully_connected(net, num_classes, scope='fc2', activation_fn=None) 
 
                                       return logits
+
+
 
 
 def loss_fkt(logits, y):
@@ -82,19 +90,19 @@ def build_model(x,
         
         #model	
         with tf.variable_scope('model_v1'):
-
-             logits, loss = 0, 0
-             for i in range(num_estimator):
-                logits += classify(x, num_classes=num_classes, is_training=is_training, reuse=reuse, scope='H%d'%i)
-                loss += loss_fkt(logits, y)
+                predictions = classify(x, num_classes=num_classes, is_training=is_training, reuse=reuse, scope='wk', route=2)
+                loss = loss_fkt(predictions, y)
 
    
         #results
-        predictions = tf.argmax(slim.softmax(logits),1)
+        predictions = tf.argmax(slim.softmax(predictions),1)
         return loss, predictions 	
 
 
 
+
+#Parameters
+TRAINABLE_SCOPES = None #everything is trainable 
 
 
 

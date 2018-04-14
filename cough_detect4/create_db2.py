@@ -198,7 +198,7 @@ def create_dataset(files1, files0, db_name,
 
 
                 if not do_augmentation:
-                  create_n_samples=1
+                  create_n_samples=0
 
                 for j in range(create_n_samples+1):
 

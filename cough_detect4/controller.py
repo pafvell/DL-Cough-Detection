@@ -32,7 +32,9 @@ with open('config.json') as json_data_file:
 
 control_config = config["controller"] # reads the config for the controller file
 MODEL = importlib.import_module(control_config["model"]) #loads the model specified in the config file
-config_train = control_config["train"]
+config_train = control_config["training_parameter"]
+
+TRAIN_MODEL = control_config["train_model"]
 
 ROOT_DIR = config["ROOT_DIR"]
 NUM_CLASSES = control_config["num_classes"]
@@ -190,7 +192,7 @@ def train(
                 sess.run(init)
 
               	#checkpoints              
-                saver = load_model(sess, checkpoint_dir, 'controller.py')
+                saver = load_model(sess, checkpoint_dir, 'config.json')
 
                 #wait for the queues to be filled
                 time.sleep(20) 
@@ -209,12 +211,12 @@ def train(
               		        #training
                                 _, step, train_loss_ = sess.run([train_op, global_step, train_loss])
               			#logging: update training summary
-                                if i >= 300 and i%(log_every_n_steps) == 0:
+                                if i >= 500 and i%(log_every_n_steps) == 0:
                                         summary = sess.run([summary_op])[0]
                                         train_writer.add_summary(summary, step)
                            
               			#logging: update testing summary
-                                if i >= 300 and i%(eval_every_n_steps) == 0:
+                                if i >= 500 and i%(eval_every_n_steps) == 0:
                                         summary, mpc_, accuracy_, _ = sess.run([test_summary_op, mpc, accuracy, test_summary_update])
                                         print ('EVAL: step: %d, idx: %d, mpc: %f, accuracy: %f'% (step, i,  mpc_, accuracy_))
                                         test_writer.add_summary(summary, step)
@@ -238,6 +240,84 @@ def train(
                 sess.close()
 
 
+def validate(
+         num_epochs=1,
+         checkpoint_dir=config_train["checkpoint_dir"],
+         batch_size=config_train["batch_size"],
+         test_capacity=config_train["test_capacity"],
+         gpu_fraction=config_train["gpu_fraction"]):
+
+
+       print ('################################################################################')
+       print ('Validation: get checkpoints from: %s'%checkpoint_dir)
+       print ('################################################################################')
+
+       graph = tf.Graph() 
+       with graph.as_default():
+              #load Test Data
+              with tf.device("/cpu:0"):
+                   test_batch, test_labels, test_op_init = get_imgs('validation', batch_size=batch_size, buffer_size=test_capacity, num_epochs=num_epochs)
+
+              #Evaluation
+              test_loss, predictions = MODEL.build_model(test_batch, test_labels, is_training=False, reuse=False)
+
+              #Collect test summaries
+              with tf.name_scope('evaluation' ) as eval_scope:
+                      tf.summary.scalar('loss', test_loss )
+
+                      mpc, mpc_update = tf.metrics.mean_per_class_accuracy(predictions=predictions, labels=test_labels, num_classes=NUM_CLASSES)
+                      tf.summary.scalar('mpc_accuracy', mpc )
+
+                      accuracy, acc_update = tf.metrics.accuracy(predictions=predictions, labels=test_labels)
+                      tf.summary.scalar('accuracy', accuracy )
+
+                      auc, auc_update = tf.metrics.auc(labels=test_labels, predictions=predictions)
+                      tf.summary.scalar('AUC', auc )
+                      
+                      precision, prec_update = tf.metrics.precision(labels=test_labels, predictions=predictions)
+                      tf.summary.scalar('precision', precision )
+                      
+                      recall, rec_update = tf.metrics.recall(labels=test_labels, predictions=predictions)
+                      tf.summary.scalar('recall', recall )
+                      
+                      #tf.summary.image('test_batch', tf.expand_dims(test_batch, -1))
+
+              #test_summary_op = tf.summary.merge(list(tf.get_collection(tf.GraphKeys.SUMMARIES, eval_scope)), name='test_summary_op')
+              test_summary_update = tf.group(acc_update, mpc_update, auc_update, prec_update, rec_update)
+
+              #initialize
+              gpu_options = tf.GPUOptions(per_process_gpu_memory_fraction=gpu_fraction)
+              sess = tf.Session(graph=graph,config=tf.ConfigProto(inter_op_parallelism_threads=8, gpu_options=gpu_options))
+              init = tf.group(tf.global_variables_initializer(), tf.local_variables_initializer())
+
+              with sess.as_default():
+                sess.run(init)
+
+              	#checkpoints              
+                saver = load_model(sess, checkpoint_dir)
+                #test_writer = tf.summary.FileWriter(checkpoint_dir+"/validation")
+
+                print ('start evaluation')
+                try:
+              	        i=0
+              	        while True:
+                                i+=1
+
+              			#logging: update testing summary
+                                auc_, accuracy_, loss_, prec_, rec_, _ = sess.run([auc, accuracy, test_loss, precision, recall, test_summary_update])
+                                #print ('EVAL: idx: %d, mpc: %f, accuracy: %f'% (i,  auc_, accuracy_))
+                           
+
+                except KeyboardInterrupt:
+                      	        print("Manual interrupt occurred.")
+                except tf.errors.OutOfRangeError:
+                                print("End of Dataset: it ran for %d epochs"%num_epochs)
+
+                print ('################################################################################')
+                print ('Results - AUC:%f, accuracy:%f, precision:%f, recall:%f, loss:%f'%(auc_,accuracy_, prec_, rec_, loss_))
+                print ('################################################################################')
+                sess.close()
+
     
 def main(unused_args):
 
@@ -248,7 +328,17 @@ def main(unused_args):
        #
 
        tf.set_random_seed(0)
-       train()
+
+
+
+
+
+       if TRAIN_MODEL:
+          train()
+       else:
+          validate()
+
+
     
 
 

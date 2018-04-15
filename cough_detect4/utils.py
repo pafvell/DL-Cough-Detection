@@ -163,7 +163,7 @@ def get_variables_to_train(trainable_scopes=None, show_variables=False, sample_r
 
 def load_model(sess, 
        	checkpoint_path, 
-        root_file,
+        root_file = None,
        	show_cp_content=True, 
        	ignore_missing_vars=False):
         """warm-start the training.
@@ -171,7 +171,8 @@ def load_model(sess,
        
         if not os.path.exists(checkpoint_path):
        		os.makedirs(checkpoint_path)  
-       		copyfile(root_file, checkpoint_path+'/'+root_file)
+       		if root_file:
+                   copyfile(root_file, checkpoint_path+'/'+root_file)
 
         latest_ckpt = tf.train.latest_checkpoint(checkpoint_path)	
         if not latest_ckpt:
@@ -187,7 +188,7 @@ def load_model(sess,
                 print ('------------------------------------------------------------------------------')
                 print ('variables stored in checkpoint:')
                 from tensorflow.python.tools.inspect_checkpoint import print_tensors_in_checkpoint_file
-                print_tensors_in_checkpoint_file(latest_ckpt, '', False)
+                print_tensors_in_checkpoint_file(latest_ckpt, '', False, False)
                 print ('------------------------------------------------------------------------------')
        	
         if ignore_missing_vars:

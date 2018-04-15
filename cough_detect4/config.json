@@ -1,13 +1,15 @@
 {
   "ROOT_DIR" : "../../Audio_Data",
-  "DB_version" : "650_112",
+  "DB_version" : "650_112_2",
 
   "controller" : {
     "model" : "model_cnn_v1",
     "num_classes": 2,
     "spec_size" : 128,
 
-    "train" : {
+    "train_model": true,
+
+    "training_parameter" : {
          "eta": 2e-3,
          "grad_noise" :9e-4,
          "clipper" :10.0,
@@ -26,12 +28,15 @@
   },
 
   "create_db2": {
+
+    "CREATE_DB": true,
+
     "DB_ROOT_DIR": "../../Audio_Data",
     "HOP" : 112,
     "WINDOW" : 0.65,
     "BAND": 16,
-    "CREATE_DB": true,
-    "DO_DATA_AUGMENTATION" : true,
+
+    "DO_DATA_AUGMENTATION" : false,
     "DATA_AUGMENT_METHOD" : "pitch_shift2",
     "NOISE_STDEV" : 2e-1,
     "CREATE_N_SAMPLES" : 4,
@@ -41,6 +46,7 @@
 
   "validation":["p12", "p38", "p07","p31", "p46","p06"],
   "test":["p34", "p30", "p42", "p08", "p15", "p19"],
+  "testing":["p34", "p30", "p42", "p08", "p15", "p19"],
   "cv_partition1" : ["p40", "p13", "p34", "p24", "p25", "p47", "p11"],
   "cv_partition2" :["p43", "p12",  "p08", "p28", "p22", "p18", "p17"],
   "cv_partition3" :["p23", "p16", "p19", "p39", "p27", "p32", "p31"],

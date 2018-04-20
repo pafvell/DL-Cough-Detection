@@ -27,8 +27,6 @@ DB_ROOT_DIR = config_db["DB_ROOT_DIR"]
 HOP=config_db["HOP"] #61 #56 #224,#112,#56,
 WINDOW=config_db["WINDOW"]
 BAND=config_db["BAND"]
-
-
 VERSION=config["DB_version"]
 
 
@@ -47,14 +45,14 @@ CREATE_N_SAMPLES = config_db["CREATE_N_SAMPLES"]
 AUGM_LIST = config_db["AUGM_LIST"]
 
 
-
+'''
 def add_noise(signal, sigma=NOISE_STDEV):
-        '''
+        """
         Input:
         sound signal; time series vector, standardized
         Output:
         sound signal + gaussian noise
-        '''
+        """
         std = sigma * np.max(signal)
         noise_mat = np.random.randn(signal.shape[0])*std
         return signal + noise_mat
@@ -113,7 +111,7 @@ def apply_augment(signal, sample_rate, window_size, n_samples, method=DATA_AUGME
 
           elif method == "time_stretch":
             return time_stretch(signal=signal, sample_rate=sample_rate, window_size=window_size)
-
+'''
 
 ###################################################################################################################################################################
 
@@ -161,13 +159,15 @@ def _floats_feature(value):
 
 
             
-def create_dataset(files1, files0, db_name, 
-                  db_full_path=ROOT_DIR,
-                  hop_length=HOP,
-		              bands = BAND,
-		              window = WINDOW, #0.16
-                  do_augmentation=False,
-                  create_n_samples=CREATE_N_SAMPLES):
+def create_dataset(files1, 
+                   files0, 
+                   db_name, 
+                   db_full_path=ROOT_DIR,
+                   hop_length=HOP,
+		   bands = BAND,
+		   window = WINDOW, #0.16
+                   do_augmentation=False,
+                   create_n_samples=CREATE_N_SAMPLES):
         """
 	     load, preprocess, normalize a sample
 	     input: a list of strings
@@ -179,12 +179,12 @@ def create_dataset(files1, files0, db_name,
         writer = tf.python_io.TFRecordWriter(db_filename)
 
 
-        if do_augmentation:
-          print("data augmenting: %s"%do_augmentation)
-          print("number of samples %d"%create_n_samples)
+        #if do_augmentation:
+        #  print("data augmenting: %s"%do_augmentation)
+        #  print("number of samples %d"%create_n_samples)
 
 
-        def store_example(files, label, create_n_samples=CREATE_N_SAMPLES):
+        def store_example(files, label): #, create_n_samples=CREATE_N_SAMPLES):
 
             for f in tqdm(files):
                 try:
@@ -197,24 +197,24 @@ def create_dataset(files1, files0, db_name,
                 time_signal = standardize(time_signal)
 
 
-                if not do_augmentation:
-                  create_n_samples=0
+                #if not do_augmentation:
+                #  create_n_samples=0
 
-                for j in range(create_n_samples+1):
+                #for j in range(create_n_samples):
 
-                      if j>=1:
-                         time_signal = apply_augment(time_signal, sample_rate=sample_rate, window_size=window, n_samples=(j-1))
+                      #if j>=1:
+                      #   time_signal = apply_augment(time_signal, sample_rate=sample_rate, window_size=window, n_samples=(j-1))
 
-                      mfcc = librosa.feature.melspectrogram(y=time_signal, sr=sample_rate, n_mels=bands, power=1, hop_length=hop_length)
+                mfcc = librosa.feature.melspectrogram(y=time_signal, sr=sample_rate, n_mels=bands, power=1, hop_length=hop_length)
 
-                      example = tf.train.Example(features=tf.train.Features(feature={
+                example = tf.train.Example(features=tf.train.Features(feature={
                                                                         'height': _int64_feature(bands),
                                                                         'width': _int64_feature(mfcc.shape[1]),
                                                                         'depth': _int64_feature(1),
                                                                         'data': _floats_feature(mfcc),
                                                                         'label': _int64_feature(label),
                                                                         }))
-                      writer.write(example.SerializeToString())
+                writer.write(example.SerializeToString())
                 
         store_example(files1, 1)
         store_example(files0, 0)
@@ -222,10 +222,9 @@ def create_dataset(files1, files0, db_name,
 
             
 def test_shape(files1, 
-                  hop_length=HOP,
-		              bands = BAND,
-		              window = WINDOW, 
-                  do_denoise=False):
+               hop_length=HOP,
+	       bands = BAND,
+	       window = WINDOW):
 
             import matplotlib.pyplot as plt
             import librosa.display
@@ -260,81 +259,80 @@ def test_shape(files1,
 
     
 def main(unused_args):
-
-       listOfParticipantsInTrainset=config["testing"]
-       listOfParticipantsInValidationset=config["validation"]
-
+       tf.set_random_seed(0)
        list_of_broken_files = ['04_Coughing/Distant (cd)/p17_rode-108.wav', '04_Coughing/Distant (cd)/p17_htc-108.wav', \
                                '04_Coughing/Distant (cd)/p17_tablet-108.wav', \
                                '04_Coughing/Distant (cd)/p17_iphone-108.wav',  '04_Coughing/Distant (cd)/p17_samsung-108.wav']
 
        ##
-       # READING COUGH DATA
+       # READING DATA
        #
        #
 
        print ('use data from root path %s'%DB_ROOT_DIR)
-
        coughAll = find_files(DB_ROOT_DIR + "/04_Coughing", "wav", recursively=True)
        assert len(coughAll) > 0, 'no cough files found. did you set the correct root path to the data in line 22?'
+       trainListCough = coughAll = remove_broken_files(DB_ROOT_DIR, list_of_broken_files, coughAll)
+       trainListOther = other = find_files(DB_ROOT_DIR + "/05_Other Control Sounds", "wav", recursively=True)
 
-       #remove broken files
-       for broken_file in list_of_broken_files:
-           broken_file = os.path.join(DB_ROOT_DIR, broken_file)
-           if broken_file in coughAll:
-                 print ( 'file ignored: %s'%broken_file )
-                 coughAll.remove(broken_file)
-
-
-       #split cough files into test- and training-set
-       testListCough, validationListCough= [], []
-       trainListCough = coughAll
+       ##
+       # Make Validation Set
+       #
+       #
+       '''
+       listOfParticipantsInValidationset=config["validation"]
+       validationListOther, validationListCough = [], []
        for name in coughAll:
-           for nameToExclude in listOfParticipantsInTrainset:
-              if nameToExclude in name:
-                  testListCough.append(name)
-                  trainListCough.remove(name)
            for nameToExclude in listOfParticipantsInValidationset:
               if nameToExclude in name:
                   validationListCough.append(name)
                   trainListCough.remove(name)
-
-       print('nr of samples coughing (test): %d' % len(testListCough))
-
-       ##
-       # READING OTHER DATA
-       #
-       #
-
-       other = find_files(DB_ROOT_DIR + "/05_Other Control Sounds", "wav", recursively=True)
-
-       testListOther,  validationListOther = [], []
-       trainListOther = other
        for name in other:
-           for nameToExclude in listOfParticipantsInTrainset:
-              if nameToExclude in name:
-                  testListOther.append(name)
-                  trainListOther.remove(name)
            for nameToExclude in listOfParticipantsInValidationset:
               if nameToExclude in name:
                   validationListOther.append(name)
                   trainListOther.remove(name)
+       coughAll = trainListCough
+       other = trainListOther
 
-       print('nr of samples NOT coughing (test): %d' % len(testListOther))
-
+       create_dataset(validationListCough, validationListOther, 'validation')
+       '''
 
        ##
-       # START STORING DATA TO TFRECORDS
+       # Make Sets
        #
        #
 
-       tf.set_random_seed(0)
        if CREATE_DB:
-          create_dataset(trainListCough, trainListOther, 'train', do_augmentation=DO_DATA_AUGMENTATION)
-          create_dataset(testListCough, testListOther, 'test')
-          create_dataset(testListCough, validationListOther, 'validation')
+              for i in range(5):
+                   listOfParticipantsInTrainset=config["cv_partition%d"%i]
+                   testListOther, testListCough = [], []
+                   trainListCough = coughAll
+                   trainListOther = other
+
+                   #split files into test- and training-set
+                   for name in coughAll:
+                       for nameToExclude in listOfParticipantsInTrainset:
+                           if nameToExclude in name:
+                              testListCough.append(name)
+                              trainListCough.remove(name)
+
+                   for name in other:
+                       for nameToExclude in listOfParticipantsInTrainset:
+                           if nameToExclude in name:
+                              testListOther.append(name)
+                              trainListOther.remove(name)
+
+                   print('nr of samples coughing (test): %d' % len(testListCough))
+                   print('nr of samples NOT coughing (test): %d' % len(testListOther))
+
+                   # START STORING DATA TO TFRECORDS
+                   create_dataset(trainListCough, trainListOther, 'train_%d'%i, do_augmentation=DO_DATA_AUGMENTATION)
+                   create_dataset(testListCough, testListOther, 'test_%d'%i)
+
+       
        else:
-          test_shape(trainListCough)
+              test_shape(trainListCough)
 
 
 

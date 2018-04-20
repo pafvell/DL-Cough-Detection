@@ -35,6 +35,7 @@ MODEL = importlib.import_module(control_config["model"]) #loads the model specif
 config_train = control_config["training_parameter"]
 
 TRAIN_MODEL = control_config["train_model"]
+DO_CV = control_config["do_cv"]
 
 ROOT_DIR = config["ROOT_DIR"]
 NUM_CLASSES = control_config["num_classes"]
@@ -74,7 +75,7 @@ def get_imgs(db_name, batch_size, buffer_size=10000, prefetch_batchs=3000, num_e
 
 
 def train(
-
+         cv_partition_id=0,
          eta= config_train["eta"], #learning rate
          grad_noise = config_train["grad_noise"],
          clipper=config_train["clipper"],
@@ -84,6 +85,7 @@ def train(
          train_capacity=config_train["train_capacity"],
          test_capacity=config_train["test_capacity"],
          num_epochs = config_train["num_epochs"],
+         max_num_steps = config_train["max_num_steps"], 	  #if None it trains until num_epochs is reached. Otherwise whatever is reached first
          gpu_fraction=config_train["gpu_fraction"],
          log_every_n_steps=config_train["log_every_n_steps"],
          eval_every_n_steps=config_train["eval_every_n_steps"],
@@ -97,7 +99,7 @@ def train(
        with graph.as_default():
               #load training data
               with tf.device("/cpu:0"):
-                    train_batch, train_labels, train_op_init = get_imgs('train', batch_size=batch_size, buffer_size=train_capacity, num_epochs=num_epochs)
+                    train_batch, train_labels, train_op_init = get_imgs('train_%d'%cv_partition_id, batch_size=batch_size, buffer_size=train_capacity, num_epochs=num_epochs)
 
               #initialize
               global_step = tf.Variable(0, name='global_step', trainable=False)
@@ -137,13 +139,15 @@ def train(
                         train_op = train_op.apply_gradients(grads, global_step=global_step)
                       
               #some summaries
-              tf.summary.scalar('other/learning_rate', eta  )
-              tf.summary.scalar('other/gradient_noise', grad_noise  )
               
-              with tf.variable_scope('gradients'):
-              	for grad, var in grads:
-              		if grad is not None:
-              			tf.summary.histogram(var.op.name, grad)    
+              if cv_partition_id == 0:
+                 tf.summary.scalar('other/learning_rate', eta  )
+                 tf.summary.scalar('other/gradient_noise', grad_noise  )
+
+                 with tf.variable_scope('gradients'):
+              	      for grad, var in grads:
+                          if grad is not None:
+                             tf.summary.histogram(var.op.name, grad)    
   		       
               #collect summaries
               summaries = tf.get_collection(tf.GraphKeys.SUMMARIES)
@@ -153,7 +157,7 @@ def train(
 
               #load Test Data
               with tf.device("/cpu:0"):
-                   test_batch, test_labels, test_op_init = get_imgs('test', batch_size=batch_size, buffer_size=test_capacity, num_epochs=num_epochs)
+                   test_batch, test_labels, test_op_init = get_imgs('test_%d'%cv_partition_id, batch_size=batch_size, buffer_size=test_capacity, num_epochs=num_epochs)
 
 
               #Evaluation
@@ -192,13 +196,13 @@ def train(
                 sess.run(init)
 
               	#checkpoints              
-                saver = load_model(sess, checkpoint_dir, 'config.json')
+                saver = load_model(sess, checkpoint_dir+'/cv%d'%cv_partition_id, checkpoint_dir, 'config.json')
 
                 #wait for the queues to be filled
                 time.sleep(20) 
               		    
-                train_writer = tf.summary.FileWriter(checkpoint_dir+"/train", sess.graph)
-                test_writer = tf.summary.FileWriter(checkpoint_dir+"/test")
+                train_writer = tf.summary.FileWriter(checkpoint_dir+'/train_%d'%cv_partition_id)#, sess.graph)
+                test_writer = tf.summary.FileWriter(checkpoint_dir+'/test_%d'%cv_partition_id)
 
                 #assert that no new tensors get added to the graph after this steps 
                 sess.graph.finalize()
@@ -206,7 +210,7 @@ def train(
                 print ('start learning')
                 try:
               	        i=0
-              	        while True:
+              	        while not max_num_steps or i<=max_num_steps:
                                 i+=1
               		        #training
                                 _, step, train_loss_ = sess.run([train_op, global_step, train_loss])
@@ -217,31 +221,33 @@ def train(
                            
               			#logging: update testing summary
                                 if i >= 500 and i%(eval_every_n_steps) == 0:
-                                        summary, mpc_, accuracy_, _ = sess.run([test_summary_op, mpc, accuracy, test_summary_update])
-                                        print ('EVAL: step: %d, idx: %d, mpc: %f, accuracy: %f'% (step, i,  mpc_, accuracy_))
+                                        summary, auc_, accuracy_, loss_, prec_, rec_, _= sess.run([test_summary_op, auc, accuracy, test_loss, precision, recall, test_summary_update])
+                                        print ('EVAL: step: %d, idx: %d, auc: %f, accuracy: %f'% (step, i,  auc_, accuracy_))
                                         test_writer.add_summary(summary, step)
                            
                                 #save checkpoint
-                                if i%(save_every_n_steps) == save_every_n_steps-1 and save_checkpoint:
+                                if save_checkpoint and i%(save_every_n_steps) == save_every_n_steps-1 :
                                         print ('save model (step %d)'%step)
-                                        saver.save(sess,checkpoint_dir+'/checkpoints', global_step=step)
+                                        saver.save(sess,checkpoint_dir+'/cv%d/checkpoint'%cv_partition_id, global_step=step)
 
                 except KeyboardInterrupt:
                       	        print("Manual interrupt occurred.")
                 except tf.errors.OutOfRangeError:
                                 print("End of Dataset: it ran for %d epochs"%num_epochs)
 
-                mpc_, accuracy_, loss_ = sess.run([mpc, accuracy, test_loss])
-
                 print ('################################################################################')
-                print ('Results - mpca:%f, accuracy:%f, loss:%f'%(mpc_,accuracy_,loss_))
+                print ('Results - AUC:%f, accuracy:%f, precision:%f, recall:%f, loss:%f'%(auc_,accuracy_, prec_, rec_, loss_))
                 print ('################################################################################')
-                saver.save(sess,checkpoint_dir+'/checkpoints', global_step=step)
+                saver.save(sess,checkpoint_dir+'/cv%d/checkpoint'%cv_partition_id, global_step=step)
                 sess.close()
 
+                return [auc_, accuracy_, prec_, rec_]
 
+'''
 def validate(
+         cv_partition_id=0,
          num_epochs=1,
+         dataset_ = 'test_',
          checkpoint_dir=config_train["checkpoint_dir"],
          batch_size=config_train["batch_size"],
          test_capacity=config_train["test_capacity"],
@@ -256,7 +262,7 @@ def validate(
        with graph.as_default():
               #load Test Data
               with tf.device("/cpu:0"):
-                   test_batch, test_labels, test_op_init = get_imgs('validation', batch_size=batch_size, buffer_size=test_capacity, num_epochs=num_epochs)
+                   test_batch, test_labels, test_op_init = get_imgs(dataset_+str(cv_partition_id), batch_size=batch_size, buffer_size=test_capacity, num_epochs=num_epochs)
 
               #Evaluation
               test_loss, predictions = MODEL.build_model(test_batch, test_labels, is_training=False, reuse=False)
@@ -294,7 +300,7 @@ def validate(
                 sess.run(init)
 
               	#checkpoints              
-                saver = load_model(sess, checkpoint_dir)
+                saver = load_model(sess, checkpoint_dir+'/cv%d'%cv_partition_id)
                 #test_writer = tf.summary.FileWriter(checkpoint_dir+"/validation")
 
                 print ('start evaluation')
@@ -313,35 +319,45 @@ def validate(
                 except tf.errors.OutOfRangeError:
                                 print("End of Dataset: it ran for %d epochs"%num_epochs)
 
-                print ('################################################################################')
+                print ('######################################################################################################')
                 print ('Results - AUC:%f, accuracy:%f, precision:%f, recall:%f, loss:%f'%(auc_,accuracy_, prec_, rec_, loss_))
-                print ('################################################################################')
+                print ('######################################################################################################')
                 sess.close()
-
+'''
     
 def main(unused_args):
 
-
-       ##
-       # START TRAINING
-       #
-       #
-
        tf.set_random_seed(0)
 
-
-
-
-
        if TRAIN_MODEL:
-          train()
-       else:
-          validate()
+          if DO_CV:
+                results = []
+                for i in range(5):
+                     out = train(cv_partition_id=i)
+                     results.append(out)
+             
+                results = np.array(results)
+                mean_ = np.mean(results, axis=0)
+                std_ = np.std(results, axis=0)
+                min_ = np.min(results, axis=0)
+                max_ = np.max(results, axis=0)
+                measures = ['auc ', 'acc ', 'prec', 'rec ']
+                assert mean_.shape[0] == 4, 'theres a bug in the mean calculation. 4 != %d'%mean_.shape[0]
 
 
-    
-
-
+                print ()
+                print ('***********************************************************************************************')
+                print ('-------------------------------CROSS VALIDATION-------------------------------------')
+                print ('***********************************************************************************************')
+                for j in range(4):
+                     print ('%s - mean: %f, std:%f, min:%f, max%f' %(measures[j], mean_[j], std_[j], min_[j], max_[j]))
+                print ('***********************************************************************************************')
+          else: 
+                train()
+              
+       #else:
+       #      validate()
+             
 
 if __name__ == '__main__':
        tf.app.run()    

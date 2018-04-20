@@ -20,7 +20,6 @@ def classify(inputs,
 	     num_classes,
              dropout_keep_prob=0.5,
              weight_decay = 1e-4,
-             fc_size=16,
              num_filter=128,
 	     scope=None,
 	     reuse=None,
@@ -41,7 +40,7 @@ def classify(inputs,
                                       net = tf.expand_dims(inputs, -1) #input needs to be in the format NHWC!! if there is only one channel, expand it by 1 dimension
 
                                       with tf.variable_scope('stump'):
-                                                net = slim.conv2d(net, num_filter, [1, 7], scope='conv1x7')
+                                                net = slim.conv2d(net, num_filter/2, [1, 7], scope='conv1x7')
                                                 net = slim.max_pool2d(net, [1, 2], stride=[1, 2], scope='pool1')
                                                 net = slim.conv2d(net, num_filter, [1, 5], scope='conv1x5')
 
@@ -49,7 +48,8 @@ def classify(inputs,
 
                                                 for i in range(route):
                                                       net = slim.max_pool2d(net, [1, 2], stride=[1, 2], scope='pool%d'%(i+2))
-                                                      net += slim.conv2d(net, num_filter, [3, 3], activation_fn=None, scope='conv3x3_%d'%(i+2))
+                                                      net += slim.conv2d(net, num_filter, [3, 3], scope='conv3x3_%d'%(i+2)) #activation_fn=None, 
+                                                      #net = tf.nn.relu(net)
 
                                                 net = tf.reduce_max(net, 2) 
 
@@ -90,7 +90,7 @@ def build_model(x,
         
         #model	
         with tf.variable_scope('model_v1'):
-                predictions = classify(x, num_classes=num_classes, is_training=is_training, reuse=reuse, scope='wk', route=2)
+                predictions = classify(x, num_classes=num_classes, is_training=is_training, reuse=reuse, scope='wk')
                 loss = loss_fkt(predictions, y)
 
    

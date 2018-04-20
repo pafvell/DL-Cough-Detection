@@ -163,8 +163,9 @@ def get_variables_to_train(trainable_scopes=None, show_variables=False, sample_r
 
 def load_model(sess, 
        	checkpoint_path, 
+       	copy_path = None,
         root_file = None,
-       	show_cp_content=True, 
+       	show_cp_content=False, 
        	ignore_missing_vars=False):
         """warm-start the training.
         """
@@ -172,7 +173,9 @@ def load_model(sess,
         if not os.path.exists(checkpoint_path):
        		os.makedirs(checkpoint_path)  
        		if root_file:
-                   copyfile(root_file, checkpoint_path+'/'+root_file)
+                   if not copy_path:
+                      copy_path=checkpoint_path
+                   copyfile(root_file, copy_path+'/'+root_file)
 
         latest_ckpt = tf.train.latest_checkpoint(checkpoint_path)	
         if not latest_ckpt:
@@ -231,5 +234,14 @@ def find_files(root, fntype, recursively=False):
        return matches
 
 
-
+def remove_broken_files(root, list_of_broken_files, files):
+       for broken_file in list_of_broken_files:
+           broken_file = os.path.join(root, broken_file)
+           if broken_file in files:
+                 print ( 'file ignored: %s'%broken_file )
+                 files.remove(broken_file)
+       return files
        
+
+
+

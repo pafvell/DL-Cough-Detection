@@ -1,24 +1,26 @@
 {
-  "ROOT_DIR" : "../../Audio_Data",
-  "DB_version" : "650_112_2",
+  "ROOT_DIR" : "./Audio_Data",
+  "DB_version" : "650_112_cv",
 
   "controller" : {
-    "model" : "model_cnn_v1",
+    "model" : "model_boost_v9",
     "num_classes": 2,
     "spec_size" : 128,
 
     "train_model": true,
+    "do_cv": true,
 
     "training_parameter" : {
          "eta": 2e-3,
          "grad_noise" :9e-4,
          "clipper" :10.0,
-         "checkpoint_dir" :"./checkpoints/model_cnn_v1",
+         "checkpoint_dir" :"./checkpoints/cv_boost_v9_32_32",
          "batch_size" : 64,
          "trainable_scopes" : null,
          "train_capacity"  : 9500,
          "test_capacity" :5000,
          "num_epochs" : 100000,
+         "max_num_steps" : 100000,
          "gpu_fraction" : 0.9,
          "log_every_n_steps" : 1000,
          "eval_every_n_steps" : 1000,
@@ -31,7 +33,7 @@
 
     "CREATE_DB": true,
 
-    "DB_ROOT_DIR": "../../Audio_Data",
+    "DB_ROOT_DIR": "../cough_detect2/Audio_Data",
     "HOP" : 112,
     "WINDOW" : 0.65,
     "BAND": 16,
@@ -44,13 +46,9 @@
     "PITCH_SHIFT":[-2,-1,1,2]
   },
 
-  "validation":["p12", "p38", "p07","p31", "p46","p06"],
-  "test":["p34", "p30", "p42", "p08", "p15", "p19"],
-  "testing":["p34", "p30", "p42", "p08", "p15", "p19"],
-  "cv_partition1" : ["p40", "p13", "p34", "p24", "p25", "p47", "p11"],
-  "cv_partition2" :["p43", "p12",  "p08", "p28", "p22", "p18", "p17"],
-  "cv_partition3" :["p23", "p16", "p19", "p39", "p27", "p32", "p31"],
-  "cv_partition4": ["p07", "p46", "p33", "p21", "p26", "p41",  "p05"],
-  "cv_partition5":["p10", "p42", "p36",  "p06", "p44", "p15", "p14"],
-  "cv_test":["p38", "p29", "p45", "p30", "p37", "p20",  "p09", "p35"]
+  "cv_partition0" : ["p40", "p13", "p34", "p24", "p25", "p47", "p11"],
+  "cv_partition1" : ["p43", "p12", "p08", "p28", "p22", "p18", "p17"],
+  "cv_partition2" : ["p23", "p16", "p19", "p39", "p27", "p32", "p31"],
+  "cv_partition3" : ["p07", "p46", "p33", "p21", "p26", "p41", "p05"],
+  "cv_partition4" : ["p10", "p42", "p36", "p06", "p44", "p15", "p14"]
 }

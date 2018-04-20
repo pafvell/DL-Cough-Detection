@@ -15,7 +15,7 @@ from utils import softmax_cross_entropy_v2 as softmax_cross_entropy
 def classify(inputs, 
 	     num_classes,
              dropout_keep_prob=0.5,
-             weight_decay = 1e-4,
+             weight_decay = 1e-3,
              num_filter=32,
 	     scope=None,
 	     reuse=None,
@@ -63,7 +63,7 @@ def loss_fkt(logits, y):
 def build_model(x, 
 		y,
 	        num_classes=2,
-		num_estimator=32,
+		num_estimator=64,
                 is_training=True,
 		reuse=None
 		):

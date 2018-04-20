@@ -330,6 +330,7 @@ def main(unused_args):
        tf.set_random_seed(0)
 
        if TRAIN_MODEL:
+                '''
           if DO_CV:
                 results = []
                 for i in range(5):
@@ -353,6 +354,7 @@ def main(unused_args):
                      print ('%s - mean: %f, std:%f, min:%f, max%f' %(measures[j], mean_[j], std_[j], min_[j], max_[j]))
                 print ('***********************************************************************************************')
           else: 
+                '''
                 train()
               
        #else:

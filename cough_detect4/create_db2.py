@@ -280,7 +280,7 @@ def main(unused_args):
        #
        #
        '''
-       listOfParticipantsInValidationset=config["validation"]
+       listOfParticipantsInValidationset=config["test"]
        validationListOther, validationListCough = [], []
        for name in coughAll:
            for nameToExclude in listOfParticipantsInValidationset:
@@ -295,7 +295,11 @@ def main(unused_args):
        coughAll = trainListCough
        other = trainListOther
 
-       create_dataset(validationListCough, validationListOther, 'validation')
+       create_dataset(validationListCough, validationListOther, 'test')
+
+       t1 = len(validationListCough)
+       t2 = len(validationListOther)
+       print('total nr of test samples: (cough) %d + (other) %d = %d ' % (t1, t2, t1+t2))
        '''
 
        ##
@@ -304,8 +308,9 @@ def main(unused_args):
        #
 
        if CREATE_DB:
-              for i in range(5):
-                   listOfParticipantsInTrainset=config["cv_partition%d"%i]
+              #for i in range(5):
+                   #listOfParticipantsInTrainset=config["cv_partition%d"%i]
+                   listOfParticipantsInTrainset=config["test"]
                    testListOther, testListCough = [], []
                    trainListCough = list(coughAll)
                    trainListOther = list(other)

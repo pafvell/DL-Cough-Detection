@@ -323,6 +323,10 @@ def main(unused_args):
                               testListOther.append(name)
                               trainListOther.remove(name)
 
+
+                   print()
+                   print('------------------------------------------------------------------')
+                   print('PARTITION %d'%i)
                    print('nr of samples coughing (test): %d' % len(testListCough))
                    print('nr of samples NOT coughing (test): %d' % len(testListOther))
                    print('nr of samples coughing (train): %d' % len(trainListCough))
@@ -336,8 +340,6 @@ def main(unused_args):
                    create_dataset(trainListCough, trainListOther, 'train_%d'%i, do_augmentation=DO_DATA_AUGMENTATION)
                    create_dataset(testListCough, testListOther, 'test_%d'%i)
 
-                   print('------------------------------------------------------------------')
-                   print()
 
        
        else:

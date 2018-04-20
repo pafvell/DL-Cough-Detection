@@ -2,17 +2,14 @@
 
 
 cv_large_wk (CNN_V1_3+Residual mit je 128 channels):
-auc  - mean: 0.923694, std:0.023358, min:0.883500, max0.945116
-acc  - mean: 0.928286, std:0.018503, min:0.897644, max0.945525
-prec - mean: 0.942110, std:0.011059, min:0.932348, max0.958523
-rec  - mean: 0.890541, std:0.054532, min:0.792090, max0.933737
+TODO
 
 
 
 ---------------------------------------------------------------------------------------------------------------------
 
-
-
+pseudo boosting (32 learners mit je 32 channels)
+RUNNING
 
 
 
@@ -38,47 +35,40 @@ v1
 ---------------------------------------------------------------------------------------------------------------------
 
 Number of samples in each set
-
-100%|███████████████████████████████████████| 5692/5692 [03:07<00:00, 30.41it/s]
-100%|███████████████████████████████████████| 7514/7514 [05:23<00:00, 23.25it/s]
-save test_0 samples
-100%|███████████████████████████████████████| 1038/1038 [00:31<00:00, 33.23it/s]
-100%|███████████████████████████████████████| 1340/1340 [00:50<00:00, 26.32it/s]
-
-nr of samples coughing (test): 859
-nr of samples NOT coughing (test): 1171
-save train_1 samples
-100%|███████████████████████████████████████| 4833/4833 [02:15<00:00, 35.62it/s]
-100%|███████████████████████████████████████| 6343/6343 [03:52<00:00, 27.25it/s]
-save test_1 samples
-100%|█████████████████████████████████████████| 859/859 [00:25<00:00, 33.98it/s]
-100%|███████████████████████████████████████| 1171/1171 [00:46<00:00, 25.13it/s]
-
-nr of samples coughing (test): 832
-nr of samples NOT coughing (test): 904
-save train_2 samples
-100%|███████████████████████████████████████| 4001/4001 [01:53<00:00, 35.17it/s]
-100%|███████████████████████████████████████| 5439/5439 [03:15<00:00, 27.86it/s]
-save test_2 samples
-100%|█████████████████████████████████████████| 832/832 [00:21<00:00, 38.09it/s]
-100%|█████████████████████████████████████████| 904/904 [00:37<00:00, 24.16it/s]
-
-nr of samples coughing (test): 906
-nr of samples NOT coughing (test): 1159
-save train_3 samples
-100%|███████████████████████████████████████| 3095/3095 [01:29<00:00, 34.67it/s]
-100%|███████████████████████████████████████| 4280/4280 [02:34<00:00, 27.76it/s]
-save test_3 samples
-100%|█████████████████████████████████████████| 906/906 [00:24<00:00, 37.37it/s]
-100%|███████████████████████████████████████| 1159/1159 [00:40<00:00, 28.54it/s]
-
-nr of samples coughing (test): 805
-nr of samples NOT coughing (test): 1152
-save train_4 samples
-100%|███████████████████████████████████████| 2290/2290 [01:05<00:00, 34.94it/s]
-100%|███████████████████████████████████████| 3128/3128 [01:54<00:00, 27.38it/s]
-save test_4 samples
-100%|█████████████████████████████████████████| 805/805 [00:23<00:00, 33.88it/s]
-100%|███████████████████████████████████████| 1152/1152 [00:39<00:00, 28.84it/s]
+------------------------------------------------------------------
+PARTITION 0
+nr of samples coughing (test): 1220
+nr of samples NOT coughing (test): 1561
+nr of samples coughing (train): 5510
+nr of samples NOT coughing (train): 7293
+total nr of samples: (train) 12803 + (test) 2781 = (total) 15584
+------------------------------------------------------------------
+PARTITION 1
+nr of samples coughing (test): 1020
+nr of samples NOT coughing (test): 1401
+nr of samples coughing (train): 5710
+nr of samples NOT coughing (train): 7453
+total nr of samples: (train) 13163 + (test) 2421 = (total) 15584
+------------------------------------------------------------------
+PARTITION 2
+nr of samples coughing (test): 990
+nr of samples NOT coughing (test): 1070
+nr of samples coughing (train): 5740
+nr of samples NOT coughing (train): 7784
+total nr of samples: (train) 13524 + (test) 2060 = (total) 15584
+------------------------------------------------------------------
+PARTITION 3
+nr of samples coughing (test): 1153
+nr of samples NOT coughing (test): 1480
+nr of samples coughing (train): 5577
+nr of samples NOT coughing (train): 7374
+total nr of samples: (train) 12951 + (test) 2633 = (total) 15584
+------------------------------------------------------------------
+PARTITION 4
+nr of samples coughing (test): 1082
+nr of samples NOT coughing (test): 1552
+nr of samples coughing (train): 5648
+nr of samples NOT coughing (train): 7302
+total nr of samples: (train) 12950 + (test) 2634 = (total) 15584
 
 

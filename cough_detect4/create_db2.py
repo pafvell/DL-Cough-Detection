@@ -307,8 +307,8 @@ def main(unused_args):
               for i in range(5):
                    listOfParticipantsInTrainset=config["cv_partition%d"%i]
                    testListOther, testListCough = [], []
-                   trainListCough = coughAll
-                   trainListOther = other
+                   trainListCough = list(coughAll)
+                   trainListOther = list(other)
 
                    #split files into test- and training-set
                    for name in coughAll:
@@ -325,10 +325,19 @@ def main(unused_args):
 
                    print('nr of samples coughing (test): %d' % len(testListCough))
                    print('nr of samples NOT coughing (test): %d' % len(testListOther))
+                   print('nr of samples coughing (train): %d' % len(trainListCough))
+                   print('nr of samples NOT coughing (train): %d' % len(trainListOther))
+                   t1 = len(testListCough) + len(testListOther)
+                   t2 = len(trainListCough) + len(trainListOther)
+                   print('total nr of samples: (train) %d + (test) %d = (total) %d' % (t2, t1, t1+t2))
+                   print()
 
                    # START STORING DATA TO TFRECORDS
                    create_dataset(trainListCough, trainListOther, 'train_%d'%i, do_augmentation=DO_DATA_AUGMENTATION)
                    create_dataset(testListCough, testListOther, 'test_%d'%i)
+
+                   print('------------------------------------------------------------------')
+                   print()
 
        
        else:

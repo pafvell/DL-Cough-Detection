@@ -307,15 +307,13 @@ def main(unused_args):
        #
        #
 
-       if CREATE_DB:
-              #for i in range(1):
+       for i in range(1):
                    #listOfParticipantsInTrainset=config["cv_partition%d"%i]
-
-                   i=0
+                   
                    listOfParticipantsInTrainset=config["test"]
                    testListOther, testListCough = [], []
-                   trainListCough = list(coughAll)
-                   trainListOther = list(other)
+                   trainListCough = coughAll
+                   trainListOther = other
 
                    #split files into test- and training-set
                    for name in coughAll:
@@ -344,13 +342,15 @@ def main(unused_args):
                    print()
 
                    # START STORING DATA TO TFRECORDS
-                   create_dataset(trainListCough, trainListOther, 'train_%d'%i, do_augmentation=DO_DATA_AUGMENTATION)
-                   create_dataset(testListCough, testListOther, 'test_%d'%i)
+
+                   if CREATE_DB:
+                      create_dataset(trainListCough, trainListOther, 'train_%d'%i, do_augmentation=DO_DATA_AUGMENTATION)
+                      create_dataset(testListCough, testListOther, 'test_%d'%i)
 
 
        
-       else:
-              test_shape(trainListCough)
+                   else:
+                      test_shape(trainListCough)
 
 
 

@@ -308,8 +308,10 @@ def main(unused_args):
        #
 
        if CREATE_DB:
-              #for i in range(5):
+              #for i in range(1):
                    #listOfParticipantsInTrainset=config["cv_partition%d"%i]
+
+                   i=0
                    listOfParticipantsInTrainset=config["test"]
                    testListOther, testListCough = [], []
                    trainListCough = list(coughAll)

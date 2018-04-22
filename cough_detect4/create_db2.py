@@ -312,8 +312,8 @@ def main(unused_args):
                    
                    listOfParticipantsInTrainset=config["test"]
                    testListOther, testListCough = [], []
-                   trainListCough = coughAll
-                   trainListOther = other
+                   trainListCough = list(coughAll)
+                   trainListOther = list(other)
 
                    #split files into test- and training-set
                    for name in coughAll:
@@ -346,9 +346,6 @@ def main(unused_args):
                    if CREATE_DB:
                       create_dataset(trainListCough, trainListOther, 'train_%d'%i, do_augmentation=DO_DATA_AUGMENTATION)
                       create_dataset(testListCough, testListOther, 'test_%d'%i)
-
-
-       
                    else:
                       test_shape(trainListCough)
 

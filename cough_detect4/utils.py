@@ -165,6 +165,7 @@ def load_model(sess,
        	checkpoint_path, 
        	copy_path = None,
         root_file = None,
+	max_to_keep=10,
        	show_cp_content=False, 
        	ignore_missing_vars=False):
         """warm-start the training.
@@ -179,7 +180,7 @@ def load_model(sess,
 
         latest_ckpt = tf.train.latest_checkpoint(checkpoint_path)	
         if not latest_ckpt:
-               return tf.train.Saver()
+               return tf.train.Saver(max_to_keep=max_to_keep)
 	
         print ( 'restore from checkpoint: '+checkpoint_path )
 
@@ -212,9 +213,9 @@ def load_model(sess,
 	       	                    restore_vars.append(curr_var)
 
 	       	print ('nr vars restored: %d'%len(restore_vars))    
-	       	saver = tf.train.Saver(restore_vars)
+	       	saver = tf.train.Saver(restore_vars, max_to_keep=max_to_keep)
         else:
-                saver = tf.train.Saver(variables)
+                saver = tf.train.Saver(variables, max_to_keep=max_to_keep)
 
         saver.restore(sess,latest_ckpt)
         return saver
@@ -243,5 +244,11 @@ def remove_broken_files(root, list_of_broken_files, files):
        return files
        
 
+def make_batches(iterable, n=1):
+	l=len(iterable)
+	for ndx in range(0,l, n):
+		yield iterable[ndx:min(ndx+n,l)]
+
+	
 
 

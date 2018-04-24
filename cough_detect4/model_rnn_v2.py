@@ -32,7 +32,7 @@ def RNN_multicell(inputs,
             output, state = tf.nn.dynamic_rnn(cell, inputs, dtype = tf.float32)
             output = tf.transpose(output, [1, 0, 2])
             last = tf.gather(output, int(output.get_shape()[0]) - 1)
-            last = slim.fully_connected(last,128, 
+            last = slim.fully_connected(last,256, 
 					activation_fn=tf.nn.relu)
 
             return slim.fully_connected(last,2, activation_fn=None)
@@ -42,6 +42,8 @@ def build_model(x,
 		y,
 	        num_classes=2,
                 is_training=True,
+                num_estimator=None,
+                num_filter=None,
 		reuse=None
 		):
         """

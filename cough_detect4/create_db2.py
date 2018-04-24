@@ -14,106 +14,100 @@ import os, sys, math, shutil, time, threading
 import librosa
 
 from utils import *
+from sklearn.model_selection import train_test_split
 
+
+
+#loading config file
+parser = argparse.ArgumentParser()
+parser.add_argument('-config', 
+                     type=str,
+                     default='config.json',
+                     help='store a json file with all the necessary parameters')
+args = parser.parse_args()
 
 #loading configuration
-with open('config.json') as json_data_file:
-    config = json.load(json_data_file)
-
-ROOT_DIR = config["ROOT_DIR"]
-config_db = config["create_db2"]
-DB_ROOT_DIR = config_db["DB_ROOT_DIR"]
-
-HOP=config_db["HOP"] #61 #56 #224,#112,#56,
-WINDOW=config_db["WINDOW"]
-BAND=config_db["BAND"]
-VERSION=config["DB_version"]
-
-
-CREATE_DB = config_db["CREATE_DB"]
+with open(args.config) as json_data_file:
+           config = json.load(json_data_file)
+config_db = config["dataset"]
 
 
 
-###################################################################################################################################################################
+def get_imgs(	split_id=config_db["split_id"],			
+		db_root_dir = config_db["DB_ROOT_DIR"],
+        	listOfParticipantsInTestset=config_db["test"],
+		listOfAllowedSources=config_db["allowedSources"]
+	    ):
+       '''
+	possible experiment splits:
+	1)	standard test/training a la Felipe:  split files into test- and training-set by excluding all for the testset selected persons (stored in config.json /test)
+	2)	standard validation a la Felipe: randomly split off a validation set out of the training_set and train on the rest
+	3)	standard test/training a la Maurice: like 1 but  only consider certain types of microphones (defined in config.json /allowedSources)
+	4)	standard validation a la Maurice: like 2 but  only consider certain types of microphones (defined in config.json /allowedSources)
+	5)	standard test/training a la Kevin: like 3 but instead of splitting by selected persons only split randomly 80:20 
 
-#Data Augmentation Parameters
-DO_DATA_AUGMENTATION = config_db["DO_DATA_AUGMENTATION"]
-DATA_AUGMENT_METHOD = config_db["DATA_AUGMENT_METHOD"]
-NOISE_STDEV = config_db["NOISE_STDEV"]
-CREATE_N_SAMPLES = config_db["CREATE_N_SAMPLES"]
+       '''
 
-AUGM_LIST = config_db["AUGM_LIST"]
+       list_of_broken_files = ['04_Coughing/Distant (cd)/p17_rode-108.wav', '04_Coughing/Distant (cd)/p17_htc-108.wav', \
+                               '04_Coughing/Distant (cd)/p17_tablet-108.wav', \
+                               '04_Coughing/Distant (cd)/p17_iphone-108.wav',  '04_Coughing/Distant (cd)/p17_samsung-108.wav']
+
+       ##
+       # READING DATA
+       #
+       #
+
+       print ('use data from root path %s'%db_root_dir)
+       coughAll = find_files(db_root_dir + "/04_Coughing", "wav", recursively=True)
+       assert len(coughAll) > 0, 'no cough files found. did you set the correct root path to the data in line 22?'
+       coughAll = remove_broken_files(db_root_dir, list_of_broken_files, coughAll)
+       other = find_files(db_root_dir + "/05_Other Control Sounds", "wav", recursively=True)
+
+       #print( 'CoughAll: %d'%len(coughAll))
+       #print( 'Other: %d'%len(other))
+       #print( 'Total: %d'%(len(coughAll)+len(other)))
+
+       #3+4) additional choosable tests: only consider certain types of microphones 
+       if split_id > 2: 
+                coughAll = [c for c in coughAll for allowedMic in listOfAllowedSources if allowedMic in c]
+                other	 = [c for c in other for allowedMic  in listOfAllowedSources if allowedMic in c]
+
+       #5) additional choosable tests: when only considering certain types of microphones 
+       if split_id==5:
+                trainListOther, testListOther = train_test_split(other, test_size=0.20, random_state=42) 
+                trainListCough, testListCough = train_test_split(coughAll, test_size=0.20, random_state=42) 
+                return testListCough, testListOther, trainListCough, trainListOther
+
+       ##
+       # Make Sets
+       #
+       #
+
+       testListOther, testListCough = [], []
+       trainListCough = list(coughAll)
+       trainListOther = list(other)
+
+       #1) split files into test- and training-set by excluding all for the testset selected persons
+       for name in coughAll:
+                for nameToExclude in listOfParticipantsInTestset:
+                        if nameToExclude in name:
+                              testListCough.append(name)
+                              trainListCough.remove(name)
+
+       for name in other:
+                for nameToExclude in listOfParticipantsInTestset:
+                        if nameToExclude in name:
+                              testListOther.append(name)
+                              trainListOther.remove(name)
+
+       #2) randomly split off a validation set out of the training_set
+       if split_id%2==0:
+                trainListOther, testListOther = train_test_split(trainListOther, test_size=0.10, random_state=42) 
+                trainListCough, testListCough = train_test_split(trainListCough, test_size=0.10, random_state=42) 
+
+       return testListCough, testListOther, trainListCough, trainListOther
 
 
-'''
-def add_noise(signal, sigma=NOISE_STDEV):
-        """
-        Input:
-        sound signal; time series vector, standardized
-        Output:
-        sound signal + gaussian noise
-        """
-        std = sigma * np.max(signal)
-        noise_mat = np.random.randn(signal.shape[0])*std
-        return signal + noise_mat
-
-
-def pitch_shift(signal, sample_rate, n_steps):
-
-        # as in https://librosa.github.io/librosa/generated/librosa.effects.pitch_shift.html#librosa.effects.pitch_shift
-
-        return librosa.effects.pitch_shift(y=signal, sr=sample_rate, n_steps=n_steps)
-
-
-def pitch_shift2(signal, sample_rate, bins_per_octave=24, pitch_pm=4):
-
-        pitch_change =  pitch_pm * 2*(np.random.uniform()-0.5)   
-        y_pitch = librosa.effects.pitch_shift(signal.astype('float64'), 
-                                              sample_rate, 
-                                              n_steps=pitch_change, 
-                                              bins_per_octave=bins_per_octave)
-        return y_pitch
-
-
-def time_stretch(signal, sample_rate, window_size, stretch_factor=1.2):
-
-        # as in https://librosa.github.io/librosa/generated/librosa.effects.time_stretch.html#librosa.effects.time_stretch
-
-        signal = librosa.effects.time_stretch(y=signal, rate=stretch_factor)
-
-        return extract_Signal_Of_Importance(signal=signal, window=window_size, sample_rate=sample_rate)
-
-
-
-def apply_augment(signal, sample_rate, window_size, n_samples, method=DATA_AUGMENT_METHOD):
-
-        #TODO
-        #https://www.kaggle.com/CVxTz/audio-data-augmentation
-        #https://www.kaggle.com/huseinzol05/sound-augmentation-librosa
-
-        if method not in AUGM_LIST:
-          raise NotImplementedError("augmentation method \"%s\" has not been implemented yet"%method)
-
-        else:
-
-          if method == None:
-            return signal
-
-          elif method == "add_noise":
-            return add_noise(signal=signal)
-
-          elif method == "pitch_shift":
-            n_steps = config_db["PITCH_SHIFT"][n_samples]
-            return pitch_shift(signal=signal, sample_rate=sample_rate, n_steps = n_steps)
-
-          elif method == "pitch_shift2":
-            return pitch_shift2(signal=signal, sample_rate=sample_rate)
-
-          elif method == "time_stretch":
-            return time_stretch(signal=signal, sample_rate=sample_rate, window_size=window_size)
-'''
-
-###################################################################################################################################################################
 
 
 def standardize(timeSignal):
@@ -145,6 +139,7 @@ def extract_Signal_Of_Importance(signal, window, sample_rate ):
         return signal
 
 
+
 def _int64_feature(value):
         return tf.train.Feature(int64_list=tf.train.Int64List(value=[value]))
 
@@ -158,16 +153,33 @@ def _floats_feature(value):
     return tf.train.Feature(float_list=tf.train.FloatList(value=value.reshape(-1)))
 
 
+def preprocess(	sound_file,
+		bands,
+                hop_length,
+		window,
+		):
+
+                try:
+                       time_signal, sample_rate = librosa.load(sound_file, mono=True, res_type='kaiser_fast')
+                except ValueError as e:
+                       print ('!!!!!!! librosa failed to load file: %s !!!!!!!!!'%f)
+                       raise e
+
+                time_signal = extract_Signal_Of_Importance(time_signal, window, sample_rate)
+                time_signal = standardize(time_signal)
+                mfcc = librosa.feature.melspectrogram(y=time_signal, sr=sample_rate, n_mels=bands, power=1, hop_length=hop_length)
+                return mfcc
+
             
 def create_dataset(files1, 
                    files0, 
                    db_name, 
-                   db_full_path=ROOT_DIR,
-                   hop_length=HOP,
-		   bands = BAND,
-		   window = WINDOW, #0.16
-                   do_augmentation=False,
-                   create_n_samples=CREATE_N_SAMPLES):
+                   hop_length=config_db["HOP"],
+		   bands = config_db["BAND"],
+		   window = config_db["WINDOW"],
+                   db_full_path=config["ROOT_DIR"],
+		   version=config["DB_version"]
+	):
         """
 	     load, preprocess, normalize a sample
 	     input: a list of strings
@@ -175,38 +187,13 @@ def create_dataset(files1,
         """
 
         print ('save %s samples'%db_name)
-        db_filename = os.path.join(db_full_path, db_name + VERSION + '.tfrecords')
+        db_filename = os.path.join(db_full_path, db_name + version + '.tfrecords')
         writer = tf.python_io.TFRecordWriter(db_filename)
 
-
-        #if do_augmentation:
-        #  print("data augmenting: %s"%do_augmentation)
-        #  print("number of samples %d"%create_n_samples)
-
-
-        def store_example(files, label): #, create_n_samples=CREATE_N_SAMPLES):
+        def store_example(files, label): 
 
             for f in tqdm(files):
-                try:
-                       time_signal, sample_rate = librosa.load(f, mono=True, res_type='kaiser_fast')
-                except ValueError as e:
-                       print ('!!!!!!! librosa failed to load file: %s !!!!!!!!!'%f)
-                       raise e
-
-                time_signal = extract_Signal_Of_Importance(time_signal, window, sample_rate)
-                time_signal = standardize(time_signal)
-
-
-                #if not do_augmentation:
-                #  create_n_samples=0
-
-                #for j in range(create_n_samples):
-
-                      #if j>=1:
-                      #   time_signal = apply_augment(time_signal, sample_rate=sample_rate, window_size=window, n_samples=(j-1))
-
-                mfcc = librosa.feature.melspectrogram(y=time_signal, sr=sample_rate, n_mels=bands, power=1, hop_length=hop_length)
-
+                mfcc = preprocess(f, bands=bands, hop_length=hop_length, window=window)
                 example = tf.train.Example(features=tf.train.Features(feature={
                                                                         'height': _int64_feature(bands),
                                                                         'width': _int64_feature(mfcc.shape[1]),
@@ -221,29 +208,19 @@ def create_dataset(files1,
         writer.close()
 
             
-def test_shape(files1, 
-               hop_length=HOP,
-	       bands = BAND,
-	       window = WINDOW):
+def test_shape (files1, 
+                sound_id=0, #list id of the sample that should be displayed
+                hop_length=config_db["HOP"],
+		bands = config_db["BAND"],
+		window = config_db["WINDOW"],
+		):
 
-            import matplotlib.pyplot as plt
-            import librosa.display
+                import matplotlib.pyplot as plt
+                import librosa.display
 
-            for f in files1:
-                try:
-                       timeSignal, sample_rate = librosa.load(f, mono=True, res_type='kaiser_fast')
-                except ValueError as e:
-                       print ('!!!!!!! librosa failed to load file: %s !!!!!!!!!'%f)
-                       raise e
-
-                timeSignal = extract_Signal_Of_Importance(timeSignal, window, sample_rate)
-
-                timeSignal = standardize(timeSignal)
-
-                mfcc = librosa.feature.melspectrogram(y=timeSignal, sr=sample_rate, n_mels=bands, power=1, hop_length=hop_length)
-                #mfcc = librosa.feature.delta(mfcc)
-
-                size_cub=mfcc.shape[1]
+                f = files1[sound_id]
+                mfcc = preprocess(f, bands=bands, hop_length=hop_length, window=window)
+                
                 print ('mfcc shape: '+str(mfcc.shape))
                 print ('mfcc max: '+str(np.max(mfcc)))
 
@@ -253,101 +230,37 @@ def test_shape(files1,
                 plt.title('MFCC')
                 plt.tight_layout()
                 plt.show()
-                break
 
 
+def print_stats(test_coughs, test_other, train_coughs, train_other, name=''):
+                   print()
+                   print('------------------------------------------------------------------')
+                   print('PARTITION: '+str(name))
+                   print('nr of samples coughing (test): %d' % len(test_coughs))
+                   print('nr of samples NOT coughing (test): %d' % len(test_other))
+                   print('nr of samples coughing (train): %d' % len(train_coughs))
+                   print('nr of samples NOT coughing (train): %d' % len(train_other))
+                   t1 = len(test_coughs) + len(test_other)
+                   t2 = len(train_coughs) + len(train_other)
+                   print('total nr of samples: (train) %d + (test) %d = (total) %d' % (t2, t1, t1+t2))
+                   print('------------------------------------------------------------------')
+                   print()
 
     
 def main(unused_args):
        tf.set_random_seed(0)
-       list_of_broken_files = ['04_Coughing/Distant (cd)/p17_rode-108.wav', '04_Coughing/Distant (cd)/p17_htc-108.wav', \
-                               '04_Coughing/Distant (cd)/p17_tablet-108.wav', \
-                               '04_Coughing/Distant (cd)/p17_iphone-108.wav',  '04_Coughing/Distant (cd)/p17_samsung-108.wav']
 
-       ##
-       # READING DATA
-       #
-       #
-
-       print ('use data from root path %s'%DB_ROOT_DIR)
-       coughAll = find_files(DB_ROOT_DIR + "/04_Coughing", "wav", recursively=True)
-       assert len(coughAll) > 0, 'no cough files found. did you set the correct root path to the data in line 22?'
-       trainListCough = coughAll = remove_broken_files(DB_ROOT_DIR, list_of_broken_files, coughAll)
-       trainListOther = other = find_files(DB_ROOT_DIR + "/05_Other Control Sounds", "wav", recursively=True)
-
-       ##
-       # Make Validation Set
-       #
-       #
-       '''
-       listOfParticipantsInValidationset=config["test"]
-       validationListOther, validationListCough = [], []
-       for name in coughAll:
-           for nameToExclude in listOfParticipantsInValidationset:
-              if nameToExclude in name:
-                  validationListCough.append(name)
-                  trainListCough.remove(name)
-       for name in other:
-           for nameToExclude in listOfParticipantsInValidationset:
-              if nameToExclude in name:
-                  validationListOther.append(name)
-                  trainListOther.remove(name)
-       coughAll = trainListCough
-       other = trainListOther
-
-       create_dataset(validationListCough, validationListOther, 'test')
-
-       t1 = len(validationListCough)
-       t2 = len(validationListOther)
-       print('total nr of test samples: (cough) %d + (other) %d = %d ' % (t1, t2, t1+t2))
-       '''
-
-       ##
-       # Make Sets
-       #
-       #
-
-       for i in range(1):
-                   #listOfParticipantsInTrainset=config["cv_partition%d"%i]
-                   
-                   listOfParticipantsInTrainset=config["test"]
-                   testListOther, testListCough = [], []
-                   trainListCough = list(coughAll)
-                   trainListOther = list(other)
-
-                   #split files into test- and training-set
-                   for name in coughAll:
-                       for nameToExclude in listOfParticipantsInTrainset:
-                           if nameToExclude in name:
-                              testListCough.append(name)
-                              trainListCough.remove(name)
-
-                   for name in other:
-                       for nameToExclude in listOfParticipantsInTrainset:
-                           if nameToExclude in name:
-                              testListOther.append(name)
-                              trainListOther.remove(name)
-
-
-                   print()
-                   print('------------------------------------------------------------------')
-                   print('PARTITION %d'%i)
-                   print('nr of samples coughing (test): %d' % len(testListCough))
-                   print('nr of samples NOT coughing (test): %d' % len(testListOther))
-                   print('nr of samples coughing (train): %d' % len(trainListCough))
-                   print('nr of samples NOT coughing (train): %d' % len(trainListOther))
-                   t1 = len(testListCough) + len(testListOther)
-                   t2 = len(trainListCough) + len(trainListOther)
-                   print('total nr of samples: (train) %d + (test) %d = (total) %d' % (t2, t1, t1+t2))
-                   print()
-
-                   # START STORING DATA TO TFRECORDS
-
-                   if CREATE_DB:
-                      create_dataset(trainListCough, trainListOther, 'train_%d'%i, do_augmentation=DO_DATA_AUGMENTATION)
-                      create_dataset(testListCough, testListOther, 'test_%d'%i)
-                   else:
-                      test_shape(trainListCough)
+       # Store data to TFRECORDS
+       testListCough, testListOther, trainListCough, trainListOther = get_imgs()
+       name = config_db["split_id"]
+       if config_db["CREATE_DB"]:
+                   create_dataset(trainListCough, trainListOther, 'train_'+str(name))
+                   create_dataset(testListCough, testListOther, 'test_'+str(name))
+                   print_stats(testListCough, testListOther, trainListCough, trainListOther, name)
+       else:
+                   print_stats(testListCough, testListOther, trainListCough, trainListOther, name)
+                   test_shape(trainListCough)
+                   test_shape(trainListOther)
 
 
 

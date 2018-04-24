@@ -1,50 +1,51 @@
 {
   "ROOT_DIR" : "./Audio_Data",
-  "DB_version" : "650_112_x",
+  "DB_version" : "650_112_debug",
 
   "controller" : {
-    "model" : "model_cnn_v1_3",
+    "model" : "model_rnn_v2",
     "num_classes": 2,
     "spec_size" : 128,
 
     "train_model": true,
-    "do_cv": true,
 
     "training_parameter" : {
-         "eta": 2e-3,
+         "eta": 1e-3,
          "grad_noise" :9e-4,
          "clipper" :10.0,
-         "checkpoint_dir" :"./checkpoints/cnn_v1_3",
+         "checkpoint_dir" :"./checkpoints/rnn_test",
          "batch_size" : 64,
+         "num_estimator" : 32,
+         "num_filter" : 32,
          "trainable_scopes" : null,
          "train_capacity"  : 9500,
          "test_capacity" :5000,
          "num_epochs" : 100000,
-         "max_num_steps" : 100000,
+         "max_num_steps" : 60000,
          "gpu_fraction" : 0.9,
-         "log_every_n_steps" : 1000,
-         "eval_every_n_steps" : 1000,
-         "save_every_n_steps" : 10000,
+         "log_every_n_steps" : 500,
+         "eval_every_n_steps" : 500,
+         "save_every_n_steps" : 20000,
          "save_checkpoint" : true
     }
   },
 
-  "create_db2": {
+  "dataset": {
 
     "CREATE_DB": true,
 
     "DB_ROOT_DIR": "../cough_detect2/Audio_Data",
+
+
     "HOP" : 112,
     "WINDOW" : 0.65,
     "BAND": 16,
 
-    "DO_DATA_AUGMENTATION" : false,
-    "DATA_AUGMENT_METHOD" : "pitch_shift2",
-    "NOISE_STDEV" : 2e-1,
-    "CREATE_N_SAMPLES" : 4,
-    "AUGM_LIST" : [null, "add_noise", "pitch_shift", "time_stretch", "pitch_shift2"],
-    "PITCH_SHIFT":[-2,-1,1,2]
-  },
 
-  "test"    : ["p05", "p17", "p34", "p20", "p28", "p09", "p08", "p11", "p31", "p21", "p14"]
+    "test"    : ["p05", "p17", "p34", "p20", "p28", "p09", "p08", "p11", "p31", "p21", "p14"],
+    "allowedSources":["htc", "iPhone", "Rode", "SamsunsgS5", "tablet", "s5", "s6", "audio track"],
+    "split_id": 1
+
+  }
+
 }

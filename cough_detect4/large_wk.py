@@ -18,9 +18,9 @@ from utils import softmax_cross_entropy_v2 as softmax_cross_entropy
 
 def classify(inputs, 
 	     num_classes,
+             num_filter,
              dropout_keep_prob=0.5,
-             weight_decay = 1e-4,
-             num_filter=128,
+             weight_decay = 1e-6,
 	     scope=None,
 	     reuse=None,
              is_training=True,
@@ -48,8 +48,8 @@ def classify(inputs,
 
                                                 for i in range(route):
                                                       net = slim.max_pool2d(net, [1, 2], stride=[1, 2], scope='pool%d'%(i+2))
-                                                      net += slim.conv2d(net, num_filter, [3, 3], scope='conv3x3_%d'%(i+2)) #activation_fn=None, 
-                                                      #net = tf.nn.relu(net)
+                                                      net += slim.conv2d(net, num_filter, [3, 3], activation_fn=None, scope='conv3x3_%d'%(i+2)) #, 
+                                                      net = tf.nn.relu(net)
 
                                                 net = tf.reduce_max(net, 2) 
 
@@ -71,7 +71,8 @@ def loss_fkt(logits, y):
 def build_model(x, 
 		y,
 	        num_classes=2,
-		num_estimator=64,
+		num_estimator=None,
+                num_filter=128,
                 is_training=True,
 		reuse=None
 		):
@@ -90,7 +91,7 @@ def build_model(x,
         
         #model	
         with tf.variable_scope('model_v1'):
-                predictions = classify(x, num_classes=num_classes, is_training=is_training, reuse=reuse, scope='wk')
+                predictions = classify(x, num_classes=num_classes, num_filter=num_filter, is_training=is_training, reuse=reuse, scope='wk')
                 loss = loss_fkt(predictions, y)
 
    
@@ -102,7 +103,7 @@ def build_model(x,
 
 
 #Parameters
-TRAINABLE_SCOPES = None #everything is trainable 
+#TRAINABLE_SCOPES = None #everything is trainable 
 
 
 

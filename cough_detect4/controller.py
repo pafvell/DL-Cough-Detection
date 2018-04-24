@@ -7,8 +7,10 @@ import numpy as np
 import os, sys, math, shutil, time, threading
 import importlib
 import json
+import argparse
 from utils import *
 
+tf.set_random_seed(0)
 
 #******************************************************************************************************************
 #possible models
@@ -26,27 +28,35 @@ from utils import *
 #from model_rnn_v1 import *
 
 #******************************************************************************************************************
-#loading configuration
-with open('config.json') as json_data_file:
-    config = json.load(json_data_file)
 
+#loading config file
+parser = argparse.ArgumentParser()
+parser.add_argument('-config', 
+                     type=str,
+                     default='config.json',
+                     help='store a json file with all the necessary parameters')
+args = parser.parse_args()
+
+#loading configuration
+with open(args.config) as json_data_file:
+           config = json.load(json_data_file)
 control_config = config["controller"] # reads the config for the controller file
-MODEL = importlib.import_module(control_config["model"]) #loads the model specified in the config file
+config_db = config["dataset"] 
 config_train = control_config["training_parameter"]
 
-TRAIN_MODEL = control_config["train_model"]
-DO_CV = control_config["do_cv"]
-
-ROOT_DIR = config["ROOT_DIR"]
-NUM_CLASSES = control_config["num_classes"]
-SPEC_SIZE= control_config["spec_size"]
-DB_VERSION  = config["DB_version"] #'175_61'
+#******************************************************************************************************************
 
 
-def get_imgs(db_name, batch_size, buffer_size=10000, prefetch_batchs=3000, num_epochs=1000):
-  size_cub=SPEC_SIZE
+def get_imgs(	db_name,
+		batch_size, 
+		num_epochs,
+		buffer_size, 
+  		size_cub,
+		db_version, 
+		root_dir,
+		prefetch_batchs=3000):
 
-  filename = os.path.join(ROOT_DIR, '%s%s.tfrecords'%(db_name, DB_VERSION))
+  filename = os.path.join(root_dir, '%s%s.tfrecords'%(db_name, db_version))
   print ('use dataset location: '+filename)
   dataset = tf.data.TFRecordDataset([filename])
 
@@ -75,13 +85,20 @@ def get_imgs(db_name, batch_size, buffer_size=10000, prefetch_batchs=3000, num_e
 
 
 def train(
-         cv_partition_id=0,
+	 model_name=control_config["model"],
+         split_id=config_db["split_id"],
+         checkpoint_dir=config_train["checkpoint_dir"],
+	 db_version= config["DB_version"], 
+	 root_dir=config["ROOT_DIR"],
          eta= config_train["eta"], #learning rate
          grad_noise = config_train["grad_noise"],
          clipper=config_train["clipper"],
-         checkpoint_dir=config_train["checkpoint_dir"],
          batch_size=config_train["batch_size"],
-         trainable_scopes=config_train["trainable_scopes"],
+	 num_classes=control_config["num_classes"],
+         num_estimator=config_train["num_estimator"],
+         num_filter=config_train["num_filter"],
+         trainable_scopes=config_train["trainable_scopes"],  		
+	 size_cub=control_config["spec_size"],
          train_capacity=config_train["train_capacity"],
          test_capacity=config_train["test_capacity"],
          num_epochs = config_train["num_epochs"],
@@ -93,13 +110,23 @@ def train(
          save_checkpoint=config_train["save_checkpoint"]):
 
 
+
+       model = importlib.import_module(model_name) #loads the model specified in the config file
        print ('save checkpoints to: %s'%checkpoint_dir)
+       print ('train model:'+model_name)
 
        graph = tf.Graph() 
        with graph.as_default():
               #load training data
               with tf.device("/cpu:0"):
-                    train_batch, train_labels, train_op_init = get_imgs('train_%d'%cv_partition_id, batch_size=batch_size, buffer_size=train_capacity, num_epochs=num_epochs)
+                    train_batch, train_labels, train_op_init = get_imgs('train_%d'%split_id, 
+									batch_size=batch_size, 
+									buffer_size=train_capacity, 
+									num_epochs=num_epochs,
+									size_cub=size_cub,
+									db_version=db_version,
+									root_dir=root_dir
+								)
 
               #initialize
               global_step = tf.Variable(0, name='global_step', trainable=False)
@@ -108,8 +135,10 @@ def train(
               #during the latest training steps, when the computed loss with the previously associated lambda(initial learning rate) parameter has stopped to decrease.
               train_op = tf.train.AdamOptimizer(learning_rate=eta) #, epsilon=1e-5 
               eta = train_op._lr
-
-              train_loss, preds = MODEL.build_model(train_batch, train_labels)
+              
+              train_batch = tf.placeholder_with_default(train_batch, shape=train_batch.get_shape(), name='Input')
+              train_loss, preds = model.build_model(train_batch, train_labels, num_estimator=num_estimator, num_filter=num_filter)
+              preds = tf.identity(preds, 'Prediction')
               tf.summary.scalar('training/loss', train_loss )
               train_acc, train_acc_update = tf.metrics.accuracy(predictions=preds, labels=train_labels)
               tf.summary.scalar('training/accuracy', train_acc )
@@ -139,12 +168,10 @@ def train(
                         train_op = train_op.apply_gradients(grads, global_step=global_step)
                       
               #some summaries
-              
-              if cv_partition_id == 0:
-                 tf.summary.scalar('other/learning_rate', eta  )
-                 tf.summary.scalar('other/gradient_noise', grad_noise  )
+              tf.summary.scalar('other/learning_rate', eta  )
+              tf.summary.scalar('other/gradient_noise', grad_noise  )
 
-                 with tf.variable_scope('gradients'):
+              with tf.variable_scope('gradients'):
               	      for grad, var in grads:
                           if grad is not None:
                              tf.summary.histogram(var.op.name, grad)    
@@ -157,17 +184,23 @@ def train(
 
               #load Test Data
               with tf.device("/cpu:0"):
-                   test_batch, test_labels, test_op_init = get_imgs('test_%d'%cv_partition_id, batch_size=batch_size, buffer_size=test_capacity, num_epochs=num_epochs)
+                   test_batch, test_labels, test_op_init = get_imgs('test_%d'%split_id, 
+									batch_size=batch_size, 
+									buffer_size=test_capacity, 
+									num_epochs=num_epochs,
+									size_cub=size_cub,
+									db_version=db_version,
+									root_dir=root_dir)
 
 
               #Evaluation
-              test_loss, predictions = MODEL.build_model(test_batch, test_labels, is_training=False, reuse=True)
+              test_loss, predictions = model.build_model(test_batch, test_labels, num_estimator=num_estimator, num_filter=num_filter, is_training=False, reuse=True)
 
               #Collect test summaries
               with tf.name_scope('evaluation' ) as eval_scope:
                       tf.summary.scalar('loss', test_loss )
 
-                      mpc, mpc_update = tf.metrics.mean_per_class_accuracy(predictions=predictions, labels=test_labels, num_classes=NUM_CLASSES)
+                      mpc, mpc_update = tf.metrics.mean_per_class_accuracy(predictions=predictions, labels=test_labels, num_classes=num_classes)
                       tf.summary.scalar('mpc_accuracy', mpc )
 
                       accuracy, acc_update = tf.metrics.accuracy(predictions=predictions, labels=test_labels)
@@ -196,13 +229,13 @@ def train(
                 sess.run(init)
 
               	#checkpoints              
-                saver = load_model(sess, checkpoint_dir+'/cv%d'%cv_partition_id, checkpoint_dir, 'config.json')
+                saver = load_model(sess, checkpoint_dir+'/cv%d'%split_id, checkpoint_dir, 'config.json')
 
                 #wait for the queues to be filled
                 time.sleep(20) 
               		    
-                train_writer = tf.summary.FileWriter(checkpoint_dir+'/train_%d'%cv_partition_id)#, sess.graph)
-                test_writer = tf.summary.FileWriter(checkpoint_dir+'/test_%d'%cv_partition_id)
+                train_writer = tf.summary.FileWriter(checkpoint_dir+'/train_%d'%split_id)#, sess.graph)
+                test_writer = tf.summary.FileWriter(checkpoint_dir+'/test_%d'%split_id)
 
                 #assert that no new tensors get added to the graph after this steps 
                 sess.graph.finalize()
@@ -228,7 +261,7 @@ def train(
                                 #save checkpoint
                                 if save_checkpoint and i%(save_every_n_steps) == save_every_n_steps-1 :
                                         print ('save model (step %d)'%step)
-                                        saver.save(sess,checkpoint_dir+'/cv%d/checkpoint'%cv_partition_id, global_step=step)
+                                        saver.save(sess,checkpoint_dir+'/cv%d/checkpoint'%split_id, global_step=step)
 
                 except KeyboardInterrupt:
                       	        print("Manual interrupt occurred.")
@@ -238,98 +271,19 @@ def train(
                 print ('################################################################################')
                 print ('Results - AUC:%f, accuracy:%f, precision:%f, recall:%f, loss:%f'%(auc_,accuracy_, prec_, rec_, loss_))
                 print ('################################################################################')
-                saver.save(sess,checkpoint_dir+'/cv%d/checkpoint'%cv_partition_id, global_step=step)
+                saver.save(sess,checkpoint_dir+'/cv%d/checkpoint'%split_id, global_step=step)
                 sess.close()
 
-                return [auc_, accuracy_, prec_, rec_]
-
-'''
-def validate(
-         cv_partition_id=0,
-         num_epochs=1,
-         dataset_ = 'test_',
-         checkpoint_dir=config_train["checkpoint_dir"],
-         batch_size=config_train["batch_size"],
-         test_capacity=config_train["test_capacity"],
-         gpu_fraction=config_train["gpu_fraction"]):
+                return auc_, accuracy_, prec_, rec_
 
 
-       print ('################################################################################')
-       print ('Validation: get checkpoints from: %s'%checkpoint_dir)
-       print ('################################################################################')
 
-       graph = tf.Graph() 
-       with graph.as_default():
-              #load Test Data
-              with tf.device("/cpu:0"):
-                   test_batch, test_labels, test_op_init = get_imgs(dataset_+str(cv_partition_id), batch_size=batch_size, buffer_size=test_capacity, num_epochs=num_epochs)
+#******************************************************************************************************************
 
-              #Evaluation
-              test_loss, predictions = MODEL.build_model(test_batch, test_labels, is_training=False, reuse=False)
 
-              #Collect test summaries
-              with tf.name_scope('evaluation' ) as eval_scope:
-                      tf.summary.scalar('loss', test_loss )
-
-                      mpc, mpc_update = tf.metrics.mean_per_class_accuracy(predictions=predictions, labels=test_labels, num_classes=NUM_CLASSES)
-                      tf.summary.scalar('mpc_accuracy', mpc )
-
-                      accuracy, acc_update = tf.metrics.accuracy(predictions=predictions, labels=test_labels)
-                      tf.summary.scalar('accuracy', accuracy )
-
-                      auc, auc_update = tf.metrics.auc(labels=test_labels, predictions=predictions)
-                      tf.summary.scalar('AUC', auc )
-                      
-                      precision, prec_update = tf.metrics.precision(labels=test_labels, predictions=predictions)
-                      tf.summary.scalar('precision', precision )
-                      
-                      recall, rec_update = tf.metrics.recall(labels=test_labels, predictions=predictions)
-                      tf.summary.scalar('recall', recall )
-                      
-                      #tf.summary.image('test_batch', tf.expand_dims(test_batch, -1))
-
-              #test_summary_op = tf.summary.merge(list(tf.get_collection(tf.GraphKeys.SUMMARIES, eval_scope)), name='test_summary_op')
-              test_summary_update = tf.group(acc_update, mpc_update, auc_update, prec_update, rec_update)
-
-              #initialize
-              gpu_options = tf.GPUOptions(per_process_gpu_memory_fraction=gpu_fraction)
-              sess = tf.Session(graph=graph,config=tf.ConfigProto(inter_op_parallelism_threads=8, gpu_options=gpu_options))
-              init = tf.group(tf.global_variables_initializer(), tf.local_variables_initializer())
-
-              with sess.as_default():
-                sess.run(init)
-
-              	#checkpoints              
-                saver = load_model(sess, checkpoint_dir+'/cv%d'%cv_partition_id)
-                #test_writer = tf.summary.FileWriter(checkpoint_dir+"/validation")
-
-                print ('start evaluation')
-                try:
-              	        i=0
-              	        while True:
-                                i+=1
-
-              			#logging: update testing summary
-                                auc_, accuracy_, loss_, prec_, rec_, _ = sess.run([auc, accuracy, test_loss, precision, recall, test_summary_update])
-                                #print ('EVAL: idx: %d, mpc: %f, accuracy: %f'% (i,  auc_, accuracy_))
-                           
-
-                except KeyboardInterrupt:
-                      	        print("Manual interrupt occurred.")
-                except tf.errors.OutOfRangeError:
-                                print("End of Dataset: it ran for %d epochs"%num_epochs)
-
-                print ('######################################################################################################')
-                print ('Results - AUC:%f, accuracy:%f, precision:%f, recall:%f, loss:%f'%(auc_,accuracy_, prec_, rec_, loss_))
-                print ('######################################################################################################')
-                sess.close()
-'''
-    
+  
 def main(unused_args):
 
-       tf.set_random_seed(0)
-
-       if TRAIN_MODEL:
                 '''
           if DO_CV:
                 results = []
@@ -356,10 +310,7 @@ def main(unused_args):
           else: 
                 '''
                 train()
-              
-       #else:
-       #      validate()
-             
+
 
 if __name__ == '__main__':
        tf.app.run()    

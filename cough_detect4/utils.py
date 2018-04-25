@@ -242,6 +242,33 @@ def remove_broken_files(root, list_of_broken_files, files):
                  print ( 'file ignored: %s'%broken_file )
                  files.remove(broken_file)
        return files
+
+
+def get_device(filename):
+
+  devices_dict = {
+        'Rode': "studio",
+        'SamsungS5': "samsung",
+        'SamsunsgS5': "samsung",
+        'audio track': "audio track",
+        'htc': "htc",
+        'iPhone': "iphone",
+        'iphone': "iphone",
+        'rode': "studio",
+        's5': "samsung",
+        's6': "samsung",
+        'samsung': "samsung",
+        'samsungS5': "samsung",
+        'tablet': "tablet",
+        'tablet2': "tablet"
+        }
+
+  try:
+    device = devices_dict[filename.split("/")[-1].split("_")[1].split("-")[0]]
+    return device
+  except:
+    raise KeyError("unknown device for file %s"%filename)
+
        
 
 def make_batches(iterable, n=1):

@@ -33,9 +33,9 @@ config_db = config["dataset"]
 
 
 
-def get_imgs(	split_id=config_db["split_id"],			
+def get_imgs(	split_id=config_db["split_id"],
 		db_root_dir = config_db["DB_ROOT_DIR"],
-        	listOfParticipantsInTestset=config_db["test"],
+    listOfParticipantsInTestset=config_db["test"],
 		listOfAllowedSources=config_db["allowedSources"]
 	    ):
        '''
@@ -69,8 +69,8 @@ def get_imgs(	split_id=config_db["split_id"],
 
        #3+4) additional choosable tests: only consider certain types of microphones 
        if split_id > 2: 
-                coughAll = [c for c in coughAll for allowedMic in listOfAllowedSources if allowedMic in c]
-                other	 = [c for c in other for allowedMic  in listOfAllowedSources if allowedMic in c]
+                coughAll = [c for c in coughAll for allowedMic in listOfAllowedSources if allowedMic in get_device(c)]
+                other	 = [c for c in other for allowedMic  in listOfAllowedSources if allowedMic in get_device(c)]
 
        #5) additional choosable tests: when only considering certain types of microphones 
        if split_id==5:
@@ -154,10 +154,10 @@ def _floats_feature(value):
 
 
 def preprocess(	sound_file,
-		bands,
+                bands,
                 hop_length,
-		window,
-		):
+                window,
+                ):
 
                 try:
                        time_signal, sample_rate = librosa.load(sound_file, mono=True, res_type='kaiser_fast')
@@ -172,14 +172,14 @@ def preprocess(	sound_file,
 
             
 def create_dataset(files1, 
-                   files0, 
-                   db_name, 
-                   hop_length=config_db["HOP"],
-		   bands = config_db["BAND"],
-		   window = config_db["WINDOW"],
-                   db_full_path=config["ROOT_DIR"],
-		   version=config["DB_version"]
-	):
+        files0, 
+        db_name, 
+        hop_length=config_db["HOP"],
+        bands = config_db["BAND"],
+        window = config_db["WINDOW"],
+        db_full_path=config["ROOT_DIR"],
+        version=config["DB_version"]
+        ):
         """
 	     load, preprocess, normalize a sample
 	     input: a list of strings
@@ -211,9 +211,9 @@ def create_dataset(files1,
 def test_shape (files1, 
                 sound_id=0, #list id of the sample that should be displayed
                 hop_length=config_db["HOP"],
-		bands = config_db["BAND"],
-		window = config_db["WINDOW"],
-		):
+                bands = config_db["BAND"],
+                window = config_db["WINDOW"],
+                ):
 
                 import matplotlib.pyplot as plt
                 import librosa.display

@@ -1,5 +1,5 @@
 {
-  "ROOT_DIR" : "./Audio_Data",
+  "ROOT_DIR" : "../../Audio_Data",
   "DB_version" : "650_112_debug",
 
   "controller" : {
@@ -34,7 +34,7 @@
 
     "CREATE_DB": true,
 
-    "DB_ROOT_DIR": "../cough_detect2/Audio_Data",
+    "DB_ROOT_DIR": "../../Audio_Data",
 
 
     "HOP" : 112,
@@ -43,9 +43,24 @@
 
 
     "test"    : ["p05", "p17", "p34", "p20", "p28", "p09", "p08", "p11", "p31", "p21", "p14"],
-    "allowedSources":["htc", "iPhone", "Rode", "SamsunsgS5", "tablet", "s5", "s6", "audio track"],
+    "allowedSources": ["studio", "iphone", "samsung", "htc", "tablet", "audio track"],
     "split_id": 1
 
   }
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -51,7 +51,7 @@ def classification_report(y, preds):
 
 def test(
 		checkpoint_dir=config_train["checkpoint_dir"],
-                hop_length=config_db["HOP"],
+        hop_length=config_db["HOP"],
 		bands = config_db["BAND"],
 		window = config_db["WINDOW"],
 		batch_size=config_train["batch_size"],
@@ -91,17 +91,17 @@ def test(
 	output_op = graph.get_operation_by_name('Prediction') 
 	output_tensor = output_op.outputs[0]
 
-        #get data and predict        
-	X_cough, X_other, _, _ = get_imgs(split_id=split_id,			
+    #get data and predict        
+	X_cough, X_other, _, _ = get_imgs(split_id=split_id,	
 					  db_root_dir = db_root_dir,
-        				  listOfParticipantsInTestset=participants,
+        			  listOfParticipantsInTestset=participants,
 					  listOfAllowedSources=sources
 				  	)
 
 	print('nr of samples coughing (test): %d' % len(X_cough))
 	print('nr of samples NOT coughing (test): %d' % len(X_other))
 
-	X = X_cough + X_other	
+	X = X_cough + X_other
 	y = [1]*len(X_cough)+[0]*len(X_other)
 
 
@@ -119,9 +119,9 @@ def test(
 
 
 	X = list(zip(X, y, predictions))
-	sources =['htc', 'iPhone', 'Rode', 'SamsunsgS5', 'tablet', 's5', 's6', 'audio track']
+	sources = ["studio", "iphone", "samsung", "htc", "tablet", "audio track"]
 	for mic in sources:
-		Xlittle = [x for x in X if mic in x[0] ]
+		Xlittle = [x for x in X if mic in get_device(x[0])]
 		if len(Xlittle) > 0:
 			Xlittle, ylittle, Plittle = zip(*Xlittle)
 			print ()

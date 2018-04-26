@@ -51,7 +51,7 @@ def classification_report(y, preds):
 
 def test(
 		checkpoint_dir=config_train["checkpoint_dir"],
-        hop_length=config_db["HOP"],
+        	hop_length=config_db["HOP"],
 		bands = config_db["BAND"],
 		window = config_db["WINDOW"],
 		batch_size=config_train["batch_size"],

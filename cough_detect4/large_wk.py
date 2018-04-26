@@ -71,7 +71,7 @@ def loss_fkt(logits, y):
 def build_model(x, 
 		y,
 	        num_classes=2,
-		num_estimator=None,
+		num_estimator=3, #we missuse num_estimator for the number of convolutions
                 num_filter=128,
                 is_training=True,
 		reuse=None
@@ -91,7 +91,7 @@ def build_model(x,
         
         #model	
         with tf.variable_scope('model_v1'):
-                predictions = classify(x, num_classes=num_classes, num_filter=num_filter, is_training=is_training, reuse=reuse, scope='wk')
+                predictions = classify(x, num_classes=num_classes, num_filter=num_filter, route=num_estimator, is_training=is_training, reuse=reuse, scope='wk')
                 loss = loss_fkt(predictions, y)
 
    

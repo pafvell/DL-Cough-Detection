@@ -51,7 +51,7 @@ def classify(x,
                                                       net = slim.max_pool2d(net, [1, 2], stride=[1, 2], scope='pool%d'%(i+2))
                                                       net = slim.conv2d(net, num_filter, [3, 3], scope='conv3x3_%d'%(i+2))
 
-                                                net = tf.reduce_max(net, 2) 
+                                                #net = tf.reduce_max(net, 2) 
 
                                       with tf.variable_scope('top'):
                                                 net = slim.flatten(net)
@@ -64,7 +64,7 @@ def classify(x,
 def build_model(x, 
 		y,
 	        num_classes=2,
-                num_estimator=None, #we missuse num_estimator for the number of convolutions
+                num_estimator=3, #we missuse num_estimator for the number of convolutions
                 num_filter=16,
                 is_training=True,
 		reuse=None

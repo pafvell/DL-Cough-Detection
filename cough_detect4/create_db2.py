@@ -36,6 +36,7 @@ config_db = config["dataset"]
 def get_imgs(	split_id=config_db["split_id"],
 		db_root_dir = config_db["DB_ROOT_DIR"],
     listOfParticipantsInTestset=config_db["test"],
+    listOfParticipantsInValidationset=config_db["validation"],
 		listOfAllowedSources=config_db["allowedSources"]
 	    ):
        '''
@@ -73,10 +74,10 @@ def get_imgs(	split_id=config_db["split_id"],
                 other	 = [c for c in other for allowedMic  in listOfAllowedSources if allowedMic in get_device(c)]
 
        #5) additional choosable tests: when only considering certain types of microphones 
-       if split_id==5:
-                trainListOther, testListOther = train_test_split(other, test_size=0.20, random_state=42) 
-                trainListCough, testListCough = train_test_split(coughAll, test_size=0.20, random_state=42) 
-                return testListCough, testListOther, trainListCough, trainListOther
+       #if split_id==5:
+       #         trainListOther, testListOther = train_test_split(other, test_size=0.20, random_state=42) 
+       #         trainListCough, testListCough = train_test_split(coughAll, test_size=0.20, random_state=42) 
+       #         return testListCough, testListOther, trainListCough, trainListOther
 
        ##
        # Make Sets
@@ -102,12 +103,26 @@ def get_imgs(	split_id=config_db["split_id"],
 
        #2) randomly split off a validation set out of the training_set
        if split_id%2==0:
-                trainListOther, testListOther = train_test_split(trainListOther, test_size=0.10, random_state=42) 
-                trainListCough, testListCough = train_test_split(trainListCough, test_size=0.10, random_state=42) 
+                #trainListOther, testListOther = train_test_split(trainListOther, test_size=0.10, random_state=42) 
+                #trainListCough, testListCough = train_test_split(trainListCough, test_size=0.10, random_state=42) 
+
+                testListOther, testListCough = [], []
+                coughAll = list(trainListCough)
+                other = list(trainListOther) 
+
+                for name in coughAll:
+                        for nameToExclude in listOfParticipantsInValidationset:
+                              if nameToExclude in name:
+                                     testListCough.append(name)
+                                     trainListCough.remove(name)
+
+                for name in other:
+                        for nameToExclude in listOfParticipantsInValidationset:
+                              if nameToExclude in name:
+                                     testListOther.append(name)
+                                     trainListOther.remove(name)
 
        return testListCough, testListOther, trainListCough, trainListOther
-
-
 
 
 def standardize(timeSignal):

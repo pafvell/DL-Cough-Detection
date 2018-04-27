@@ -46,8 +46,8 @@ def classify(x,
                                                 net = slim.conv2d(net, num_filter, [1, 5], scope='conv1x5')
 
                                       with tf.variable_scope('middle'):
-
                                                 for i in range(route):
+                                                      print ('input shape'+str(net.get_shape()))
                                                       net = slim.max_pool2d(net, [1, 2], stride=[1, 2], scope='pool%d'%(i+2))
                                                       net = slim.conv2d(net, num_filter, [3, 3], scope='conv3x3_%d'%(i+2))
 
@@ -78,7 +78,6 @@ def build_model(x,
 	"""
 	#preprocess
 	y = slim.one_hot_encoding(y, num_classes)
-
 	#model
 	logits = classify(x, num_classes=num_classes, num_filter=num_filter, route=num_estimator, is_training=is_training, reuse=reuse)	
 

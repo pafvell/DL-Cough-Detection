@@ -1,9 +1,9 @@
 {
-  "ROOT_DIR" : "../../Audio_Data",
-  "DB_version" : "650_112_debug",
+  "ROOT_DIR" : "./Audio_Data",
+  "DB_version" : "650_112_final",
 
   "controller" : {
-    "model" : "model_rnn_v2",
+    "model" : "model_boost_v9",
     "num_classes": 2,
     "spec_size" : 128,
 
@@ -13,7 +13,7 @@
          "eta": 1e-3,
          "grad_noise" :9e-4,
          "clipper" :10.0,
-         "checkpoint_dir" :"./checkpoints/rnn_test",
+         "checkpoint_dir" :"./checkpoints/boost32",
          "batch_size" : 64,
          "num_estimator" : 32,
          "num_filter" : 32,
@@ -21,7 +21,7 @@
          "train_capacity"  : 9500,
          "test_capacity" :5000,
          "num_epochs" : 100000,
-         "max_num_steps" : 60000,
+         "max_num_steps" : 50000,
          "gpu_fraction" : 0.9,
          "log_every_n_steps" : 500,
          "eval_every_n_steps" : 500,
@@ -32,9 +32,9 @@
 
   "dataset": {
 
-    "CREATE_DB": true,
+    "CREATE_DB": false,
 
-    "DB_ROOT_DIR": "../../Audio_Data",
+    "DB_ROOT_DIR": "../cough_detect2/Audio_Data",
 
 
     "HOP" : 112,
@@ -43,8 +43,9 @@
 
 
     "test"    : ["p05", "p17", "p34", "p20", "p28", "p09", "p08", "p11", "p31", "p21", "p14"],
+    "validation" :  ["p07", "p13", "p24", "p36", "p47"],
     "allowedSources": ["studio", "iphone", "samsung", "htc", "tablet", "audio track"],
-    "split_id": 1
+    "split_id": 2
 
   }
 

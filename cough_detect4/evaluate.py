@@ -10,7 +10,7 @@ import json
 import argparse
 from utils import *
 from create_db2 import get_imgs, preprocess
-from sklearn.metrics import accuracy_score, confusion_matrix
+from sklearn.metrics import accuracy_score, confusion_matrix, precision_score, recall_score
 
 tf.set_random_seed(0)
 
@@ -34,19 +34,27 @@ config_train = control_config["training_parameter"]
 
 #******************************************************************************************************************
 
-def classification_report(y, preds):
-	cm = confusion_matrix(y,preds)
-	print ('Confusion Matrix: \n', cm)
-
+def classification_report(y_true, y_pred, sanity_check=False, print_report=True):
+	cm = confusion_matrix(y_true,y_pred)
 	total = sum(sum(cm))
-	acc = accuracy_score(y,preds)
-	print ('accuracy: ', acc)
-	sensitivity = cm[0,0]/(cm[0,0]+cm[0,1])
-	print ('sensitivity: ', sensitivity)
-	specificity = cm[1,1]/(cm[1,0]+cm[1,1])
-	print ('specificity:', specificity)
+	acc = accuracy_score(y_true,y_pred)
+	specificity = cm[0,0]/(cm[0,0]+cm[0,1])  
+	sensitivity = cm[1,1]/(cm[1,0]+cm[1,1])
+	precision = cm[1,1]/(cm[0,1]+cm[1,1]) 
 
-	return acc, sensitivity, specificity
+	if print_report:
+		print ('Confusion Matrix: \n', cm)
+		print ('accuracy: ', acc)
+		print ('sensitivity (recall): ', sensitivity)
+		print ('specificity:', specificity)
+		print ('precision: ', precision)
+
+	if sanity_check:
+		print ('(SANITY CHECK - our precision: %f vs sklearn precision: %f)'%(precision, precision_score(y_true, y_pred)))
+		print ('(SANITY CHECK - our sensitivity: %f vs sklearn recall: %f)'%(sensitivity, recall_score(y_true, y_pred)))
+
+
+	return acc, sensitivity, specificity, precision
  
 
 def test(
@@ -97,6 +105,7 @@ def test(
         			  listOfParticipantsInTestset=participants,
 					  listOfAllowedSources=sources
 				  	)
+        
 
 	print('nr of samples coughing (test): %d' % len(X_cough))
 	print('nr of samples NOT coughing (test): %d' % len(X_other))
@@ -115,7 +124,7 @@ def test(
 	print ()
 	print ('********************************************************************************')
 	print ('Evaluate over Everything:')
-	acc, sen, spe = classification_report(predictions,y)
+	acc, sen, spe, prec = classification_report(predictions,y)
 
 
 	X = list(zip(X, y, predictions))
@@ -129,7 +138,7 @@ def test(
 			print ('Evaluate '+mic)
 			classification_report(Plittle, ylittle)
 
-	return acc, sen, spe
+	return acc, sen, spe, prec
 
 
 

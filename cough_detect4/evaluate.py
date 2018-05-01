@@ -124,19 +124,33 @@ def test(
 	print ()
 	print ('********************************************************************************')
 	print ('Evaluate over Everything:')
-	acc, sen, spe, prec = classification_report(predictions,y)
+	acc, sen, spe, prec = classification_report(y, predictions)
 
 
 	X = list(zip(X, y, predictions))
-	sources = ["studio", "iphone", "samsung", "htc", "tablet", "audio track"]
+	sources = ["studio", "iphone", "samsung", "htc", "tablet", "audio track" ]
 	for mic in sources:
 		Xlittle = [x for x in X if mic in get_device(x[0])]
 		if len(Xlittle) > 0:
-			Xlittle, ylittle, Plittle = zip(*Xlittle)
+			path, y_true, y_pred = zip(*Xlittle)
 			print ()
 			print ('********************************************************************************')
 			print ('Evaluate '+mic)
-			classification_report(Plittle, ylittle)
+			classification_report(y_true, y_pred)
+
+	kinds = ["Close (cc)", "Distant (cd)", "01_Throat Clearing", "02_Laughing", "03_Speaking", "04_Spirometer"]
+
+	for kind in kinds:
+		Xlittle = [x for x in X if kind in x[0]]
+		if len(Xlittle) > 0:
+			path, y_true, y_pred = zip(*Xlittle)
+			print ()
+			print ('********************************************************************************')
+			print ('Evaluate '+kind)
+			cm = confusion_matrix(y_true,y_pred)
+			acc = accuracy_score(y_true,y_pred)
+			print ('Confusion Matrix: \n', cm)
+			print ('accuracy: ', acc)
 
 	return acc, sen, spe, prec
 

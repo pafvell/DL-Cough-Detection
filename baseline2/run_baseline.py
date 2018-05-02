@@ -85,6 +85,7 @@ print('N_TREES = %i\nMAX_FEATUREs = %i\nMAX_DEPTH = %i\n'%(N_TREES, MAX_FEATURES
 print('----------------- device: %s -----------------'%DEVICE_FILTER)
 print('RESULTS:')
 print('test accuracy: %f'%test_accuracy)
+print('train accuracy: %f'%train_accuracy)
 print('sensitivity: %f'%sensitivity)
 print('specificity: %f'%specificity)
 print('precision: %f'%precision)
@@ -121,6 +122,7 @@ for device in DEVICE_FILTER:
 	# print results
 	print('RESULTS:')
 	print('test accuracy: %f'%test_accuracy)
+	print('train accuracy: %f'%train_accuracy)
 	print('sensitivity: %f'%sensitivity)
 	print('specificity: %f'%specificity)
 	print('precision: %f'%precision)

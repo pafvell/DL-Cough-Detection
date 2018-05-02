@@ -112,8 +112,8 @@ def generate_cough_model(file_list, batch_size=BATCH_SIZE):
 			
 			# compute energy
 			energy = np.mean(librosa.feature.rmse(S=stft_reduced))
-			energy_low_freq = np.mean(librosa.feature.rmse(S=stft_reduced[:(batch_size // 2),]))
-			energy_high_freq = np.mean(librosa.feature.rmse(S=stft_reduced[(batch_size // 2):,]))
+			energy_low_freq = np.mean(librosa.feature.rmse(S=stft_reduced[:(stft_shape[0] // 2),]))
+			energy_high_freq = np.mean(librosa.feature.rmse(S=stft_reduced[(stft_shape[0] // 2):,]))
 			energy_features_ = np.hstack([energy, energy_low_freq, energy_high_freq])
 			if i == 0:
 				energy_features = energy_features_

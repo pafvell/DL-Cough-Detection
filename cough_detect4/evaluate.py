@@ -34,7 +34,7 @@ config_train = control_config["training_parameter"]
 
 #******************************************************************************************************************
 
-def classification_report(y_true, y_pred, sanity_check=False, print_report=True):
+def classification_report(y_true, y_pred, sanity_check=True, print_report=True):
 	cm = confusion_matrix(y_true,y_pred)
 	total = sum(sum(cm))
 	acc = accuracy_score(y_true,y_pred)
@@ -62,6 +62,7 @@ def test(
         	hop_length=config_db["HOP"],
 		bands = config_db["BAND"],
 		window = config_db["WINDOW"],
+                nfft = config_db["NFFT"], 
 		batch_size=config_train["batch_size"],
 		split_id=config_db["split_id"],
 		participants=config_db["test"],
@@ -116,7 +117,7 @@ def test(
 
 	predictions=[]
 	for x in X:  #make_batches(X, batch_size): 
-		x = preprocess(x, bands=bands, hop_length=hop_length, window=window)
+		x = preprocess(x, bands=bands, hop_length=hop_length, window=window, nfft=nfft)
 		x = np.expand_dims(x, 0)
 		predictions.append(sess.run(output_tensor, {input_tensor: x}))
 	

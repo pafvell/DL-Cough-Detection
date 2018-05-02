@@ -172,6 +172,7 @@ def preprocess(	sound_file,
                 bands,
                 hop_length,
                 window,
+                nfft
                 ):
 
                 try:
@@ -182,7 +183,7 @@ def preprocess(	sound_file,
 
                 time_signal = extract_Signal_Of_Importance(time_signal, window, sample_rate)
                 time_signal = standardize(time_signal)
-                mfcc = librosa.feature.melspectrogram(y=time_signal, sr=sample_rate, n_mels=bands, power=1, hop_length=hop_length)
+                mfcc = librosa.feature.melspectrogram(y=time_signal, sr=sample_rate, n_mels=bands, power=1, hop_length=hop_length, n_fft=nfft)
                 return mfcc
 
             
@@ -192,6 +193,7 @@ def create_dataset(files1,
         hop_length=config_db["HOP"],
         bands = config_db["BAND"],
         window = config_db["WINDOW"],
+        nfft = config_db["NFFT"],
         db_full_path=config["ROOT_DIR"],
         version=config["DB_version"]
         ):
@@ -208,7 +210,7 @@ def create_dataset(files1,
         def store_example(files, label): 
 
             for f in tqdm(files):
-                mfcc = preprocess(f, bands=bands, hop_length=hop_length, window=window)
+                mfcc = preprocess(f, bands=bands, hop_length=hop_length, window=window, nfft=nfft)
                 example = tf.train.Example(features=tf.train.Features(feature={
                                                                         'height': _int64_feature(bands),
                                                                         'width': _int64_feature(mfcc.shape[1]),
@@ -228,13 +230,14 @@ def test_shape (files1,
                 hop_length=config_db["HOP"],
                 bands = config_db["BAND"],
                 window = config_db["WINDOW"],
+                nfft = config_db["NFFT"],
                 ):
 
                 import matplotlib.pyplot as plt
                 import librosa.display
 
                 f = files1[sound_id]
-                mfcc = preprocess(f, bands=bands, hop_length=hop_length, window=window)
+                mfcc = preprocess(f, bands=bands, hop_length=hop_length, window=window, nfft=nfft)
                 
                 print ('mfcc shape: '+str(mfcc.shape))
                 print ('mfcc max: '+str(np.max(mfcc)))

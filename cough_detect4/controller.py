@@ -10,7 +10,6 @@ import json
 import argparse
 from utils import *
 
-tf.set_random_seed(0)
 
 #******************************************************************************************************************
 #possible models
@@ -110,6 +109,8 @@ def train(
          save_checkpoint=config_train["save_checkpoint"]):
 
 
+
+       tf.set_random_seed(0)
 
        model = importlib.import_module(model_name) #loads the model specified in the config file
        print ('save checkpoints to: %s'%checkpoint_dir)

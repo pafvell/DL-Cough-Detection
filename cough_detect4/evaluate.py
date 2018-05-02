@@ -9,20 +9,29 @@ import importlib
 import json
 import argparse
 from utils import *
-from create_db2 import get_imgs, preprocess
 from sklearn.metrics import accuracy_score, confusion_matrix, precision_score, recall_score
 
-tf.set_random_seed(0)
+
 
 #******************************************************************************************************************
 
+
+tf.set_random_seed(0)
+
+
 #loading config file
-parser = argparse.ArgumentParser()
-parser.add_argument('-config', 
+parser = argparse.ArgumentParser(description='Script to evaluate a given Model')
+parser.add_argument('--config', 
                      type=str,
                      default='config.json',
                      help='store a json file with all the necessary parameters')
+parser.add_argument('--checkpoint_dir', 
+                     type=str,
+                     default=None,
+                     help='path to a trained model - if set, this allowes to overwrite the named model path in the config file.')
 args = parser.parse_args()
+
+print (args.checkpoint_dir)
 
 #loading configuration
 with open(args.config) as json_data_file:
@@ -31,10 +40,14 @@ control_config = config["controller"] # reads the config for the controller file
 config_db = config["dataset"] 
 config_train = control_config["training_parameter"]
 
+if args.checkpoint_dir:
+	MODEL_NAME=args.checkpoint_dir[:-1]
+else:
+	MODEL_NAME=config_train["checkpoint_dir"]
 
 #******************************************************************************************************************
 
-def classification_report(y_true, y_pred, sanity_check=True, print_report=True):
+def classification_report(y_true, y_pred, sanity_check=False, print_report=True):
 	cm = confusion_matrix(y_true,y_pred)
 	total = sum(sum(cm))
 	acc = accuracy_score(y_true,y_pred)
@@ -58,7 +71,7 @@ def classification_report(y_true, y_pred, sanity_check=True, print_report=True):
  
 
 def test(
-		checkpoint_dir=config_train["checkpoint_dir"],
+		checkpoint_dir=MODEL_NAME,
         	hop_length=config_db["HOP"],
 		bands = config_db["BAND"],
 		window = config_db["WINDOW"],
@@ -69,9 +82,11 @@ def test(
 		sources=config_db["allowedSources"],
 		db_root_dir=config_db["DB_ROOT_DIR"]
         ):
+
+
+
 	print ('read checkpoints: %s'%checkpoint_dir)
 	checkpoint_dir = checkpoint_dir+'/cv%d'%split_id
-
 
 	#TODO restore any checkpoint
 	latest_ckpt = tf.train.latest_checkpoint(checkpoint_dir)	
@@ -100,12 +115,13 @@ def test(
 	output_op = graph.get_operation_by_name('Prediction') 
 	output_tensor = output_op.outputs[0]
 
-    #get data and predict        
-	X_cough, X_other, _, _ = get_imgs(split_id=split_id,	
-					  db_root_dir = db_root_dir,
-        			  listOfParticipantsInTestset=participants,
-					  listOfAllowedSources=sources
-				  	)
+    	#get data and predict        
+	X_cough, X_other, _, _ = get_imgs(	split_id=config_db["split_id"],
+						db_root_dir = config_db["DB_ROOT_DIR"],
+    						listOfParticipantsInTestset=config_db["test"],
+    						listOfParticipantsInValidationset=config_db["validation"],
+						listOfAllowedSources=config_db["allowedSources"]
+					)
         
 
 	print('nr of samples coughing (test): %d' % len(X_cough))
@@ -158,9 +174,6 @@ def test(
 
 
 test()
-
-
-
 
 
 

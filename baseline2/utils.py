@@ -60,6 +60,12 @@ def remove_broken_files(root, list_of_broken_files, files):
        return files
 
 
+def get_raw_device(filename):
+
+	device = filename.split("/")[-1].split("_")[1].split("-")[0]
+	return device
+
+
 def get_device(filename):
 
 	devices_dict = {
@@ -84,9 +90,6 @@ def get_device(filename):
 		return device
 	except:
 		raise KeyError("unknown device for file %s"%filename)
-
-
-
 
 
 

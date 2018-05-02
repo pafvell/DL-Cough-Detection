@@ -6,21 +6,23 @@
 
   "create_db": {
     "DO_VALIDATION": false,
+    "BATCH_SIZE": 512,
     "PCA_COMPONENTS": 10,
     "HOP": 256,
     "N_FFT": 512,
     "WINDOW_SIZE": 0.32,
-    "DEVICE_FILTER": ["studio", "iphone", "samsung", "htc", "tablet", "audio track"]
+    "DEVICE_FILTER": ["studio", "iphone", "samsung", "htc", "tablet", "audio track"],
+    "ALL_DEVICES": ["studio", "iphone", "samsung", "htc", "tablet", "audio track"]
   },
 
   "run_baseline": {
     "MAX_DEPTH": 8,
-    "MAX_FEATURES": 8,
+    "MAX_FEATURES": 7,
     "N_TREES": 500
   },
 
   "data_split": {
-    "test"    : ["p05", "p17", "p34", "p20", "p28", "p09", "p08", "p11", "p31", "p21", "p14"]
+    "test": ["p05", "p17", "p34", "p20", "p28", "p09", "p08", "p11", "p31", "p21", "p14"]
   }
 
 }

@@ -27,9 +27,10 @@ HOP = config["create_db"]["HOP"]
 N_FFT = config["create_db"]["N_FFT"]
 WINDOW_SIZE = config["create_db"]["WINDOW_SIZE"]
 DEVICE_FILTER = config["create_db"]["DEVICE_FILTER"]
+BATCH_SIZE = config["create_db"]["BATCH_SIZE"]
 
-DB_FILENAME = '/data_DEVICES=[%s]_PCA=%i_NFFT=%i_HOP=%i_WINDOW=%f.h5'%\
-				("-".join(DEVICE_FILTER), PCA_COMPONENTS, N_FFT, HOP, WINDOW_SIZE)
+DB_FILENAME = '/data_DEVICES=[%s]_BATCHSIZE=%i_PCA=%i_NFFT=%i_HOP=%i_WINDOW=%f.h5'%\
+				("-".join(DEVICE_FILTER), BATCH_SIZE, PCA_COMPONENTS, N_FFT, HOP, WINDOW_SIZE)
 
 print('Data will be stored to %s'%(DB_ROOT_DIR + DB_FILENAME))
 
@@ -79,14 +80,15 @@ def stack_spectrograms(filenames):
 
 
 
-def generate_cough_model(file_list, batch_size=128):
+def generate_cough_model(file_list, batch_size=BATCH_SIZE):
 
 	idx = 0
 	batch_num = 1
 
 	assert batch_size % 2 == 0
 
-	for idx in tqdm(range(0, len(file_list) - batch_size + 1, batch_size)):
+	# for idx in tqdm(range(0, len(file_list) - batch_size + 1, batch_size)):
+	for idx in tqdm(range(0, len(file_list), batch_size)):
 	# while idx <= (len(file_list) - batch_size):
 
 		batch = file_list[idx:(idx+batch_size)]
@@ -131,6 +133,9 @@ def generate_cough_model(file_list, batch_size=128):
 			all_devices.extend(device_classes)
 
 		batch_num += 1
+
+	print("shape of labels: {label_shape}, shape of cough model: {cough_shape}"\
+		.format(label_shape=np.shape(all_labels), cough_shape=np.shape(cough_model)))
 
 	return all_devices, all_labels, cough_model
 
@@ -198,9 +203,9 @@ def main():
 	test_list = testListCough
 	test_list.extend(testListOther)
 	np.random.shuffle(test_list)
-	print("number of train samples:", len(test_list))
+	print("number of test samples:", len(test_list))
 	test_devices, test_labels, test_features = generate_cough_model(test_list)
-	
+
 
 	# store everything
 	with h5py.File(DB_ROOT_DIR + DB_FILENAME, 'w') as hf:

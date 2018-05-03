@@ -23,15 +23,13 @@ tf.set_random_seed(0)
 parser = argparse.ArgumentParser(description='Script to evaluate a given Model')
 parser.add_argument('--config', 
                      type=str,
-                     default='config.json',
-                     help='store a json file with all the necessary parameters')
-parser.add_argument('--checkpoint_dir', 
+                     default='./config.json',
+                     help='path to the file config.json which stores all the necessary parameters')
+parser.add_argument('--ckpt_dir', 
                      type=str,
-                     default=None,
-                     help='path to a trained model - if set, this allowes to overwrite the named model path in the config file.')
+                     default='',
+                     help='path to the file config.json which stores all the necessary parameters')
 args = parser.parse_args()
-
-print (args.checkpoint_dir)
 
 #loading configuration
 with open(args.config) as json_data_file:
@@ -40,10 +38,15 @@ control_config = config["controller"] # reads the config for the controller file
 config_db = config["dataset"] 
 config_train = control_config["training_parameter"]
 
-if args.checkpoint_dir:
-	MODEL_NAME=args.checkpoint_dir[:-1]
+if args.ckpt_dir:
+	CKPT_DIR = args.ckpt_dir
 else:
-	MODEL_NAME=config_train["checkpoint_dir"]
+	CKPT_DIR = config_train["checkpoint_dir"]
+
+if "NFFT" in config_db:
+	NFFT = config_db["NFFT"]
+else:
+	NFFT = 2048		
 
 #******************************************************************************************************************
 
@@ -71,22 +74,29 @@ def classification_report(y_true, y_pred, sanity_check=False, print_report=True)
  
 
 def test(
-		checkpoint_dir=MODEL_NAME,
+	 	model_name=control_config["model"],
         	hop_length=config_db["HOP"],
 		bands = config_db["BAND"],
 		window = config_db["WINDOW"],
-                nfft = config_db["NFFT"], 
+	 	size_cub=control_config["spec_size"],
 		batch_size=config_train["batch_size"],
+        	num_estimator=config_train["num_estimator"],
+         	num_filter=config_train["num_filter"],
 		split_id=config_db["split_id"],
 		participants=config_db["test"],
 		sources=config_db["allowedSources"],
-		db_root_dir=config_db["DB_ROOT_DIR"]
+		db_root_dir=config_db["DB_ROOT_DIR"],
+		checkpoint_dir=CKPT_DIR,
+                nfft = NFFT, 	
         ):
 
 
 
 	print ('read checkpoints: %s'%checkpoint_dir)
 	checkpoint_dir = checkpoint_dir+'/cv%d'%split_id
+
+	print ('evaluate model:'+model_name)
+	model = importlib.import_module(model_name) 
 
 	#TODO restore any checkpoint
 	latest_ckpt = tf.train.latest_checkpoint(checkpoint_dir)	
@@ -102,18 +112,14 @@ def test(
 	    allow_soft_placement = True
 	)
 	sess = tf.Session(config=sess_config)
-
-	saver = tf.train.import_meta_graph(latest_ckpt+'.meta')
-	saver.restore(sess, latest_ckpt)
 	
-	graph = tf.get_default_graph()
-	graph.finalize()
+	input_tensor = tf.placeholder(tf.float32, shape=[bands,size_cub], name='Input')
+	x = tf.expand_dims(input_tensor, 0) 
+	_, output_tensor = model.build_model(x, [1], num_estimator=num_estimator, num_filter=num_filter, is_training=False)
 
-	# Get the input and output operations
-	input_op = graph.get_operation_by_name('Input') 
-	input_tensor = input_op.outputs[0]
-	output_op = graph.get_operation_by_name('Prediction') 
-	output_tensor = output_op.outputs[0]
+
+	saver = tf.train.Saver()
+	saver.restore(sess, latest_ckpt)		
 
     	#get data and predict        
 	X_cough, X_other, _, _ = get_imgs(	split_id=config_db["split_id"],
@@ -134,7 +140,7 @@ def test(
 	predictions=[]
 	for x in X:  #make_batches(X, batch_size): 
 		x = preprocess(x, bands=bands, hop_length=hop_length, window=window, nfft=nfft)
-		x = np.expand_dims(x, 0)
+		#x = np.expand_dims(x, 0)
 		predictions.append(sess.run(output_tensor, {input_tensor: x}))
 	
 

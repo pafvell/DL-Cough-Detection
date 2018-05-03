@@ -137,9 +137,7 @@ def train(
               train_op = tf.train.AdamOptimizer(learning_rate=eta) #, epsilon=1e-5 
               eta = train_op._lr
               
-              train_batch = tf.placeholder_with_default(train_batch, shape=train_batch.get_shape(), name='Input')
               train_loss, preds = model.build_model(train_batch, train_labels, num_estimator=num_estimator, num_filter=num_filter)
-              preds = tf.identity(preds, 'Prediction')
               tf.summary.scalar('training/loss', train_loss )
               train_acc, train_acc_update = tf.metrics.accuracy(predictions=preds, labels=train_labels)
               tf.summary.scalar('training/accuracy', train_acc )
@@ -195,7 +193,9 @@ def train(
 
 
               #Evaluation
+              test_batch = tf.placeholder_with_default(test_batch, shape=test_batch.get_shape(), name='Input')
               test_loss, predictions = model.build_model(test_batch, test_labels, num_estimator=num_estimator, num_filter=num_filter, is_training=False, reuse=True)
+              predictions = tf.identity(predictions, 'Prediction')
 
               #Collect test summaries
               with tf.name_scope('evaluation' ) as eval_scope:

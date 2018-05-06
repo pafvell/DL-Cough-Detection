@@ -53,7 +53,9 @@ def better_arg_scope(weight_decay=0.0005,
              	return arg_sc
 '''
 
-def batchnorm_arg_scope(batch_norm_decay=0.997,
+def batchnorm_arg_scope(
+                       is_training,
+                       batch_norm_decay=0.997,
                        batch_norm_epsilon=1e-5,
                        batch_norm_scale=True):
   """Defines an arg_scope that initializes all the necessary parameters for the batch_norm

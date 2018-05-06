@@ -1,5 +1,5 @@
-FOLDER=./checkpoints/2048
-SPLIT='-1'
+FOLDER=./checkpoints
+SPLIT=''
 
  
 myExit() {

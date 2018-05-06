@@ -24,7 +24,7 @@ def RNN_multicell(inputs,
 	):
   with tf.variable_scope('rnn_multicell', [inputs],
       			reuse=reuse) as sc:
-       #with slim.arg_scope(batchnorm_arg_scope(is_training=is_training)): 
+       with slim.arg_scope(batchnorm_arg_scope(is_training=is_training)): 
             cell1 = tf.nn.rnn_cell.GRUCell(128)
             cell2 = tf.nn.rnn_cell.GRUCell(64)
             cell3 = tf.nn.rnn_cell.GRUCell(32)

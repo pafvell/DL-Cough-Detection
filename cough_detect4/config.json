@@ -5,17 +5,17 @@
   "DB_version" : "650_112_final",
 
   "controller" : {
-    "model" : "model_boost_v9",
+    "model" : "model_rnn_v1",
     "num_classes": 2,
     "spec_size" : 128,
 
     "train_model": true,
 
     "training_parameter" : {
-         "eta": 1e-3,
-         "grad_noise" :9e-4,
+         "eta": 5e-3,
+         "grad_noise" :0,
          "clipper" :10.0,
-         "checkpoint_dir" :"./checkpoints/2048-1/boost64",
+         "checkpoint_dir" :"./checkpoints/rnn_v1",
          "batch_size" : 64,
          "num_estimator" : 64,
          "num_filter" : 32,
@@ -36,7 +36,7 @@
 
     "CREATE_DB": false,
 
-    "DB_ROOT_DIR": "../cough_detect2/Audio_Data",
+    "DB_ROOT_DIR": "../../cough_detect2/Audio_Data",
 
 
     "HOP" : 112,
@@ -52,8 +52,6 @@
   }
 
 }
-
-
 
 
 

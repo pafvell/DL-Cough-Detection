@@ -12,10 +12,10 @@
     "train_model": true,
 
     "training_parameter" : {
-         "eta": 5e-3,
-         "grad_noise" :0,
+         "eta": 1e-3,
+         "grad_noise" :9e-4,
          "clipper" :10.0,
-         "checkpoint_dir" :"./checkpoints/rnn_v1",
+         "checkpoint_dir" :"./checkpoints/rnn_v1_gradient_noise",
          "batch_size" : 64,
          "num_estimator" : 64,
          "num_filter" : 32,
@@ -23,7 +23,7 @@
          "train_capacity"  : 9500,
          "test_capacity" :5000,
          "num_epochs" : 100000,
-         "max_num_steps" : 100000,
+         "max_num_steps" : 70000,
          "gpu_fraction" : 0.9,
          "log_every_n_steps" : 500,
          "eval_every_n_steps" : 500,

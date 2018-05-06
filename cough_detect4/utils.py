@@ -69,6 +69,7 @@ def batchnorm_arg_scope(
       'epsilon': batch_norm_epsilon,
       'scale': batch_norm_scale,
       'updates_collections': tf.GraphKeys.UPDATE_OPS,
+      'is_training': is_training,
   }
 
   with slim.arg_scope(

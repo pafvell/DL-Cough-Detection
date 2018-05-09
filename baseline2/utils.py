@@ -37,7 +37,7 @@ def extract_Signal_Of_Importance(f, window):
 
         signal, sample_rate = librosa.load(f, mono=True, res_type='kaiser_fast')
 
-        window_size = int(window * sample_rate)		
+        window_size = int(window * sample_rate)
 
         start = max(0, np.argmax(np.abs(signal)) - (window_size // 2))
         end = min(np.size(signal), start + window_size)

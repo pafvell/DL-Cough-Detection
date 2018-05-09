@@ -1,12 +1,13 @@
 {
 
   "general":{
-    "DB_ROOT_DIR" : "../../Audio_Data"
+    "DB_ROOT_DIR" : "../../Audio_Data",
+    "DB_VERSION": "V2"
   },
 
   "create_db": {
     "DO_VALIDATION": false,
-    "BATCH_SIZE": 512,
+    "BATCH_SIZE": 256,
     "PCA_COMPONENTS": 10,
     "HOP": 256,
     "N_FFT": 512,
@@ -16,8 +17,8 @@
   },
 
   "run_baseline": {
-    "MAX_DEPTH": 8,
-    "MAX_FEATURES": 7,
+    "MAX_DEPTH": 14,
+    "MAX_FEATURES": 10,
     "N_TREES": 500
   },
 

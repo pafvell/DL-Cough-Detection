@@ -20,6 +20,7 @@ with open('config.json') as json_data_file:
 ## read params from config file
 # training params
 DB_ROOT_DIR = config["general"]["DB_ROOT_DIR"]
+DB_VERSION = config["general"]["DB_VERSION"]
 MAX_DEPTH = config["run_baseline"]["MAX_DEPTH"]
 MAX_FEATURES = config["run_baseline"]["MAX_FEATURES"]
 N_TREES = config["run_baseline"]["N_TREES"]
@@ -32,9 +33,9 @@ WINDOW_SIZE = config["create_db"]["WINDOW_SIZE"]
 DEVICE_FILTER = config["create_db"]["DEVICE_FILTER"]
 BATCH_SIZE = config["create_db"]["BATCH_SIZE"]
 
+
 # DB File
-DB_FILENAME = '/data_DEVICES=[%s]_BATCHSIZE=%i_PCA=%i_NFFT=%i_HOP=%i_WINDOW=%f.h5'%\
-				("-".join(DEVICE_FILTER), BATCH_SIZE, PCA_COMPONENTS, N_FFT, HOP, WINDOW_SIZE)
+DB_FILENAME = '/data_%s.h5'%(DB_VERSION)
 
 print('#'*100, "\n")
 
@@ -79,7 +80,7 @@ print('#'*100, "\n")
 
 ## print hyperparams
 print('----------------- HYPERPARAMS -----------------\n')
-print('N_TREES = %i\nMAX_FEATUREs = %i\nMAX_DEPTH = %i\n'%(N_TREES, MAX_FEATURES, MAX_DEPTH))
+print('N_TREES = %i\nMAX_FEATURES = %i\nMAX_DEPTH = %i\n'%(N_TREES, MAX_FEATURES, MAX_DEPTH))
 
 ## start printing results
 print('----------------- device: %s -----------------'%DEVICE_FILTER)

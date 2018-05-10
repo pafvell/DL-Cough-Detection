@@ -5,7 +5,7 @@
   "DB_version" : "650_112_final",
 
   "controller" : {
-    "model" : "model_rnn_v1",
+    "model" : "model_boost_v9",
     "num_classes": 2,
     "spec_size" : 128,
 
@@ -15,15 +15,15 @@
          "eta": 1e-3,
          "grad_noise" :9e-4,
          "clipper" :10.0,
-         "checkpoint_dir" :"./checkpoints/rnn_v1_gradient_noise",
+         "checkpoint_dir" :"./checkpoints/boost_80",
          "batch_size" : 64,
-         "num_estimator" : 64,
+         "num_estimator" : 80,
          "num_filter" : 32,
          "trainable_scopes" : null,
          "train_capacity"  : 9500,
          "test_capacity" :5000,
          "num_epochs" : 100000,
-         "max_num_steps" : 70000,
+         "max_num_steps" : 100000,
          "gpu_fraction" : 0.9,
          "log_every_n_steps" : 500,
          "eval_every_n_steps" : 500,
@@ -42,12 +42,12 @@
     "HOP" : 112,
     "WINDOW" : 0.65,
     "BAND": 16,
-
+    "NFFT": 2048,
 
     "test"    : ["p05", "p17", "p34", "p20", "p28", "p09", "p08", "p11", "p31", "p21", "p14"],
     "validation" :  ["p07", "p13", "p24", "p36", "p47"],
     "allowedSources": ["studio", "iphone", "samsung", "htc", "tablet", "audio track"],
-    "split_id": 1
+    "split_id": 2
 
   }
 

@@ -36,10 +36,10 @@ def standardize(timeSignal):
 def extract_Signal_Of_Importance(f, window, do_standardize=True):
         """
         f: filename of the sound file to be loaded
-		extract a window around the maximum of the signal
-		input: 	signal
-                window -> size of a window in seconds
-		sample_rate 
+        extract a window around the maximum of the signal
+        input: 	signal
+        window -> size of a window in seconds
+        sample_rate 
         """
 
         signal, sample_rate = librosa.load(f, mono=True, res_type='kaiser_fast')
@@ -56,8 +56,8 @@ def extract_Signal_Of_Importance(f, window, do_standardize=True):
                 #pad zeros to the signal if too short
                 signal = np.concatenate((signal, np.zeros(window_size-length)))
 
-		if do_standardize:        
-        	signal = standardize(signal)
+        if do_standardize:        
+                signal = standardize(signal)
 
         return signal, sample_rate
 

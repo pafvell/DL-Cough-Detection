@@ -3,6 +3,7 @@
 import numpy as np
 import json
 import h5py
+import time
 
 import sklearn
 from sklearn import decomposition
@@ -16,6 +17,7 @@ from utils import *
 with open('config.json') as json_data_file:
 	config = json.load(json_data_file)
 
+t = time.time()
 
 ## read params from config file
 # training params
@@ -133,7 +135,7 @@ for device in DEVICE_FILTER:
 print('#'*100)
 
 
-
+print('time elapsed: ', time.time() - t)
 
 
 

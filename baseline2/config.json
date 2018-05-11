@@ -2,7 +2,7 @@
 
   "general":{
     "DB_ROOT_DIR" : "../../Audio_Data",
-    "DB_VERSION": "V2"
+    "DB_VERSION": "v1.1"
   },
 
   "create_db": {

@@ -2,6 +2,7 @@
 
 import numpy as np
 import pandas as pd
+import time
 import h5py
 import json
 from itertools import chain
@@ -32,6 +33,8 @@ DEVICE_FILTER = config["create_db"]["DEVICE_FILTER"]
 BATCH_SIZE = config["create_db"]["BATCH_SIZE"]
 
 DB_FILENAME = '/data_%s.h5'%(DB_VERSION)
+
+RECONSTRUCT = True
 
 print('Data will be stored to %s'%(DB_ROOT_DIR + DB_FILENAME))
 
@@ -92,9 +95,9 @@ def generate_cough_model(file_list, batch_size=BATCH_SIZE, pca=None, training=Tr
 		device_classes.extend(device_classes_)
 		labels.extend(labels_)
 
+
 	## compute model
 	# PCA on vectorized spectrograms
-	# features = sklearn.preprocessing.scale(features, axis=0, with_mean=True, with_std=False)
 	features_mean = features.mean(1).reshape(np.shape(features)[0],1)
 	if training:
 		pca = decomposition.PCA()
@@ -109,19 +112,20 @@ def generate_cough_model(file_list, batch_size=BATCH_SIZE, pca=None, training=Tr
 	residual_error = np.diagonal(cdist(features, features_reduced, 'euclidean'))
 
 	# reconstruct spectrogram to compute energy features for training set
+	energy_features = np.array([]).reshape(0,3)
 	for i in range(np.shape(features_reduced)[0]):
-
-		stft_reduced = np.reshape(features_reduced[i,:], (stft_shape[0], stft_shape[1]))
 		
-		# compute energy
-		energy = np.mean(librosa.feature.rmse(S=stft_reduced))
-		energy_low_freq = np.mean(librosa.feature.rmse(S=stft_reduced[:(stft_shape[0] // 2),]))
-		energy_high_freq = np.mean(librosa.feature.rmse(S=stft_reduced[(stft_shape[0] // 2):,]))
+		# compute mean decibel energy for entire reconstructed spectrogram plus for frequencies above and below the mean frequency
+		stft_reduced = np.reshape(features_reduced[i,:], (stft_shape[0], stft_shape[1]))
+		stft_reduced_db = librosa.power_to_db(S=stft_reduced**2) # convert magnitude spectrogram to decibel units
+		energy = np.mean(librosa.feature.rmse(S=stft_reduced_db))
+		energy_low_freq = np.mean(librosa.feature.rmse(S=stft_reduced_db[:(stft_shape[0] // 2),]))
+		energy_high_freq = np.mean(librosa.feature.rmse(S=stft_reduced_db[(stft_shape[0] // 2):,]))
+
 		energy_features_ = np.hstack([energy, energy_low_freq, energy_high_freq])
-		if i == 0:
-			energy_features = energy_features_
-		else:
-			energy_features = np.vstack([energy_features, energy_features_])
+
+		energy_features = np.vstack([energy_features, energy_features_])
+		
 
 	# merge features into single data matrix
 	cough_model = np.column_stack((features_projected, energy_features, residual_error))
@@ -214,7 +218,9 @@ def main():
 
 
 if __name__ == "__main__":
+	t = time.time()
 	main()
+	print('time elapsed: ', time.time() - t)
 
 
 

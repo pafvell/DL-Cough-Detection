@@ -26,13 +26,20 @@ def find_files(root, fntype, recursively=False):
 	return matches
 
 
-def extract_Signal_Of_Importance(f, window):
+def standardize(timeSignal):
+         maxValue = np.max(timeSignal)
+         minValue = np.min(timeSignal)
+         timeSignal = (timeSignal - minValue)/(maxValue - minValue) 
+         return timeSignal
+
+
+def extract_Signal_Of_Importance(f, window, do_standardize=True):
         """
         f: filename of the sound file to be loaded
-		extract a window around the maximum of the signal
-		input: 	signal
-                window -> size of a window in seconds
-		sample_rate 
+        extract a window around the maximum of the signal
+        input: 	signal
+        window -> size of a window in seconds
+        sample_rate 
         """
 
         signal, sample_rate = librosa.load(f, mono=True, res_type='kaiser_fast')
@@ -47,7 +54,11 @@ def extract_Signal_Of_Importance(f, window):
         assert length <= window_size, 'extracted signal is longer than the allowed window size'
         if length < window_size:
                 #pad zeros to the signal if too short
-                signal = np.concatenate((signal, np.zeros(window_size-length))) 
+                signal = np.concatenate((signal, np.zeros(window_size-length)))
+
+        if do_standardize:        
+                signal = standardize(signal)
+
         return signal, sample_rate
 
 

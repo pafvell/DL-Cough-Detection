@@ -1,7 +1,7 @@
 {
 
   "general":{
-    "DB_ROOT_DIR" : "../../Audio_Data",
+    "DB_ROOT_DIR" : "../../cough_detect2/Audio_Data",
     "DB_VERSION": "V2"
   },
 

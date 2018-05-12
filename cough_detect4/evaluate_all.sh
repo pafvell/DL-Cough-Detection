@@ -1,4 +1,4 @@
-FOLDER=./checkpoints
+FOLDER=./checkpoints/new
 SPLIT=''
 
  

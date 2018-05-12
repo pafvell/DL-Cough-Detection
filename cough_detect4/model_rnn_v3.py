@@ -24,79 +24,6 @@ def preprocess_input(inputs):
             print ('patches shape: ', inputs.get_shape())
             return inputs
 
-def preprocess_input_mean(inputs):
-            inputs = preprocess_input(inputs)
-            shape = tf.shape(inputs)
-            inputs = tf.reshape([shape[0], shape[1], 16,8])
-            inputs = tf.reduce_mean(inputs, 2)
-            return inputs
-
-
-
-def RNN_unidir(inputs, 
-	num_outputs,
-	num_cells=1,
-	scope=None,
-	reuse=None, 
-        is_training=True
-	):
-  with tf.variable_scope('rnn_multicell', [inputs],
-      			reuse=reuse) as sc:
-       with slim.arg_scope(batchnorm_arg_scope(is_training=is_training)):         
-            inputs = preprocess_input(inputs)
-
-            cell1 = tf.nn.rnn_cell.GRUCell(128)
-            cell2 = tf.nn.rnn_cell.GRUCell(64)
-            cell3 = tf.nn.rnn_cell.GRUCell(32)
-            cell4 = tf.nn.rnn_cell.LSTMCell(64, state_is_tuple = True)
-            cell4 = tf.contrib.rnn.AttentionCellWrapper(cell4, 16)
-            cell = tf.nn.rnn_cell.MultiRNNCell([cell1, cell2, cell3, cell4])
-            output, state = tf.nn.dynamic_rnn(cell, inputs, dtype = tf.float32)
-            print ('rnn out shape: ', output.get_shape())
-            output = tf.transpose(output, [1, 0, 2])
-            last = tf.gather(output, int(output.get_shape()[0]) - 1)
-            print ('transf. rnn out shape: ', last.get_shape())
-            last = slim.fully_connected(last,256, 
-					activation_fn=tf.nn.relu)
-
-            return slim.fully_connected(last,2, activation_fn=None)
-
-
-def RNN_bidir(inputs, 
-	num_outputs,
-	num_cells=1,
-	scope=None,
-	reuse=None, 
-        is_training=True
-	):
-  with tf.variable_scope('rnn_multicell', [inputs],
-      			reuse=reuse) as sc:
-       with slim.arg_scope(batchnorm_arg_scope(is_training=is_training)):         
-            inputs = preprocess_input(inputs)
-
-            cellF1 = tf.nn.rnn_cell.GRUCell(128)
-            cellF2 = tf.nn.rnn_cell.GRUCell(64)
-            cellF3 = tf.nn.rnn_cell.GRUCell(32)
-            cellF4 = tf.nn.rnn_cell.LSTMCell(64, state_is_tuple = True)
-            cellF4 = tf.contrib.rnn.AttentionCellWrapper(cellF4, 16)
-
-            cellB1 = tf.nn.rnn_cell.GRUCell(128)
-            cellB2 = tf.nn.rnn_cell.GRUCell(64)
-            cellB3 = tf.nn.rnn_cell.GRUCell(32)
-            cellB4 = tf.nn.rnn_cell.LSTMCell(64, state_is_tuple = True)
-            cellB4 = tf.contrib.rnn.AttentionCellWrapper(cellB4, 16)
-            
-            output, _, _ = tf.contrib.rnn.stack_bidirectional_dynamic_rnn ([cellF1, cellF2, cellF3, cellF4], [cellB1, cellB2, cellB3, cellB4], inputs, dtype = tf.float32)
-            print ('rnn out: ', output.get_shape())
-
-            output = tf.transpose(output, [1, 0, 2])
-            last = tf.gather(output, int(output.get_shape()[0]) - 1)
-
-            print ('transf. rnn out shape: ', last.get_shape())
-            last = slim.fully_connected(last,256, 
-					activation_fn=tf.nn.relu)
-
-            return slim.fully_connected(last,2, activation_fn=None)
 
 
 def RNN_deepcough(inputs, 
@@ -109,7 +36,7 @@ def RNN_deepcough(inputs,
   with tf.variable_scope('rnn_multicell', [inputs],
       			reuse=reuse) as sc:
        with slim.arg_scope(batchnorm_arg_scope(is_training=is_training)):         
-            #inputs = preprocess_input(inputs)
+            inputs = preprocess_input(inputs)
 
             cellF1 = tf.nn.rnn_cell.GRUCell(128)
             cellF2 = tf.nn.rnn_cell.GRUCell(64)

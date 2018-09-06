@@ -19,6 +19,8 @@ echo "input_layer_shape: "
 read input_layer_shape
 echo "output_layer: "
 read output_layer
+echo "last checkpoint: "
+read last_checkpoint
 
 
 # make sure frozen_graphs dir exists
@@ -34,7 +36,7 @@ echo -en "\n\n============================== $model_name =======================
 echo -en "\nfreezing model...\n"
 bazel-bin/tensorflow/python/tools/freeze_graph \
 	--input_graph="$COUGH_PATH/graphs/$model_name.pbtxt" \
-	--input_checkpoint="$COUGH_PATH/models/$model_name/cv1/checkpoint-100001" \
+	--input_checkpoint="$COUGH_PATH/models/$model_name/cv1/$last_checkpoint" \
 	--output_graph="$COUGH_PATH/frozen_graphs/$model_name.pb" \
 	--output_node_names=$output_layer \
 	--input_binary=false

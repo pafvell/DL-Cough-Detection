@@ -51,5 +51,10 @@ bazel-bin/tensorflow/tools/benchmark/benchmark_model \
 	--show_memory=true \
 	--show_summary=true \
 	--show_flops=true
+
+echo -en "\n\n summary \n"
+bazel-bin/tensorflow/tools/graph_transforms/summarize_graph \
+	--in_graph="$COUGH_PATH/frozen_graphs/$model_name.pb"
+
 echo -en "\n============================== end model $model_name ==============================\n\n"
 

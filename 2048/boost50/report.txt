@@ -1,0 +1,112 @@
+read checkpoints: ./checkpoints/2048/boost50/
+evaluate model:model_boost_v9
+restore checkpoint:./checkpoints/2048/boost50//cv2/checkpoint-100001
+use data from root path ../cough_detect2/Audio_Data
+file ignored: ../cough_detect2/Audio_Data/04_Coughing/Distant (cd)/p17_rode-108.wav
+file ignored: ../cough_detect2/Audio_Data/04_Coughing/Distant (cd)/p17_htc-108.wav
+file ignored: ../cough_detect2/Audio_Data/04_Coughing/Distant (cd)/p17_tablet-108.wav
+file ignored: ../cough_detect2/Audio_Data/04_Coughing/Distant (cd)/p17_iphone-108.wav
+file ignored: ../cough_detect2/Audio_Data/04_Coughing/Distant (cd)/p17_samsung-108.wav
+nr of samples coughing (test): 920
+nr of samples NOT coughing (test): 1255
+
+********************************************************************************
+Evaluate over Everything:
+Confusion Matrix: 
+ [[1167   88]
+ [ 191  729]]
+accuracy:  0.8717241379310345
+sensitivity (recall):  0.7923913043478261
+specificity: 0.9298804780876494
+precision:  0.8922888616891065
+
+********************************************************************************
+Evaluate studio
+Confusion Matrix: 
+ [[230  21]
+ [ 34 150]]
+accuracy:  0.8735632183908046
+sensitivity (recall):  0.8152173913043478
+specificity: 0.9163346613545816
+precision:  0.8771929824561403
+
+********************************************************************************
+Evaluate iphone
+Confusion Matrix: 
+ [[136  14]
+ [ 27  88]]
+accuracy:  0.8452830188679246
+sensitivity (recall):  0.7652173913043478
+specificity: 0.9066666666666666
+precision:  0.8627450980392157
+
+********************************************************************************
+Evaluate samsung
+Confusion Matrix: 
+ [[374  25]
+ [ 56 237]]
+accuracy:  0.8829479768786127
+sensitivity (recall):  0.8088737201365188
+specificity: 0.9373433583959899
+precision:  0.9045801526717557
+
+********************************************************************************
+Evaluate htc
+Confusion Matrix: 
+ [[194  10]
+ [ 32 112]]
+accuracy:  0.8793103448275862
+sensitivity (recall):  0.7777777777777778
+specificity: 0.9509803921568627
+precision:  0.9180327868852459
+
+********************************************************************************
+Evaluate tablet
+Confusion Matrix: 
+ [[233  18]
+ [ 42 142]]
+accuracy:  0.8620689655172413
+sensitivity (recall):  0.7717391304347826
+specificity: 0.9282868525896414
+precision:  0.8875
+
+********************************************************************************
+Evaluate Close (cc)
+Confusion Matrix: 
+ [[  0   0]
+ [103 337]]
+accuracy:  0.7659090909090909
+
+********************************************************************************
+Evaluate Distant (cd)
+Confusion Matrix: 
+ [[  0   0]
+ [ 88 392]]
+accuracy:  0.8166666666666667
+
+********************************************************************************
+Evaluate 01_Throat Clearing
+Confusion Matrix: 
+ [[456  74]
+ [  0   0]]
+accuracy:  0.8603773584905661
+
+********************************************************************************
+Evaluate 02_Laughing
+Confusion Matrix: 
+ [[574  11]
+ [  0   0]]
+accuracy:  0.9811965811965812
+
+********************************************************************************
+Evaluate 03_Speaking
+Confusion Matrix: 
+ [[95]]
+accuracy:  1.0
+
+********************************************************************************
+Evaluate 04_Spirometer
+Confusion Matrix: 
+ [[42  3]
+ [ 0  0]]
+accuracy:  0.9333333333333333

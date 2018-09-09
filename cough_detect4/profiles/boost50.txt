@@ -1,0 +1,87 @@
+============================== boost50 ==============================
+
+freezing model...
+tf.estimator package not installed.
+2018-09-09 13:17:46.256502: I tensorflow/core/platform/cpu_feature_guard.cc:141] Your CPU supports instructions that this TensorFlow binary was not compiled to use: SSE4.2 AVX AVX2 FMA
+
+benchmarking model...
+2018-09-09 13:17:48.378106: I tensorflow/tools/benchmark/benchmark_model.cc:469] Graph: [/Users/maurice/projects/eth/deepLearning/DL-Cough-Detection/cough_detect4/frozen_graphs/boost50.pb]
+2018-09-09 13:17:48.378415: I tensorflow/tools/benchmark/benchmark_model.cc:470] Init ops:
+2018-09-09 13:17:48.378424: I tensorflow/tools/benchmark/benchmark_model.cc:471] Input layers: [Input]
+2018-09-09 13:17:48.378431: I tensorflow/tools/benchmark/benchmark_model.cc:472] Input shapes: [16,128]
+2018-09-09 13:17:48.378437: I tensorflow/tools/benchmark/benchmark_model.cc:473] Input types: [float]
+2018-09-09 13:17:48.378444: I tensorflow/tools/benchmark/benchmark_model.cc:474] Output layers: [ArgMax]
+2018-09-09 13:17:48.378451: I tensorflow/tools/benchmark/benchmark_model.cc:475] Target layers: []
+2018-09-09 13:17:48.378461: I tensorflow/tools/benchmark/benchmark_model.cc:476] Num runs: [1000]
+2018-09-09 13:17:48.378469: I tensorflow/tools/benchmark/benchmark_model.cc:477] Inter-inference delay (seconds): [-1.0]
+2018-09-09 13:17:48.378476: I tensorflow/tools/benchmark/benchmark_model.cc:478] Inter-benchmark delay (seconds): [-1.0]
+2018-09-09 13:17:48.378484: I tensorflow/tools/benchmark/benchmark_model.cc:480] Num threads: [-1]
+2018-09-09 13:17:48.378490: I tensorflow/tools/benchmark/benchmark_model.cc:481] Benchmark name: []
+2018-09-09 13:17:48.378494: I tensorflow/tools/benchmark/benchmark_model.cc:482] Output prefix: []
+2018-09-09 13:17:48.378502: I tensorflow/tools/benchmark/benchmark_model.cc:483] Show sizes: [0]
+2018-09-09 13:17:48.378508: I tensorflow/tools/benchmark/benchmark_model.cc:484] Warmup runs: [1]
+2018-09-09 13:17:48.378516: I tensorflow/tools/benchmark/benchmark_model.cc:251] Loading TensorFlow.
+2018-09-09 13:17:48.378537: I tensorflow/tools/benchmark/benchmark_model.cc:258] Got config, 0 devices
+2018-09-09 13:17:48.378637: I tensorflow/core/platform/cpu_feature_guard.cc:141] Your CPU supports instructions that this TensorFlow binary was not compiled to use: SSE4.2 AVX AVX2 FMA
+2018-09-09 13:17:48.469762: I tensorflow/tools/benchmark/benchmark_model.cc:496] Initialized session in 0.0912s
+2018-09-09 13:17:48.469931: I tensorflow/tools/benchmark/benchmark_model.cc:327] Running benchmark for max 1 iterations, max -1 seconds without detailed stat logging, with -1s sleep between inferences
+2018-09-09 13:17:49.585933: I tensorflow/tools/benchmark/benchmark_model.cc:361] count=1 curr=1115884
+
+2018-09-09 13:17:49.585974: I tensorflow/tools/benchmark/benchmark_model.cc:327] Running benchmark for max 1000 iterations, max 10 seconds without detailed stat logging, with -1s sleep between inferences
+2018-09-09 13:17:59.595987: I tensorflow/tools/benchmark/benchmark_model.cc:361] count=265 first=39025 curr=41265 min=31708 max=83323 avg=37766.7 std=9128
+
+2018-09-09 13:17:59.596029: I tensorflow/tools/benchmark/benchmark_model.cc:327] Running benchmark for max 1000 iterations, max 10 seconds with detailed stat logging, with -1s sleep between inferences
+2018-09-09 13:18:10.891929: I tensorflow/tools/benchmark/benchmark_model.cc:361] count=254 first=77762 curr=39611 min=35616 max=77762 avg=39520.8 std=5223
+
+2018-09-09 13:18:10.891957: I tensorflow/tools/benchmark/benchmark_model.cc:600] Average inference timings in us: Warmup: 1115884, no stats: 37766, with stats: 39520
+2018-09-09 13:18:10.894309: I tensorflow/core/util/stat_summarizer.cc:85] ============================== Top by Memory Use ==============================
+2018-09-09 13:18:10.894359: I tensorflow/core/util/stat_summarizer.cc:85] 	             [node type]	  [start]	  [first]	 [avg ms]	     [%]	  [cdf%]	  [mem KB]	[times called]	[Name]
+2018-09-09 13:18:10.894378: I tensorflow/core/util/stat_summarizer.cc:85] 	                  Conv2D	   27.836	    0.708	    0.465	  0.332%	  0.332%	   131.072	        1	model_v1/H27/stump/conv1x7/Conv2D
+2018-09-09 13:18:10.894386: I tensorflow/core/util/stat_summarizer.cc:85] 	                  Conv2D	   30.188	    1.010	    0.727	  0.519%	  0.852%	   131.072	        1	model_v1/H30/stump/conv1x5/Conv2D
+2018-09-09 13:18:10.894392: I tensorflow/core/util/stat_summarizer.cc:85] 	                  Conv2D	   28.776	    1.977	    0.646	  0.462%	  1.314%	   131.072	        1	model_v1/H28/stump/conv1x5/Conv2D
+2018-09-09 13:18:10.894399: I tensorflow/core/util/stat_summarizer.cc:85] 	                  Conv2D	   28.122	    2.488	    0.430	  0.307%	  1.621%	   131.072	        1	model_v1/H28/stump/conv1x7/Conv2D
+2018-09-09 13:18:10.894409: I tensorflow/core/util/stat_summarizer.cc:85] 	                  Conv2D	   28.523	    2.105	    0.617	  0.441%	  2.062%	   131.072	        1	model_v1/H27/stump/conv1x5/Conv2D
+2018-09-09 13:18:10.894420: I tensorflow/core/util/stat_summarizer.cc:85] 	                  Conv2D	   28.230	    1.877	    0.490	  0.351%	  2.413%	   131.072	        1	model_v1/H40/stump/conv1x7/Conv2D
+2018-09-09 13:18:10.894430: I tensorflow/core/util/stat_summarizer.cc:85] 	                  Conv2D	   28.504	    1.125	    0.509	  0.364%	  2.777%	   131.072	        1	model_v1/H29/stump/conv1x7/Conv2D
+2018-09-09 13:18:10.894440: I tensorflow/core/util/stat_summarizer.cc:85] 	                  Conv2D	   36.288	    0.321	    0.498	  0.356%	  3.133%	   131.072	        1	model_v1/H36/stump/conv1x5/Conv2D
+2018-09-09 13:18:10.894450: I tensorflow/core/util/stat_summarizer.cc:85] 	                  Conv2D	   36.131	    0.534	    0.532	  0.380%	  3.513%	   131.072	        1	model_v1/H37/stump/conv1x5/Conv2D
+2018-09-09 13:18:10.894460: I tensorflow/core/util/stat_summarizer.cc:85] 	                  Conv2D	   36.018	    0.333	    0.553	  0.396%	  3.908%	   131.072	        1	model_v1/H35/stump/conv1x5/Conv2D
+2018-09-09 13:18:10.894752: I tensorflow/core/util/stat_summarizer.cc:85] 
+2018-09-09 13:18:10.894776: I tensorflow/core/util/stat_summarizer.cc:85] Number of nodes executed: 1402
+2018-09-09 13:18:10.894807: I tensorflow/core/util/stat_summarizer.cc:85] ============================== Summary by node type ==============================
+2018-09-09 13:18:10.894825: I tensorflow/core/util/stat_summarizer.cc:85] 	             [Node type]	  [count]	  [avg ms]	    [avg %]	    [cdf %]	  [mem KB]	[times called]
+2018-09-09 13:18:10.894836: I tensorflow/core/util/stat_summarizer.cc:85] 	                  Conv2D	      177	   112.443	    80.749%	    80.749%	 16662.527	      177
+2018-09-09 13:18:10.894846: I tensorflow/core/util/stat_summarizer.cc:85] 	                 BiasAdd	      227	    11.836	     8.500%	    89.249%	     0.000	      227
+2018-09-09 13:18:10.895156: I tensorflow/core/util/stat_summarizer.cc:85] 	                 MaxPool	      127	     8.850	     6.355%	    95.604%	  6832.128	      127
+2018-09-09 13:18:10.895168: I tensorflow/core/util/stat_summarizer.cc:85] 	                    Relu	      177	     1.818	     1.306%	    96.910%	     0.000	      177
+2018-09-09 13:18:10.895174: I tensorflow/core/util/stat_summarizer.cc:85] 	                     Add	       77	     1.188	     0.853%	    97.763%	     0.000	       77
+2018-09-09 13:18:10.895179: I tensorflow/core/util/stat_summarizer.cc:85] 	                     Max	       50	     1.138	     0.817%	    98.580%	   102.400	       50
+2018-09-09 13:18:10.895188: I tensorflow/core/util/stat_summarizer.cc:85] 	                   Const	      459	     1.116	     0.801%	    99.382%	     0.000	      459
+2018-09-09 13:18:10.895197: I tensorflow/core/util/stat_summarizer.cc:85] 	                  MatMul	       50	     0.545	     0.391%	    99.773%	     0.400	       50
+2018-09-09 13:18:10.895206: I tensorflow/core/util/stat_summarizer.cc:85] 	                 Reshape	       50	     0.211	     0.152%	    99.925%	     0.000	       50
+2018-09-09 13:18:10.895216: I tensorflow/core/util/stat_summarizer.cc:85] 	                    AddN	        1	     0.043	     0.031%	    99.955%	     0.000	        1
+2018-09-09 13:18:10.895224: I tensorflow/core/util/stat_summarizer.cc:85] 	                    NoOp	        1	     0.018	     0.013%	    99.968%	     0.000	        1
+2018-09-09 13:18:10.895229: I tensorflow/core/util/stat_summarizer.cc:85] 	                 _Retval	        1	     0.014	     0.010%	    99.978%	     0.000	        1
+2018-09-09 13:18:10.895234: I tensorflow/core/util/stat_summarizer.cc:85] 	              ExpandDims	        2	     0.014	     0.010%	    99.989%	     0.000	        2
+2018-09-09 13:18:10.895239: I tensorflow/core/util/stat_summarizer.cc:85] 	                 Softmax	        1	     0.007	     0.005%	    99.994%	     0.000	        1
+2018-09-09 13:18:10.895244: I tensorflow/core/util/stat_summarizer.cc:85] 	                  ArgMax	        1	     0.006	     0.004%	    99.998%	     0.008	        1
+2018-09-09 13:18:10.895452: I tensorflow/core/util/stat_summarizer.cc:85] 	                    _Arg	        1	     0.003	     0.002%	   100.000%	     0.000	        1
+2018-09-09 13:18:10.895465: I tensorflow/core/util/stat_summarizer.cc:85] 
+2018-09-09 13:18:10.895476: I tensorflow/core/util/stat_summarizer.cc:85] Timings (microseconds): count=254 first=286692 curr=141851 min=125392 max=286692 avg=139911 std=19319
+2018-09-09 13:18:10.895484: I tensorflow/core/util/stat_summarizer.cc:85] Memory (bytes): count=254 curr=23597464(all same)
+2018-09-09 13:18:10.895492: I tensorflow/core/util/stat_summarizer.cc:85] 1402 nodes observed
+2018-09-09 13:18:10.895496: I tensorflow/core/util/stat_summarizer.cc:85] 
+2018-09-09 13:18:11.789040: I tensorflow/tools/benchmark/benchmark_model.cc:635] FLOPs estimate: 797.15M
+2018-09-09 13:18:11.789072: I tensorflow/tools/benchmark/benchmark_model.cc:637] FLOPs/second: 21.11B
+
+
+ summary 
+Found 1 possible inputs: (name=Input, type=float(1), shape=[16,128]) 
+No variables spotted.
+Found 1 possible outputs: (name=ArgMax, op=ArgMax) 
+Found 899853 (899.85k) const parameters, 0 (0) variable parameters, and 0 control_edges
+Op types used: 809 Const, 504 Identity, 227 BiasAdd, 177 Conv2D, 177 Relu, 127 Add, 127 MaxPool, 52 Reshape, 51 ExpandDims, 50 Max, 50 Pack, 50 MatMul, 50 StridedSlice, 1 Placeholder, 1 ArgMax, 1 Softmax
+To use with tensorflow/tools/benchmark:benchmark_model try these arguments:
+bazel run tensorflow/tools/benchmark:benchmark_model -- --graph=/Users/maurice/projects/eth/deepLearning/DL-Cough-Detection/cough_detect4/frozen_graphs/boost50.pb --show_flops --input_layer=Input --input_layer_type=float --input_layer_shape=16,128 --output_layer=ArgMax
+
+============================== end model boost50 ==============================

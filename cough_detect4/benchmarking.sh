@@ -36,7 +36,7 @@ echo -en "\n\n============================== $model_name =======================
 echo -en "\nfreezing model...\n"
 bazel-bin/tensorflow/python/tools/freeze_graph \
 	--input_graph="$COUGH_PATH/graphs/$model_name.pbtxt" \
-	--input_checkpoint="$COUGH_PATH/models/$model_name/cv1/$last_checkpoint" \
+	--input_checkpoint="$COUGH_PATH/models/$model_name/cv2/$last_checkpoint" \
 	--output_graph="$COUGH_PATH/frozen_graphs/$model_name.pb" \
 	--output_node_names=$output_layer \
 	--input_binary=false

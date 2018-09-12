@@ -402,7 +402,7 @@ def preprocess(	sound_file,
                 ):
 
                 try:
-                       time_signal, sample_rate = librosa.load(sound_file, mono=True, res_type='kaiser_fast')
+                       time_signal, sample_rate = librosa.load(sound_file, mono=True, sr=None, res_type='kaiser_fast')
                 except ValueError as e:
                        print ('!!!!!!! librosa failed to load file: %s !!!!!!!!!'%f)
                        raise e

@@ -28,7 +28,7 @@ def main():
 
 	ckpt_dir = "checkpoints"
 
-	model_ckpt_dir = os.path.join(ckpt_dir, subdir, 'cv2')
+	model_ckpt_dir = os.path.join(ckpt_dir, subdir, 'cv1')
 
 	if os.path.isdir(model_ckpt_dir):
 

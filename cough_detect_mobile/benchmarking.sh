@@ -11,17 +11,15 @@ myExit() {
  
 trap myExit SIGINT
 
-
 # get shape and output layer name from user
 echo "model name: "
 read model_name
-echo "input_layer_shape: "
-read input_layer_shape
 echo "output_layer: "
 read output_layer
 echo "last checkpoint: "
 read last_checkpoint
 
+input_layer_shape="16,128"
 
 # make sure frozen_graphs dir exists
 if [ ! -d "$COUGH_PATH/frozen_graphs" ]; then

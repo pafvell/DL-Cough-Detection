@@ -26,9 +26,9 @@ def main():
 	options = parser.parse_args()
 	subdir = options.subdir
 
-	ckpt_dir = "models"
+	ckpt_dir = "checkpoints"
 
-	model_ckpt_dir = os.path.join(ckpt_dir, subdir, 'cv2')
+	model_ckpt_dir = os.path.join(ckpt_dir, subdir, 'cv1')
 
 	if os.path.isdir(model_ckpt_dir):
 
@@ -71,6 +71,8 @@ def main():
 
 			#save the graph
 			tf.train.write_graph(sess.graph_def, 'graphs', subdir + '.pbtxt')
+			writer = tf.summary.FileWriter(model_ckpt_dir)
+			writer.add_graph(sess.graph)
 
 
 if __name__ == "__main__":

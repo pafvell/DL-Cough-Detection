@@ -1,0 +1,110 @@
+read checkpoints: ./checkpoints/wk236_mobile
+evaluate model:large_wk_mobile
+restore checkpoint:./checkpoints/wk236_mobile/cv1/checkpoint-100001
+use data from root path ./Audio_Data
+file ignored: ./Audio_Data/04_Coughing/Distant (cd)/p17_rode-108.wav
+file ignored: ./Audio_Data/04_Coughing/Distant (cd)/p17_htc-108.wav
+file ignored: ./Audio_Data/04_Coughing/Distant (cd)/p17_tablet-108.wav
+file ignored: ./Audio_Data/04_Coughing/Distant (cd)/p17_iphone-108.wav
+file ignored: ./Audio_Data/04_Coughing/Distant (cd)/p17_samsung-108.wav
+nr of samples coughing (test): 1866
+nr of samples NOT coughing (test): 2296
+()
+********************************************************************************
+Evaluate over Everything:
+('Confusion Matrix: \n', array([[2105,  191],
+       [ 235, 1631]]))
+('accuracy: ', 0.8976453628063431)
+('sensitivity (recall): ', 0)
+('specificity:', 0)
+('precision: ', 0)
+()
+********************************************************************************
+Evaluate studio
+('Confusion Matrix: \n', array([[406,  25],
+       [ 34, 308]]))
+('accuracy: ', 0.9236739974126779)
+('sensitivity (recall): ', 0)
+('specificity:', 0)
+('precision: ', 0)
+()
+********************************************************************************
+Evaluate iphone
+('Confusion Matrix: \n', array([[332,  41],
+       [ 18, 267]]))
+('accuracy: ', 0.9103343465045592)
+('sensitivity (recall): ', 0)
+('specificity:', 0)
+('precision: ', 0)
+()
+********************************************************************************
+Evaluate samsung
+('Confusion Matrix: \n', array([[493,  38],
+       [ 41, 403]]))
+('accuracy: ', 0.918974358974359)
+('sensitivity (recall): ', 0)
+('specificity:', 0)
+('precision: ', 0)
+()
+********************************************************************************
+Evaluate htc
+('Confusion Matrix: \n', array([[414,  50],
+       [ 69, 310]]))
+('accuracy: ', 0.8588374851720048)
+('sensitivity (recall): ', 0)
+('specificity:', 0)
+('precision: ', 0)
+()
+********************************************************************************
+Evaluate tablet
+('Confusion Matrix: \n', array([[427,  37],
+       [ 73, 306]]))
+('accuracy: ', 0.8695136417556346)
+('sensitivity (recall): ', 0)
+('specificity:', 0)
+('precision: ', 0)
+()
+********************************************************************************
+Evaluate audio track
+('Confusion Matrix: \n', array([[33,  0],
+       [ 0, 37]]))
+('accuracy: ', 1.0)
+('sensitivity (recall): ', 1)
+('specificity:', 1)
+('precision: ', 1)
+()
+********************************************************************************
+Evaluate Close (cc)
+('Confusion Matrix: \n', array([[  0,   0],
+       [153, 771]]))
+('accuracy: ', 0.8344155844155844)
+()
+********************************************************************************
+Evaluate Distant (cd)
+('Confusion Matrix: \n', array([[  0,   0],
+       [ 82, 860]]))
+('accuracy: ', 0.9129511677282378)
+()
+********************************************************************************
+Evaluate 01_Throat Clearing
+('Confusion Matrix: \n', array([[936,  84],
+       [  0,   0]]))
+('accuracy: ', 0.9176470588235294)
+()
+********************************************************************************
+Evaluate 02_Laughing
+('Confusion Matrix: \n', array([[899,  99],
+       [  0,   0]]))
+('accuracy: ', 0.9008016032064128)
+()
+********************************************************************************
+Evaluate 03_Speaking
+('Confusion Matrix: \n', array([[199,   4],
+       [  0,   0]]))
+('accuracy: ', 0.9802955665024631)
+()
+********************************************************************************
+Evaluate 04_Spirometer
+('Confusion Matrix: \n', array([[71,  4],
+       [ 0,  0]]))
+('accuracy: ', 0.9466666666666667)

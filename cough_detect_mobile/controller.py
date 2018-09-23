@@ -230,7 +230,7 @@ def train(
                 sess.run(init)
 
               	#checkpoints              
-                saver = load_model(sess, checkpoint_dir+'/cv%d'%split_id, checkpoint_dir, 'config.json')
+                saver = load_model(sess, checkpoint_dir+'/cv%d'%split_id, checkpoint_dir, args.config)#'config.json')
 
                 #wait for the queues to be filled
                 time.sleep(20) 

@@ -15,9 +15,9 @@
          "eta": 1e-3,
          "grad_noise" :9e-4,
          "clipper" :10.0,
-         "checkpoint_dir" :"./checkpoints/boost64_mobile",
+         "checkpoint_dir" :"./checkpoints/boost70_mobile",
          "batch_size" : 64,
-         "num_estimator" : 64,
+         "num_estimator" : 70,
          "num_filter" : 32,
          "trainable_scopes" : null,
          "train_capacity"  : 9500,
@@ -34,7 +34,7 @@
 
   "dataset": {
 
-    "CREATE_DB": false,
+    "CREATE_DB": true,
 
     "DB_ROOT_DIR": "./Audio_Data",
 

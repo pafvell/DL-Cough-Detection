@@ -113,6 +113,10 @@ def test(
 	)
 	sess = tf.Session(config=sess_config)
 	
+	#saver = tf.train.import_meta_graph(latest_ckpt+'.meta')
+	#graph = tf.get_default_graph()
+	#graph.finalize()
+
 	input_tensor = tf.placeholder(tf.float32, shape=[bands,size_cub], name='Input')
 	x = tf.expand_dims(input_tensor, 0) 
 	_, output_tensor = model.build_model(x, [1], num_estimator=num_estimator, num_filter=num_filter, is_training=False)
@@ -120,6 +124,13 @@ def test(
 
 	saver = tf.train.Saver()
 	saver.restore(sess, latest_ckpt)		
+
+
+	# Get the input and output operations
+	#input_op = graph.get_operation_by_name('Input') 
+	#input_tensor = input_op.outputs[0]
+	#output_op = graph.get_operation_by_name('Prediction') 
+	#output_tensor = output_op.outputs[0]
 
     	#get data and predict        
 	X_cough, X_other, _, _ = get_imgs(	split_id=config_db["split_id"],

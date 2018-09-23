@@ -34,7 +34,7 @@
 
   "dataset": {
 
-    "CREATE_DB": false,
+    "CREATE_DB": true,
 
     "DB_ROOT_DIR": "./Audio_Data",
 

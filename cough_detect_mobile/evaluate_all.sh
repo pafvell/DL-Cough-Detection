@@ -1,4 +1,4 @@
-FOLDER=./checkpoints/new
+FOLDER=./checkpoints
 SPLIT=''
 
  
@@ -13,7 +13,7 @@ trap myExit SIGINT
 
 for d in ${FOLDER}/*/; do
 	echo $d
-	python3 evaluate.py --config $d/config.json --ckpt_dir $d > $d/report$SPLIT.txt
+	python3 evaluate.py --config $d/config.json --ckpt_dir $d > $d/results.txt
 	echo 
 	echo '==========================================================================' 
 	echo 

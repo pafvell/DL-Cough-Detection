@@ -179,7 +179,7 @@ def load_model(sess,
        		if root_file:
                    if not copy_path:
                       copy_path=checkpoint_path
-                   copyfile(root_file, copy_path+'/'+root_file)
+                   copyfile(root_file, copy_path+'/config.json')#+root_file)
 
         latest_ckpt = tf.train.latest_checkpoint(checkpoint_path)	
         if not latest_ckpt:
@@ -421,5 +421,12 @@ def make_batches(iterable, n=1):
 		yield iterable[ndx:min(ndx+n,l)]
 
 	
-
+def random_choice(a, axis, samples_shape=None):
+    if samples_shape is None:
+        samples_shape = (1,)
+    shape = tuple(a.get_shape().as_list())
+    dim = shape[axis]
+    choice_indices = tf.random_uniform(samples_shape, minval=0, maxval=dim, dtype=tf.int32)
+    samples = tf.gather(a, choice_indices, axis=axis)
+    return samples
 

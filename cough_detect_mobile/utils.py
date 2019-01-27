@@ -1,10 +1,10 @@
-#Author: Kevin Kipfer
+#Author: Kevin Kipfer, Filipe Barata
 
 import librosa
 import numpy as np
 import tensorflow as tf
 import tensorflow.contrib.slim as slim
-import os, fnmatch, sys, random
+import os, fnmatch, sys, random, glob
 
 from shutil import copyfile
 
@@ -242,7 +242,7 @@ def remove_broken_files(root, list_of_broken_files, files):
        for broken_file in list_of_broken_files:
            broken_file = os.path.join(root, broken_file)
            if broken_file in files:
-                 print ( 'file ignored: %s'%broken_file )
+                 print ( 'file ignored: %s'+broken_file )
                  files.remove(broken_file)
        return files
 
@@ -404,16 +404,52 @@ def preprocess(	sound_file,
                 try:
                        time_signal, sample_rate = librosa.load(sound_file, mono=True, res_type='kaiser_fast')
                 except ValueError as e:
-                       print ('!!!!!!! librosa failed to load file: %s !!!!!!!!!'%f)
+                       print ('!!!!!!! librosa failed to load file: %s !!!!!!!!!')
                        raise e
 
                 time_signal = extract_Signal_Of_Importance(time_signal, window, sample_rate)
                 time_signal = standardize(time_signal)
                 mfcc = librosa.feature.melspectrogram(y=time_signal, sr=sample_rate, n_mels=bands, power=1, hop_length=hop_length, n_fft=nfft)
+                
                 return mfcc
 
 
-       
+def computeLocalHuMoments(stardardized_time_signal, sample_rate, hop_length):
+    import skimage.util
+    import skimage.measure
+    import scipy.fftpack
+
+    w = 5
+    mfcc = librosa.feature.melspectrogram(y=stardardized_time_signal, sr=sample_rate, n_mels=75, power=1, hop_length=hop_length,n_fft=4096)
+    log_mfcc = librosa.logamplitude(mfcc)
+    (n,m) = np.shape(mfcc)
+    if m%w != 0:
+        mzero = m + w - m%w
+    else:
+        mzero = m
+
+    log_mfcc_resized = np.zeros((n,mzero))
+    log_mfcc_resized[:n, :m] = log_mfcc
+    energymatrix = skimage.util.view_as_blocks(log_mfcc_resized, block_shape=(w, w))
+
+    nrow = np.shape(energymatrix)[0]
+    ncol = np.shape(energymatrix)[1]
+    humatrix = np.zeros(nrow,ncol)
+    for i in range(0,nrow):
+        for j in range(0,ncol):
+            M = skimage.measure.moments(energymatrix[i,j])
+            cr = M[1, 0] / M[0, 0]
+            cc = M[0, 1] / M[0, 0]
+            momentscentral = skimage.measure.moments_central(energymatrix[i,j], (cr, cc))
+            normalizedCentralmoments= skimage.measure.moments_normalized(momentscentral)
+            humoments = skimage.measure.moments_hu(normalizedCentralmoments)
+            humatrix[i,j] = humoments[0]
+
+    TQ = scipy.fftpack.dct(humatrix,axis=1)
+    result = TQ[1:,:]
+
+    return result
+
 
 def make_batches(iterable, n=1):
 	l=len(iterable)

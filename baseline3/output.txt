@@ -1,0 +1,19 @@
+baseline.py output on entire dataset
+
+******************
+y_train shape:  (10366,)
+X_train shape:  (10366, 12)
+y_test shape:  (3163,)
+X_test shape:  (3163, 12)
+******************
+test accuracy: 0.754031
+train accuracy: 1.000000
+auc roc score test: 0.760828
+auc roc score train: 1.000000
+
+
+hyperparams:
+
+pca_components = 10
+n_trees = 500
+max_features = 12 (=all)

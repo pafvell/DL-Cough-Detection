@@ -1,0 +1,34 @@
+{
+
+  "general":{
+    "DB_ROOT_DIR" : "../../Audio_Data",
+    "DB_VERSION": "hu_v1.1"
+  },
+
+  "create_db": {
+    "DO_VALIDATION": false,
+    "ALTERNATIVE_COMP": false,
+    "PAPER": true,
+    "FILTERING": false,
+    "DOWNSAMPLING_FACTOR": 2,
+    "SAMPLING_RATE": 22050,
+    "NPERSEG": 441,
+    "NOVERLAP": 221,
+    "HOP": 256,
+    "N_FFT": 4096,
+    "WINDOW_SIZE": 0.4,
+    "DEVICE_FILTER": ["studio", "iphone", "samsung", "htc", "tablet", "audio track"],
+    "ALL_DEVICES": ["studio", "iphone", "samsung", "htc", "tablet", "audio track"]
+  },
+
+  "run_baseline": {
+    "NNEIGHBOURS": 3,
+    "WEIGHT_TYPE": "distance",
+    "WEIGHT_METRIC": 2
+  },
+
+  "data_split": {
+    "test": ["p05", "p17", "p34", "p20", "p28", "p09", "p08", "p11", "p31", "p21", "p14"]
+  }
+
+}

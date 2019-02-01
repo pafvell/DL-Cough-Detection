@@ -1,19 +1,54 @@
-baseline.py output on entire dataset
+Sender: LSF System <lsfadmin@eu-c7-045-04>
+Subject: Job 84186358: <python baseline.py> in cluster <euler> Done
 
-******************
-y_train shape:  (10366,)
-X_train shape:  (10366, 12)
-y_test shape:  (3163,)
-X_test shape:  (3163, 12)
-******************
-test accuracy: 0.754031
+Job <python baseline.py> was submitted from host <eu-login-14-ng> by user <dfilipe> in cluster <euler> at Thu Jan 31 16:11:26 2019
+Job was executed on host(s) <8*eu-c7-045-04>, in queue <normal.24h>, as user <dfilipe> in cluster <euler> at Thu Jan 31 16:11:53 2019
+</cluster/home/dfilipe> was used as the home directory.
+</cluster/home/dfilipe/DL-Cough-Detection/baseline3> was used as the working directory.
+Started at Thu Jan 31 16:11:53 2019
+Terminated at Thu Jan 31 16:19:43 2019
+Results reported at Thu Jan 31 16:19:43 2019
+
+Your job looked like:
+
+------------------------------------------------------------
+# LSBATCH: User input
+python baseline.py
+------------------------------------------------------------
+
+Successfully completed.
+
+Resource usage summary:
+
+    CPU time :                                   6589.00 sec.
+    Max Memory :                                 9453 MB
+    Average Memory :                             6393.61 MB
+    Total Requested Memory :                     16384.00 MB
+    Delta Memory :                               6931.00 MB
+    Max Swap :                                   -
+    Max Processes :                              102
+    Max Threads :                                105
+    Run time :                                   496 sec.
+    Turnaround time :                            497 sec.
+
+The output (if any) follows:
+
+use data from root path ../../Audio_Data
+file ignored: ../../Audio_Data/04_Coughing/Distant (cd)/p17_rode-108.wav
+file ignored: ../../Audio_Data/04_Coughing/Distant (cd)/p17_htc-108.wav
+file ignored: ../../Audio_Data/04_Coughing/Distant (cd)/p17_tablet-108.wav
+file ignored: ../../Audio_Data/04_Coughing/Distant (cd)/p17_iphone-108.wav
+file ignored: ../../Audio_Data/04_Coughing/Distant (cd)/p17_samsung-108.wav
+nr of test samples coughing: 1060
+nr of test samples NOT coughing: 1327
+computing cough model for training data...
+computing cough model for test data...
+*********  RESULTS *********
+test accuracy: 0.746497
 train accuracy: 1.000000
-auc roc score test: 0.760828
+auc roc score test: 0.756228
 auc roc score train: 1.000000
-
-
-hyperparams:
-
-pca_components = 10
-n_trees = 500
-max_features = 12 (=all)
+[[868 436]
+ [161 890]]
+test matthew correlation coeff.: 0.513592
+train matthew correlation coeff.: 1.000000

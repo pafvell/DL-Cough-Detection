@@ -6,6 +6,7 @@ import time
 import h5py
 import sklearn
 from sklearn.neighbors import KNeighborsClassifier
+import pandas as pd
 
 from utils import *
 
@@ -68,11 +69,20 @@ knn.fit(train_features, train_labels)
 train_pred = knn.predict(train_features)
 test_pred = knn.predict(test_features)
 
+# auc roc curve
+probability_test = knn.predict_proba(test_features)
+probVec = probability_test[:, 1]
+fpr, tpr, thresholds = sklearn.metrics.roc_curve(test_labels, probVec)
+df = pd.DataFrame({'fpr': fpr, 'tpr': tpr, 'thresholds': thresholds})
+df.to_csv("knn_roc_curve.csv")
+
 ## get figures for entire data set
 train_accuracy = sklearn.metrics.accuracy_score(y_true=train_labels, y_pred=train_pred)
 test_accuracy = sklearn.metrics.accuracy_score(y_true=test_labels, y_pred=test_pred)
-aucroc_score_train = sklearn.metrics.roc_auc_score(train_labels, train_pred)
-aucroc_score_test = sklearn.metrics.roc_auc_score(test_labels, test_pred)
+
+aucroc_score_test = sklearn.metrics.roc_auc_score(test_labels, probability_test[:,1])
+
+mcc_test = sklearn.metrics.matthews_corrcoef(test_labels, test_pred)
 cm = sklearn.metrics.confusion_matrix(y_true=test_labels, y_pred=test_pred).astype(float)
 specificity = cm[0,0]/(cm[0,0]+cm[0,1])  
 sensitivity = cm[1,1]/(cm[1,0]+cm[1,1])
@@ -92,7 +102,8 @@ print('train accuracy: %f'%train_accuracy)
 print('sensitivity: %f'%sensitivity)
 print('specificity: %f'%specificity)
 print('precision: %f'%precision)
-
+print('mcc: %f'%mcc_test)
+print('auc: %f'%aucroc_score_test)
 
 ## get figures for each device
 for device in DEVICE_FILTER:
@@ -108,7 +119,7 @@ for device in DEVICE_FILTER:
 	train_pred_ = [train_pred[i] for i in train_indexes]
 	train_labels_ = [train_labels[i] for i in train_indexes]
 	train_accuracy = sklearn.metrics.accuracy_score(y_true=train_labels_, y_pred=train_pred_)
-	aucroc_score_train = sklearn.metrics.roc_auc_score(train_labels_, train_pred_)
+
 	
 	# test figures
 	test_indexes = np.where(np.isin(test_devices, device))[0]
@@ -116,7 +127,13 @@ for device in DEVICE_FILTER:
 	test_pred_ = [test_pred[i] for i in test_indexes]
 	test_labels_ = [test_labels[i] for i in test_indexes]
 	test_accuracy = sklearn.metrics.accuracy_score(y_true=test_labels_, y_pred=test_pred_)
-	aucroc_score_test = sklearn.metrics.roc_auc_score(test_labels_, test_pred_)
+
+	test_features_= [test_features[j] for j in test_indexes]
+	probability_test_ = knn.predict_proba(test_features_)
+	aucroc_score_test = sklearn.metrics.roc_auc_score(test_labels_, probability_test_[:,1])
+
+
+	mcc_test = sklearn.metrics.matthews_corrcoef(test_labels_, test_pred_)
 	cm = sklearn.metrics.confusion_matrix(y_true=test_labels_, y_pred=test_pred_).astype(float)
 	specificity = cm[0,0]/(cm[0,0]+cm[0,1])
 	sensitivity = cm[1,1]/(cm[1,0]+cm[1,1])
@@ -129,8 +146,8 @@ for device in DEVICE_FILTER:
 	print('sensitivity: %f'%sensitivity)
 	print('specificity: %f'%specificity)
 	print('precision: %f'%precision)
-
-
+	print('mcc: %f' %mcc_test)
+	print('auc: %f' %aucroc_score_test)
 
 print('#'*100)
 

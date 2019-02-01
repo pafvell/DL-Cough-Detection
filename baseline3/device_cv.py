@@ -61,6 +61,7 @@ mother_test_accuracy = []
 mother_aucroc_score_test = []
 mother_specificity = []
 mother_sensitivity = []
+mother_mcc = []
 
 for device in DEVICE_FILTER:
 
@@ -89,8 +90,11 @@ for device in DEVICE_FILTER:
     ## get figures for entire data set
     train_accuracy = sklearn.metrics.accuracy_score(y_true=tmp_train_labels, y_pred=train_pred)
     test_accuracy = sklearn.metrics.accuracy_score(y_true=tmp_test_labels, y_pred=test_pred)
-    aucroc_score_train = sklearn.metrics.roc_auc_score(tmp_train_labels, train_pred)
-    aucroc_score_test = sklearn.metrics.roc_auc_score(tmp_test_labels, test_pred)
+
+    probability_test_ = knn.predict_proba(tmp_test_features)
+    aucroc_score_test = sklearn.metrics.roc_auc_score(tmp_test_labels, probability_test_[:, 1])
+
+    test_mcc = sklearn.metrics.matthews_corrcoef(y_true=tmp_test_labels, y_pred=test_pred)
     cm = sklearn.metrics.confusion_matrix(y_true=tmp_test_labels, y_pred=test_pred).astype(float)
     specificity = cm[0, 0] / (cm[0, 0] + cm[0, 1])
     sensitivity = cm[1, 1] / (cm[1, 0] + cm[1, 1])
@@ -112,12 +116,15 @@ for device in DEVICE_FILTER:
     print('train accuracy: %f' % train_accuracy)
     print('sensitivity: %f' % sensitivity)
     print('specificity: %f' % specificity)
+    print('auc: %f' % aucroc_score_test)
     print('precision: %f' % precision)
+    print('mcc: %f' % test_mcc)
 
     mother_aucroc_score_test.append(aucroc_score_test)
     mother_test_accuracy.append(test_accuracy)
     mother_specificity.append(specificity)
     mother_sensitivity.append(sensitivity)
+    mother_mcc.append(test_mcc)
 
 acc_av = np.mean(mother_test_accuracy)
 acc_sd = np.std(mother_test_accuracy)
@@ -127,6 +134,8 @@ spec_av = np.mean(mother_specificity)
 spec_sd = np.std(mother_specificity)
 sens_av = np.mean(mother_sensitivity)
 sens_sd = np.std(mother_sensitivity)
+mcc_av = np.mean(mother_mcc)
+mcc_sd = np.std(mother_mcc)
 
 print('#' * 100, "\n")
 print('#' * 100, "\n")
@@ -135,6 +144,8 @@ print('test accuracy: (mean %f, +/- SD %f)' % (acc_av, acc_sd))
 print('aucroc score test: (mean %f, +/- SD %f)' % (aucroc_av, aucroc_sd))
 print('sensitivity: (mean %f, +/- SD %f)' % (spec_av, spec_sd))
 print('specificity: (mean %f, +/- SD %f)' % (sens_av, sens_sd))
+print('specificity: (mean %f, +/- SD %f)' % (sens_av, sens_sd))
+print('mcc: (mean %f, +/- SD %f)' % (mcc_av, mcc_sd))
 
 print('#' * 100)
 

@@ -1,17 +1,13 @@
 #Author: Maurice Weber
 
-import numpy as np
 import json
-import h5py
 import time
 
+import h5py
 import sklearn
-from sklearn import decomposition
 from sklearn.ensemble import RandomForestClassifier
-from scipy import signal
 
 from utils import *
-
 
 #loading configuration
 with open('config.json') as json_data_file:
@@ -64,6 +60,14 @@ rf = RandomForestClassifier(n_estimators = N_TREES,
 							random_state=0)
 rf.fit(train_features, train_labels)
 
+# auc roc curve
+probability_test = rf.predict_proba(test_features)
+probVec = probability_test[:, 1]
+fpr, tpr, thresholds = sklearn.metrics.roc_curve(test_labels, probVec)
+df = pd.DataFrame({'fpr': fpr, 'tpr': tpr, 'thresholds': thresholds})
+df.to_csv("knn_roc_curve.csv")
+
+
 # predictions
 train_pred = rf.predict(train_features)
 test_pred = rf.predict(test_features)
@@ -71,9 +75,11 @@ test_pred = rf.predict(test_features)
 ## get figures for entire data set
 train_accuracy = sklearn.metrics.accuracy_score(y_true=train_labels, y_pred=train_pred)
 test_accuracy = sklearn.metrics.accuracy_score(y_true=test_labels, y_pred=test_pred)
-aucroc_score_train = sklearn.metrics.roc_auc_score(train_labels, train_pred)
-aucroc_score_test = sklearn.metrics.roc_auc_score(test_labels, test_pred)
+
+aucroc_score_test = sklearn.metrics.roc_auc_score(test_labels, probability_test[:,1])
+
 cm = sklearn.metrics.confusion_matrix(y_true=test_labels, y_pred=test_pred)
+mcc_test = sklearn.metrics.matthews_corrcoef(test_labels, test_pred)
 specificity = cm[0,0]/(cm[0,0]+cm[0,1])  
 sensitivity = cm[1,1]/(cm[1,0]+cm[1,1])
 precision = cm[1,1]/(cm[0,1]+cm[1,1])
@@ -92,7 +98,7 @@ print('train accuracy: %f'%train_accuracy)
 print('sensitivity: %f'%sensitivity)
 print('specificity: %f'%specificity)
 print('precision: %f'%precision)
-
+print('mcc; %f'%mcc_test)
 
 ## get figures for each device
 for device in DEVICE_FILTER:
@@ -116,7 +122,12 @@ for device in DEVICE_FILTER:
 	test_pred_ = [test_pred[i] for i in test_indexes]
 	test_labels_ = [test_labels[i] for i in test_indexes]
 	test_accuracy = sklearn.metrics.accuracy_score(y_true=test_labels_, y_pred=test_pred_)
-	aucroc_score_test = sklearn.metrics.roc_auc_score(test_labels_, test_pred_)
+
+	test_features_ = [test_features[j] for j in test_indexes]
+	probability_test_ = rf.predict_proba(test_features_)
+	aucroc_score_test = sklearn.metrics.roc_auc_score(test_labels_, probability_test_[:, 1])
+
+	mcc_test = sklearn.metrics.matthews_corrcoef(test_labels_, test_pred_)
 	cm = sklearn.metrics.confusion_matrix(y_true=test_labels_, y_pred=test_pred_)
 	specificity = cm[0,0]/(cm[0,0]+cm[0,1])  
 	sensitivity = cm[1,1]/(cm[1,0]+cm[1,1])
@@ -128,7 +139,9 @@ for device in DEVICE_FILTER:
 	print('train accuracy: %f'%train_accuracy)
 	print('sensitivity: %f'%sensitivity)
 	print('specificity: %f'%specificity)
+	print('auc: %f'%aucroc_score_test)
 	print('precision: %f'%precision)
+	print('mcc: %f' % mcc_test)
 
 
 

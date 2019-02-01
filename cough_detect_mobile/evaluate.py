@@ -1,17 +1,15 @@
 #!/usr/bin/python
-# Authors: Kevin Kipfer
+# Authors: Kevin Kipfer, Filipe Barata
 
-import matplotlib.pyplot as plt
-import tensorflow as tf
-import tensorflow.contrib.slim as slim
-import numpy as np
-import os, sys, math, shutil, time, threading
+import argparse
 import importlib
 import json
-import argparse
-from utils import *
-from sklearn.metrics import accuracy_score, confusion_matrix, precision_score, recall_score
+
+import matplotlib.pyplot as plt
 import sklearn.metrics as skmetrics
+from sklearn.metrics import accuracy_score, confusion_matrix, precision_score, recall_score, matthews_corrcoef
+
+from utils import *
 
 # ******************************************************************************************************************
 
@@ -68,10 +66,13 @@ def plot_roc(fpr, tpr, auc_roc_score):
     print("saved roc curve as {}".format(plot_filename))
 
 
-def classification_report(y_true, y_pred, y_probs=None, sanity_check=False, print_report=True):
+def classification_report(y_true, y_pred, y_probs=None, sanity_check=False, print_report=True, write_aucroccurve_tofile = False):
     cm = confusion_matrix(y_true, y_pred)
     total = sum(sum(cm))
     acc = accuracy_score(y_true, y_pred)
+    mcc = matthews_corrcoef(y_true, y_pred)
+    auc_roc_score = []
+
     specificity = cm[0, 0] / (cm[0, 0] + cm[0, 1])
     sensitivity = cm[1, 1] / (cm[1, 0] + cm[1, 1])
     precision = cm[1, 1] / (cm[0, 1] + cm[1, 1])
@@ -87,8 +88,11 @@ def classification_report(y_true, y_pred, y_probs=None, sanity_check=False, prin
         # compute auc roc score + make plot
         fpr, tpr, thresholds = skmetrics.roc_curve(y_true, y_probs)
         auc_roc_score = skmetrics.roc_auc_score(y_true, y_probs)
-        print('auc_roc_score: ', auc_roc_score)
-        plot_roc(fpr, tpr, auc_roc_score)
+        if write_aucroccurve_tofile:
+            df = pd.DataFrame({'fpr': fpr, 'tpr': tpr, 'thresholds': thresholds})
+            df.to_csv("knn_roc_curve.csv")
+        #print('auc_roc_score: ', auc_roc_score)
+        #plot_roc(fpr, tpr, auc_roc_score)
 
     if sanity_check:
         print('(SANITY CHECK - our precision: %f vs sklearn precision: %f)' % (
@@ -96,7 +100,7 @@ def classification_report(y_true, y_pred, y_probs=None, sanity_check=False, prin
         print(
             '(SANITY CHECK - our sensitivity: %f vs sklearn recall: %f)' % (sensitivity, recall_score(y_true, y_pred)))
 
-    return acc, sensitivity, specificity, precision
+    return acc, sensitivity, specificity, precision, mcc, auc_roc_score
 
 
 def test(
@@ -169,7 +173,7 @@ def test(
     print()
     print('********************************************************************************')
     print('Evaluate over Everything:')
-    acc, sen, spe, prec = classification_report(y, predictions, class_probs_list)
+    acc, sen, spe, prec, mcc, auc = classification_report(y, predictions, class_probs_list, write_aucroccurve_tofile = True)
 
     X = list(zip(X, y, predictions))
     sources = ["studio", "iphone", "samsung", "htc", "tablet", "audio track"]
@@ -196,7 +200,145 @@ def test(
             print('Confusion Matrix: \n', cm)
             print('accuracy: ', acc)
 
-    return acc, sen, spe, prec
+    return acc, sen, spe, prec, mcc
 
 
-test()
+def test_cv(device,
+        model_name=control_config["model"],
+        hop_length=config_db["HOP"],
+        bands=config_db["BAND"],
+        window=config_db["WINDOW"],
+        size_cub=control_config["spec_size"],
+        batch_size=config_train["batch_size"],
+        num_estimator=config_train["num_estimator"],
+        num_filter=config_train["num_filter"],
+        split_id=config_db["split_id"],
+        participants=config_db["test"],
+        sources=config_db["allowedSources"],
+        db_root_dir=config_db["DB_ROOT_DIR"],
+        checkpoint_dir=CKPT_DIR,
+        nfft=NFFT):
+    checkpoint_dir = checkpoint_dir + device
+    print('read checkpoints: %s' % checkpoint_dir)
+    checkpoint_dir = checkpoint_dir + '/cv%d' % split_id
+
+    print('evaluate model:' + model_name)
+    model = importlib.import_module(model_name)
+
+    # TODO restore any checkpoint
+    latest_ckpt = tf.train.latest_checkpoint(checkpoint_dir)
+    if not latest_ckpt:
+        raise IOError('Invalid checkpoint path: %s! It is not possible to evaluate the model.' % checkpoint_dir)
+    print('restore checkpoint:%s' % latest_ckpt)
+
+    # Create the session that we'll use to execute the model
+    sess_config = tf.ConfigProto(
+        log_device_placement=False,
+        allow_soft_placement=True
+    )
+    sess = tf.Session(config=sess_config)
+
+    input_tensor = tf.placeholder(tf.float32, shape=[bands, size_cub], name='Input')
+    x = tf.expand_dims(input_tensor, 0)
+    _, output_tensor, logits = model.build_model(x, [1], num_estimator=num_estimator, num_filter=num_filter,
+                                                 is_training=False, include_logits=True)
+    class_probabilities = tf.nn.softmax(logits)
+
+    saver = tf.train.Saver()
+    saver.restore(sess, latest_ckpt)
+
+    # get data and predict
+    X_cough, X_other, _, _ = get_imgs(split_id=config_db["split_id"],
+                                      db_root_dir=config_db["DB_ROOT_DIR"],
+                                      listOfParticipantsInTestset=config_db["test"],
+                                      listOfParticipantsInValidationset=config_db["validation"],
+                                      listOfAllowedSources=config_db["allowedSources"],
+                                      device_cv = True,
+                                      device = device
+                                      )
+
+    print('nr of samples coughing (test): %d' % len(X_cough))
+    print('nr of samples NOT coughing (test): %d' % len(X_other))
+
+    X = X_cough + X_other
+    y = [1] * len(X_cough) + [0] * len(X_other)
+
+    predictions, class_probs_list = [], []
+    for x in X:  # make_batches(X, batch_size):
+        x = preprocess(x, bands=bands, hop_length=hop_length, window=window, nfft=nfft)
+        # x = np.expand_dims(x, 0)
+        preds_sample, class_probs_sample = sess.run([output_tensor, class_probabilities], {input_tensor: x})
+        predictions.append(preds_sample)
+        class_probs_list.append(class_probs_sample[0][1])  # probability of positive class
+
+    print('class probs shape: ', np.shape(class_probs_list))
+
+    print()
+    print('********************************************************************************')
+    print('Evaluate over Everything:')
+    acc, sen, spe, prec, mfcc, auc = classification_report(y, predictions, y_probs=class_probs_list, write_aucroccurve_tofile = False)
+
+
+    kinds = ["Close (cc)", "Distant (cd)", "01_Throat Clearing", "02_Laughing", "03_Speaking", "04_Spirometer"]
+
+    for kind in kinds:
+        Xlittle = [x for x in X if kind in x[0]]
+        if len(Xlittle) > 0:
+            path, y_true, y_pred = zip(*Xlittle)
+            print()
+            print('********************************************************************************')
+            print('Evaluate ' + kind)
+            cm = confusion_matrix(y_true, y_pred)
+            acc = accuracy_score(y_true, y_pred)
+            print('Confusion Matrix: \n', cm)
+            print('accuracy: ', acc)
+
+    return acc, sen, spe, prec, mfcc, auc
+
+
+if __name__ == '__main__':
+    if config["DEVICE_CV"]:
+
+        mother_test_accuracy = []
+        mother_aucroc_score_test = []
+        mother_specificity = []
+        mother_sensitivity = []
+        mother_mcc = []
+
+        for device in config["dataset"]["allowedSources"]:
+            if device == "audio track":
+                continue
+
+            acc, sen, spe, prec, mcc, auc = test_cv(device)
+
+            mother_aucroc_score_test.append(auc)
+            mother_test_accuracy.append(acc)
+            mother_specificity.append(spe)
+            mother_sensitivity.append(sen)
+            mother_mcc.append(mcc)
+
+        acc_av = np.mean(mother_test_accuracy)
+        acc_sd = np.std(mother_test_accuracy)
+        aucroc_av = np.mean(mother_aucroc_score_test)
+        aucroc_sd = np.std(mother_aucroc_score_test)
+        spec_av = np.mean(mother_specificity)
+        spec_sd = np.std(mother_specificity)
+        sens_av = np.mean(mother_sensitivity)
+        sens_sd = np.std(mother_sensitivity)
+        mcc_av = np.mean(mother_mcc)
+        mcc_sd = np.std(mother_mcc)
+
+        print('#' * 100, "\n")
+        print('#' * 100, "\n")
+        print('SUMMARY RESULTS:')
+        print('test accuracy: (mean %f, +/- SD %f)' % (acc_av, acc_sd))
+        print('aucroc score test: (mean %f, +/- SD %f)' % (aucroc_av, aucroc_sd))
+        print('sensitivity: (mean %f, +/- SD %f)' % (spec_av, spec_sd))
+        print('specificity: (mean %f, +/- SD %f)' % (sens_av, sens_sd))
+        print('specificity: (mean %f, +/- SD %f)' % (sens_av, sens_sd))
+        print('mcc: (mean %f, +/- SD %f)' % (mcc_av, mcc_sd))
+
+        print('#' * 100)
+
+    else:
+        test()

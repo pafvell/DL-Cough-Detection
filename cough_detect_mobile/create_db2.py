@@ -1,19 +1,10 @@
-import os.path
-import fnmatch
-import os
-import datetime as dt
-import tensorflow as tf
-from tqdm import tqdm
 import argparse
-from collections import defaultdict
 import json
+import os.path
 
-import numpy as np
-import os, sys, math, shutil, time, threading
-import librosa
+from tqdm import tqdm
 
 from utils import *
-from sklearn.model_selection import train_test_split
 
 # loading config file
 parser = argparse.ArgumentParser()
@@ -53,7 +44,8 @@ def create_dataset(files1,
                    window=config_db["WINDOW"],
                    nfft=config_db["NFFT"],
                    db_full_path=config["ROOT_DIR"],
-                   version=config["DB_version"]
+                   version=config["DB_version"],
+                   device_cv_name_extension = ""
                    ):
     """
      load, preprocess, normalize a sample
@@ -62,7 +54,7 @@ def create_dataset(files1,
     """
 
     print('save %s samples' % db_name)
-    db_filename = os.path.join(db_full_path, db_name + version + '.tfrecords')
+    db_filename = os.path.join(db_full_path, db_name + version + device_cv_name_extension+'.tfrecords')
     writer = tf.python_io.TFRecordWriter(db_filename)
 
     def store_example(files, label):
@@ -106,8 +98,10 @@ def test_shape(files1,
     plt.show()
 
 
-def print_stats(test_coughs, test_other, train_coughs, train_other, name=''):
+def print_stats(test_coughs, test_other, train_coughs, train_other, name='', device = ''):
     print()
+    if device:
+        print('----------------------------device: %s' %device )
     print('------------------------------------------------------------------')
     print('PARTITION: ' + str(name))
     print('nr of samples coughing (test): %d' % len(test_coughs))
@@ -133,7 +127,8 @@ def main(unused_args):
                                                                             listOfParticipantsInValidationset=config_db[
                                                                                 "validation"],
                                                                             listOfAllowedSources=config_db[
-                                                                                "allowedSources"])
+                                                                                "allowedSources"]
+                                                                            )
     if config_db["CREATE_DB"]:
         create_dataset(trainListCough, trainListOther, 'train_' + str(name))
         create_dataset(testListCough, testListOther, 'test_' + str(name))
@@ -144,5 +139,39 @@ def main(unused_args):
         test_shape(trainListOther)
 
 
+def main_device_cv(device):
+    tf.set_random_seed(0)
+
+    # Store data to TFRECORDS
+    name = config_db["split_id"]
+    testListCough, testListOther, trainListCough, trainListOther = get_imgs(split_id=name,
+                                                                            db_root_dir= config_db["DB_ROOT_DIR"] ,
+                                                                            listOfParticipantsInTestset=config_db[
+                                                                                "test"],
+                                                                            listOfParticipantsInValidationset=config_db[
+                                                                                "validation"],
+                                                                            listOfAllowedSources=config_db[
+                                                                                "allowedSources"],
+                                                                            device_cv = True,
+                                                                            device = device
+                                                                            )
+    if config_db["CREATE_DB"]:
+        create_dataset(trainListCough, trainListOther, 'train_' + str(name), device_cv_name_extension = device)
+        create_dataset(testListCough, testListOther, 'test_' + str(name), device_cv_name_extension = device)
+        print_stats(testListCough, testListOther, trainListCough, trainListOther, name, device = device)
+    else:
+        print_stats(testListCough, testListOther, trainListCough, trainListOther, name, device = device)
+        test_shape(trainListCough)
+        test_shape(trainListOther)
+
+
+
 if __name__ == '__main__':
-    tf.app.run()
+
+    if config["DEVICE_CV"]:
+        for device in config["dataset"]["allowedSources"]:
+            if device == "audio track":
+                continue
+            main_device_cv(device)
+    else:
+        tf.app.run()

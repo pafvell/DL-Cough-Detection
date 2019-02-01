@@ -53,9 +53,13 @@ def get_imgs(	db_name,
   		size_cub,
 		db_version, 
 		root_dir,
-		prefetch_batchs=3000):
+		prefetch_batchs=3000, device = ""):
 
-  filename = os.path.join(root_dir, '%s%s.tfrecords'%(db_name, db_version))
+
+  if device:
+    filename = os.path.join(root_dir, '%s%s%s.tfrecords' % (db_name, db_version, device))
+  else:
+    filename = os.path.join(root_dir, '%s%s.tfrecords'%(db_name, db_version))
   print ('use dataset location: '+filename)
   dataset = tf.data.TFRecordDataset([filename])
 
@@ -106,9 +110,12 @@ def train(
          log_every_n_steps=config_train["log_every_n_steps"],
          eval_every_n_steps=config_train["eval_every_n_steps"],
          save_every_n_steps=config_train["save_every_n_steps"],
-         save_checkpoint=config_train["save_checkpoint"]):
+         save_checkpoint=config_train["save_checkpoint"],
+         device = ""):
 
 
+       if device:
+        checkpoint_dir = checkpoint_dir + device
 
        tf.set_random_seed(0)
 
@@ -126,7 +133,8 @@ def train(
 									num_epochs=num_epochs,
 									size_cub=size_cub,
 									db_version=db_version,
-									root_dir=root_dir
+									root_dir=root_dir,
+                                    device = device
 								)
 
               #initialize
@@ -189,7 +197,8 @@ def train(
 									num_epochs=num_epochs,
 									size_cub=size_cub,
 									db_version=db_version,
-									root_dir=root_dir)
+									root_dir=root_dir,
+                                    device = device)
 
 
               #Evaluation
@@ -313,7 +322,19 @@ def main(unused_args):
                 train()
 
 
+def main_device_cv(device):
+
+    train(device = device)
+
+
 if __name__ == '__main__':
+    if config["DEVICE_CV"]:
+        # for device in config["dataset"]["allowedSources"]:
+        #     if device == "audio track":
+        #         continue
+        #"allowedSources": ["studio", "iphone", "samsung", "htc", "tablet", "audio track"]
+        main_device_cv("tablet")
+    else:
        tf.app.run()    
 
 

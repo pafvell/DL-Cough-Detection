@@ -277,7 +277,9 @@ def get_imgs(	split_id,
 		db_root_dir,
     		listOfParticipantsInTestset,
     		listOfParticipantsInValidationset,
-		listOfAllowedSources
+		listOfAllowedSources,
+        device_cv = False,
+        device = ""
 	    ):
        '''
 	possible experiment splits:
@@ -324,6 +326,8 @@ def get_imgs(	split_id,
        #
        #
 
+
+
        testListOther, testListCough = [], []
        trainListCough = list(coughAll)
        trainListOther = list(other)
@@ -361,6 +365,14 @@ def get_imgs(	split_id,
                               if nameToExclude in name:
                                      testListOther.append(name)
                                      trainListOther.remove(name)
+
+
+       if device_cv:
+           trainListCough = [kk for kk in trainListCough if get_device(kk) != device]
+           trainListOther = [kk for kk in trainListOther if get_device(kk) != device]
+
+           testListCough = [ll for ll in testListCough if get_device(ll) == device]
+           testListOther = [ll for ll in testListOther if get_device(ll) == device]
 
        return testListCough, testListOther, trainListCough, trainListOther
 
@@ -414,7 +426,7 @@ def preprocess(	sound_file,
                 return mfcc
 
 
-def computeLocalHuMoments(stardardized_time_signal, sample_rate, hop_length):
+def computeLocalHuMoments(stardardized_time_signal, sample_rate, hop_length=512):
     import skimage.util
     import skimage.measure
     import scipy.fftpack

@@ -4,14 +4,14 @@
 import argparse
 import importlib
 import json
-import tqdm
+
 
 import pandas as pd
 
-import tqdm
 
 
 import tqdm
+
 
 
 import matplotlib.pyplot as plt
@@ -109,6 +109,7 @@ def classification_report(y_true, y_pred, y_probs=None, sanity_check=False, prin
         if write_aucroccurve_tofile:
             df = pd.DataFrame({'fpr': fpr, 'tpr': tpr, 'thresholds': thresholds})
 
+
             df.to_csv("knn_roc_curve_rf.csv")
         #print('auc_roc_score: ', auc_roc_score)
         #plot_roc(fpr, tpr, auc_roc_score)
@@ -120,7 +121,6 @@ def classification_report(y_true, y_pred, y_probs=None, sanity_check=False, prin
         print('precision: ', precision)
         print ('mcc: ', mcc)
         print('auc_roc_score: ', auc_roc_score)
-
 
 
 

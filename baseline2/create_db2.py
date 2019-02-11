@@ -217,10 +217,104 @@ def main():
 										test_features)))
 
 
+def main_dv(device):
+	list_of_broken_files = ['04_Coughing/Distant (cd)/p17_rode-108.wav', '04_Coughing/Distant (cd)/p17_htc-108.wav', \
+							'04_Coughing/Distant (cd)/p17_tablet-108.wav', \
+							'04_Coughing/Distant (cd)/p17_iphone-108.wav',
+							'04_Coughing/Distant (cd)/p17_samsung-108.wav']
+
+	print ('use data from root path %s' % DB_ROOT_DIR)
+	coughAll = find_files(DB_ROOT_DIR + "/04_Coughing", "wav", recursively=True)
+	assert len(coughAll) > 0, 'no cough files found. did you set the correct root path to the data in line 22?'
+
+	coughAll = remove_broken_files(DB_ROOT_DIR, list_of_broken_files, coughAll)
+	other = find_files(DB_ROOT_DIR + "/05_Other Control Sounds", "wav", recursively=True)
+	trainListCough = list(coughAll)
+	trainListOther = list(other)
+
+	# test participants
+	listOfParticipantsInTestset = config["data_split"]["test"]
+	testListOther, testListCough = [], []
+
+	# split files into test- and training-set
+	for name in coughAll:
+		if get_device(name) in DEVICE_FILTER:
+			for nameToExclude in listOfParticipantsInTestset:
+				if nameToExclude in name:
+					testListCough.append(name)
+					trainListCough.remove(name)
+		else:
+			trainListCough.remove(name)
+
+	for name in other:
+		if get_device(name) in DEVICE_FILTER:
+			for nameToExclude in listOfParticipantsInTestset:
+				if nameToExclude in name:
+					testListOther.append(name)
+					trainListOther.remove(name)
+		else:
+			trainListOther.remove(name)
+
+	#Filter device
+
+	trainListCough = [kk for kk in trainListCough if get_device(kk) != device]
+	trainListOther = [kk for kk in trainListOther if get_device(kk) != device]
+
+	testListCough = [ll for ll in testListCough if get_device(ll) == device]
+	testListOther = [ll for ll in testListOther if get_device(ll) == device]
+
+	print()
+	print('------------------------------------------------------------------')
+	print('COMPOSITION OF DATASET')
+	print('nr of samples coughing (test): %d' % len(testListCough))
+	print('nr of samples NOT coughing (test): %d' % len(testListOther))
+	print('nr of samples coughing (train): %d' % len(trainListCough))
+	print('nr of samples NOT coughing (train): %d' % len(trainListOther))
+	t1 = len(testListCough) + len(testListOther)
+	t2 = len(trainListCough) + len(trainListOther)
+	print('total nr of samples: (train) %d + (test) %d = (total) %d' % (t2, t1, t1 + t2))
+	print()
+
+	print("#" * 10, "processing training data", "#" * 10)
+	train_list = trainListCough
+	train_list.extend(trainListOther)
+	np.random.shuffle(train_list)
+	print("number of train samples:", len(train_list))
+	train_devices, train_labels, train_features, pca = generate_cough_model(train_list)
+
+	print("#" * 10, "processing test data", "#" * 10)
+	test_list = testListCough
+	test_list.extend(testListOther)
+	np.random.shuffle(test_list)
+	print("number of test samples:", len(test_list))
+	test_devices, test_labels, test_features, _ = generate_cough_model(test_list, pca=pca, training=False)
+
+	DB_FILENAME = '/data_%s%s.h5' % (DB_VERSION, device)
+
+	# store everything
+	with h5py.File(DB_ROOT_DIR + DB_FILENAME, 'w') as hf:
+
+		hf.create_dataset("train_devices", data=np.string_(train_devices))
+		hf.create_dataset("train_data", data=np.hstack((
+			np.asmatrix(train_labels).T,
+			train_features)))
+
+		hf.create_dataset("test_devices", data=np.string_(test_devices))
+		hf.create_dataset("test_data", data=np.hstack((
+			np.asmatrix(test_labels).T,
+			test_features)))
+
+
 if __name__ == "__main__":
-	t = time.time()
-	main()
-	print('time elapsed: ', time.time() - t)
+	if config["DEVICE_CV"]:
+		for device in config["create_db"]["DEVICE_FILTER"]:
+			if device == "audio track":
+				continue
+			main_dv(device)
+	else:
+		t = time.time()
+		main()
+		print('time elapsed: ', time.time() - t)
 
 
 

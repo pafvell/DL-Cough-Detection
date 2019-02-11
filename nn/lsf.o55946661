@@ -1,0 +1,40 @@
+Sender: LSF System <lsfadmin@eu-c7-004-06>
+Subject: Job 55946661: <python controller.py> in cluster <euler> Exited
+
+Job <python controller.py> was submitted from host <eu-login-09> by user <dfilipe> in cluster <euler> at Fri Jan 19 17:21:20 2018.
+Job was executed on host(s) <16*eu-c7-004-06>, in queue <normal.24h>, as user <dfilipe> in cluster <euler> at Fri Jan 19 17:23:46 2018.
+</cluster/home/dfilipe> was used as the home directory.
+</cluster/home/dfilipe/DL-Cough-Detection/nn> was used as the working directory.
+Started at Fri Jan 19 17:23:46 2018.
+Terminated at Sat Jan 20 09:23:53 2018.
+Results reported at Sat Jan 20 09:23:53 2018.
+
+Your job looked like:
+
+------------------------------------------------------------
+# LSBATCH: User input
+python controller.py
+------------------------------------------------------------
+
+TERM_RUNLIMIT: job killed after reaching LSF run time limit.
+Exited with exit code 140.
+
+Resource usage summary:
+
+    CPU time :                                   785680.56 sec.
+    Max Memory :                                 5266 MB
+    Average Memory :                             5011.66 MB
+    Total Requested Memory :                     32768.00 MB
+    Delta Memory :                               27502.00 MB
+    Max Swap :                                   1 MB
+    Max Processes :                              3
+    Max Threads :                                55
+    Run time :                                   57615 sec.
+    Turnaround time :                            57753 sec.
+
+The output (if any) follows:
+
+2018-01-19 17:24:01.025674: W tensorflow/core/platform/cpu_feature_guard.cc:45] The TensorFlow library wasn't compiled to use SSE4.1 instructions, but these are available on your machine and could speed up CPU computations.
+2018-01-19 17:24:01.025879: W tensorflow/core/platform/cpu_feature_guard.cc:45] The TensorFlow library wasn't compiled to use SSE4.2 instructions, but these are available on your machine and could speed up CPU computations.
+2018-01-19 17:24:01.025895: W tensorflow/core/platform/cpu_feature_guard.cc:45] The TensorFlow library wasn't compiled to use AVX instructions, but these are available on your machine and could speed up CPU computations.
+User defined signal 2

@@ -3,7 +3,7 @@
 {
   "ROOT_DIR" : "../../Audio_Data",
   "DB_version" : "650_112_final",
-  "DEVICE_CV": true,
+  "DEVICE_CV": false,
 
   "controller" : {
     "model" : "model_cnn_v3_mobile",

@@ -1,0 +1,75 @@
+Sender: LSF System <lsfadmin@eu-c7-110-02>
+Subject: Job 84429923: <python evaluate.py> in cluster <euler> Done
+
+Job <python evaluate.py> was submitted from host <eu-login-25-ng> by user <dfilipe> in cluster <euler> at Sun Feb  3 17:52:48 2019
+Job was executed on host(s) <8*eu-c7-110-02>, in queue <normal.24h>, as user <dfilipe> in cluster <euler> at Sun Feb  3 17:52:56 2019
+</cluster/home/dfilipe> was used as the home directory.
+</cluster/home/dfilipe/DL-Cough-Detection/cough_detect_mobile> was used as the working directory.
+Started at Sun Feb  3 17:52:56 2019
+Terminated at Sun Feb  3 17:53:45 2019
+Results reported at Sun Feb  3 17:53:45 2019
+
+Your job looked like:
+
+------------------------------------------------------------
+# LSBATCH: User input
+python evaluate.py
+------------------------------------------------------------
+
+Successfully completed.
+
+Resource usage summary:
+
+    CPU time :                                   41.81 sec.
+    Max Memory :                                 711 MB
+    Average Memory :                             518.25 MB
+    Total Requested Memory :                     16384.00 MB
+    Delta Memory :                               15673.00 MB
+    Max Swap :                                   -
+    Max Processes :                              4
+    Max Threads :                                38
+    Run time :                                   55 sec.
+    Turnaround time :                            57 sec.
+
+The output (if any) follows:
+
+WARNING:tensorflow:From /cluster/home/dfilipe/.local/lib64/python3.6/site-packages/tensorflow/contrib/learn/python/learn/datasets/base.py:198: retry (from tensorflow.contrib.learn.python.learn.datasets.base) is deprecated and will be removed in a future version.
+Instructions for updating:
+Use the retry module or similar alternatives.
+2019-02-03 17:53:05.239075: I tensorflow/core/platform/cpu_feature_guard.cc:140] Your CPU supports instructions that this TensorFlow binary was not compiled to use: AVX2 AVX512F FMA
+read checkpoints: ./checkpoints/cnnv3l3_mobiletablet
+evaluate model:model_cnn_v3_mobile
+restore checkpoint:./checkpoints/cnnv3l3_mobiletablet/cv1/checkpoint-49999
+input shape(1, 16, 64, 64)
+input shape(1, 16, 32, 64)
+input shape(1, 16, 16, 64)
+use data from root path ../../Audio_Data
+file ignored: %s../../Audio_Data/04_Coughing/Distant (cd)/p17_rode-108.wav
+file ignored: %s../../Audio_Data/04_Coughing/Distant (cd)/p17_htc-108.wav
+file ignored: %s../../Audio_Data/04_Coughing/Distant (cd)/p17_tablet-108.wav
+file ignored: %s../../Audio_Data/04_Coughing/Distant (cd)/p17_iphone-108.wav
+file ignored: %s../../Audio_Data/04_Coughing/Distant (cd)/p17_samsung-108.wav
+nr of samples coughing (test): 379
+nr of samples NOT coughing (test): 464
+class probs shape:  (843,)
+
+********************************************************************************
+Evaluate over Everything:
+Confusion Matrix: 
+ [[407  57]
+ [ 73 306]]
+accuracy:  0.8457888493475683
+sensitivity (recall):  0.8073878627968337
+specificity: 0.8771551724137931
+precision:  0.8429752066115702
+#################################################################################################### 
+
+#################################################################################################### 
+
+SUMMARY RESULTS :tablet
+test accuracy: (mean 0.845789, +/- SD 0.000000)
+aucroc score test: (mean 0.913799, +/- SD 0.000000)
+sensitivity: (mean 0.877155, +/- SD 0.000000)
+specificity: (mean 0.807388, +/- SD 0.000000)
+specificity: (mean 0.807388, +/- SD 0.000000)
+mcc: (mean 0.687710, +/- SD 0.000000)

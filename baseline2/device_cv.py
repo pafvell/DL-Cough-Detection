@@ -32,25 +32,7 @@ DEVICE_FILTER = config["create_db"]["DEVICE_FILTER"]
 BATCH_SIZE = config["create_db"]["BATCH_SIZE"]
 
 
-# DB File
-DB_FILENAME = '/data_%s.h5'%(DB_VERSION)
 
-print('#'*100, "\n")
-
-print('Data used from %s'%(DB_ROOT_DIR + DB_FILENAME))
-
-# get data
-with h5py.File(DB_ROOT_DIR + DB_FILENAME, 'r') as hf:
-
-	train_devices = hf['train_devices'][:].astype('U13').tolist()
-	train_labels = hf['train_data'][:,0]
-	train_features = hf['train_data'][:,1:]
-	print("shape of train features: {train_shape}".format(train_shape=np.shape(train_features)))
-
-	test_devices = hf['test_devices'][:].astype('U13').tolist()
-	test_labels = hf['test_data'][:,0]
-	test_features = hf['test_data'][:,1:]
-	print("shape of test features: {test_shape}".format(test_shape=np.shape(test_features)))
 
 
 mother_test_accuracy = []
@@ -63,6 +45,26 @@ for device in DEVICE_FILTER:
 
     if device == "audio track":
         continue
+
+    # DB File
+    DB_FILENAME = '/data_%s%s.h5' % (DB_VERSION, device)
+
+    print('#' * 100, "\n")
+
+    print('Data used from %s' % (DB_ROOT_DIR + DB_FILENAME))
+
+    # get data
+    with h5py.File(DB_ROOT_DIR + DB_FILENAME, 'r') as hf:
+
+        train_devices = hf['train_devices'][:].astype('U13').tolist()
+        train_labels = hf['train_data'][:, 0]
+        train_features = hf['train_data'][:, 1:]
+        print("shape of train features: {train_shape}".format(train_shape=np.shape(train_features)))
+
+        test_devices = hf['test_devices'][:].astype('U13').tolist()
+        test_labels = hf['test_data'][:, 0]
+        test_features = hf['test_data'][:, 1:]
+        print("shape of test features: {test_shape}".format(test_shape=np.shape(test_features)))
 
     id_not_device_train = np.array(train_devices) != device
     tmp_train_labels = train_labels[id_not_device_train]

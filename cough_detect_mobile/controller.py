@@ -329,11 +329,11 @@ def main_device_cv(device):
 
 if __name__ == '__main__':
     if config["DEVICE_CV"]:
-        # for device in config["dataset"]["allowedSources"]:
-        #     if device == "audio track":
-        #         continue
-        #"allowedSources": ["studio", "iphone", "samsung", "htc", "tablet", "audio track"]
-        main_device_cv("tablet")
+        for device in config["dataset"]["allowedSources"]:
+            if device == "audio track":
+                continue
+
+            main_device_cv(device)
     else:
        tf.app.run()    
 

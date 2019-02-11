@@ -65,7 +65,7 @@ probability_test = rf.predict_proba(test_features)
 probVec = probability_test[:, 1]
 fpr, tpr, thresholds = sklearn.metrics.roc_curve(test_labels, probVec)
 df = pd.DataFrame({'fpr': fpr, 'tpr': tpr, 'thresholds': thresholds})
-df.to_csv("knn_roc_curve.csv")
+df.to_csv("knn_roc_curve_rf.csv")
 
 
 # predictions
@@ -78,7 +78,7 @@ test_accuracy = sklearn.metrics.accuracy_score(y_true=test_labels, y_pred=test_p
 
 aucroc_score_test = sklearn.metrics.roc_auc_score(test_labels, probability_test[:,1])
 
-cm = sklearn.metrics.confusion_matrix(y_true=test_labels, y_pred=test_pred)
+cm = sklearn.metrics.confusion_matrix(y_true=test_labels, y_pred=test_pred).astype(float)
 mcc_test = sklearn.metrics.matthews_corrcoef(test_labels, test_pred)
 specificity = cm[0,0]/(cm[0,0]+cm[0,1])  
 sensitivity = cm[1,1]/(cm[1,0]+cm[1,1])
@@ -128,7 +128,7 @@ for device in DEVICE_FILTER:
 	aucroc_score_test = sklearn.metrics.roc_auc_score(test_labels_, probability_test_[:, 1])
 
 	mcc_test = sklearn.metrics.matthews_corrcoef(test_labels_, test_pred_)
-	cm = sklearn.metrics.confusion_matrix(y_true=test_labels_, y_pred=test_pred_)
+	cm = sklearn.metrics.confusion_matrix(y_true=test_labels_, y_pred=test_pred_).astype(float)
 	specificity = cm[0,0]/(cm[0,0]+cm[0,1])  
 	sensitivity = cm[1,1]/(cm[1,0]+cm[1,1])
 	precision = cm[1,1]/(cm[0,1]+cm[1,1])

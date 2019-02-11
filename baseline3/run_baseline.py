@@ -74,13 +74,13 @@ probability_test = knn.predict_proba(test_features)
 probVec = probability_test[:, 1]
 fpr, tpr, thresholds = sklearn.metrics.roc_curve(test_labels, probVec)
 df = pd.DataFrame({'fpr': fpr, 'tpr': tpr, 'thresholds': thresholds})
-df.to_csv("knn_roc_curve.csv")
+df.to_csv("knn_roc_curve_rf.csv")
 
 ## get figures for entire data set
 train_accuracy = sklearn.metrics.accuracy_score(y_true=train_labels, y_pred=train_pred)
 test_accuracy = sklearn.metrics.accuracy_score(y_true=test_labels, y_pred=test_pred)
 
-aucroc_score_test = sklearn.metrics.roc_auc_score(test_labels, probability_test[:,1])
+
 
 mcc_test = sklearn.metrics.matthews_corrcoef(test_labels, test_pred)
 cm = sklearn.metrics.confusion_matrix(y_true=test_labels, y_pred=test_pred).astype(float)

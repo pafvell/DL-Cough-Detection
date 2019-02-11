@@ -1,8 +1,9 @@
 
 
 {
-  "ROOT_DIR" : "./Audio_Data",
+  "ROOT_DIR" : "/Users/maurice/tmp/Audio_Data",
   "DB_version" : "650_112_final",
+  "DEVICE_CV": false,
 
   "controller" : {
     "model" : "model_cnn_v3_mobile",
@@ -36,7 +37,7 @@
 
     "CREATE_DB": false,
 
-    "DB_ROOT_DIR": "./Audio_Data",
+    "DB_ROOT_DIR": "/Users/maurice/tmp/Audio_Data",
 
 
     "HOP" : 112,

@@ -323,7 +323,7 @@ if __name__ == "__main__":
 
 	fpr, tpr, thresholds = sklearn.metrics.roc_curve(y_test, probVec)
 	df = pd.DataFrame({'fpr':fpr, 'tpr':tpr, 'thresholds': thresholds})
-	df.to_csv("knn_roc_curve.csv")
+	df.to_csv("knn_roc_curve_rf.csv")
 
 	aucroc_score_test = roc_auc_score(y_test, predictions_test)
 	aucroc_score_train = roc_auc_score(y_train, predictions_train)

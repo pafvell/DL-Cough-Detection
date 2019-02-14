@@ -2,217 +2,29 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="3f7c58d6-d884-4dcc-ba5d-e01070be66ff" name="Default" comment="">
-      <change afterPath="$PROJECT_DIR$/baseline3/knn_roc_curve_cnn.csv" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/baseline3/knn_roc_curve_rf.csv" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect3/checkpoints/large_wk/checkpoint" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect3/checkpoints/large_wk/checkpoints-19999.data-00000-of-00001" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect3/checkpoints/large_wk/checkpoints-19999.index" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect3/checkpoints/large_wk/checkpoints-19999.meta" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect3/checkpoints/large_wk/checkpoints-29999.data-00000-of-00001" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect3/checkpoints/large_wk/checkpoints-29999.index" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect3/checkpoints/large_wk/checkpoints-29999.meta" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect3/checkpoints/large_wk/checkpoints-39999.data-00000-of-00001" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect3/checkpoints/large_wk/checkpoints-39999.index" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect3/checkpoints/large_wk/checkpoints-39999.meta" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect3/checkpoints/large_wk/checkpoints-49999.data-00000-of-00001" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect3/checkpoints/large_wk/checkpoints-49999.index" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect3/checkpoints/large_wk/checkpoints-49999.meta" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect3/checkpoints/large_wk/checkpoints-9999.data-00000-of-00001" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect3/checkpoints/large_wk/checkpoints-9999.index" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect3/checkpoints/large_wk/checkpoints-9999.meta" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect3/checkpoints/large_wk/controller.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect3/checkpoints/large_wk/test/events.out.tfevents.1522090430.eu-c7-006-03" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect3/checkpoints/large_wk/train/events.out.tfevents.1521986235.eu-c7-020-06" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect3/checkpoints/large_wk/train/events.out.tfevents.1521986776.eu-c7-019-04" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect3/checkpoints/large_wk/train/events.out.tfevents.1521986918.eu-c7-013-12" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect3/checkpoints/large_wk/train/events.out.tfevents.1521987239.rodolfo" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect3/checkpoints/large_wk/train/events.out.tfevents.1522081071.eu-c7-088-16" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect3/checkpoints/large_wk/train/events.out.tfevents.1522086574.eu-c7-088-16" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect3/checkpoints/large_wk/train/events.out.tfevents.1522088396.eu-c7-088-16" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect3/checkpoints/large_wk/train/events.out.tfevents.1522088649.rodolfo" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect3/checkpoints/large_wk/train/events.out.tfevents.1522088961.rodolfo" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect3/checkpoints/large_wk/train/events.out.tfevents.1522089290.eu-c7-006-03" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect3/large_wk.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect3/lsf.o60056862" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect3/lsf.o60057159" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect3/lsf.o60058350" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect4/checkpoints/boost_v9b6_2/checkpoint" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect4/checkpoints/boost_v9b6_2/checkpoints-19999.data-00000-of-00001" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect4/checkpoints/boost_v9b6_2/checkpoints-19999.index" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect4/checkpoints/boost_v9b6_2/checkpoints-19999.meta" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect4/checkpoints/boost_v9b6_2/checkpoints-29999.data-00000-of-00001" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect4/checkpoints/boost_v9b6_2/checkpoints-29999.index" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect4/checkpoints/boost_v9b6_2/checkpoints-29999.meta" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect4/checkpoints/boost_v9b6_2/checkpoints-39999.data-00000-of-00001" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect4/checkpoints/boost_v9b6_2/checkpoints-39999.index" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect4/checkpoints/boost_v9b6_2/checkpoints-39999.meta" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect4/checkpoints/boost_v9b6_2/checkpoints-49999.data-00000-of-00001" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect4/checkpoints/boost_v9b6_2/checkpoints-49999.index" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect4/checkpoints/boost_v9b6_2/checkpoints-49999.meta" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect4/checkpoints/boost_v9b6_2/checkpoints-52724.data-00000-of-00001" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect4/checkpoints/boost_v9b6_2/checkpoints-52724.index" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect4/checkpoints/boost_v9b6_2/checkpoints-52724.meta" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect4/checkpoints/boost_v9b6_2/controller.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect4/checkpoints/boost_v9b6_2/test/events.out.tfevents.1522786672.eu-c7-002-03" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect4/checkpoints/boost_v9b6_2/test/events.out.tfevents.1522858371.eu-c7-021-04" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect4/checkpoints/boost_v9b6_2/train/events.out.tfevents.1522584352.rodolfo" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect4/checkpoints/boost_v9b6_2/train/events.out.tfevents.1522587692.rodolfo" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect4/checkpoints/boost_v9b6_2/train/events.out.tfevents.1522772757.eu-c7-002-03" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect4/checkpoints/boost_v9b6_2/train/events.out.tfevents.1522857958.eu-c7-021-04" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect4/checkpoints/boost_v9b6_3/checkpoint" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect4/checkpoints/boost_v9b6_3/checkpoints-109999.data-00000-of-00001" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect4/checkpoints/boost_v9b6_3/checkpoints-109999.index" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect4/checkpoints/boost_v9b6_3/checkpoints-109999.meta" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect4/checkpoints/boost_v9b6_3/checkpoints-119999.data-00000-of-00001" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect4/checkpoints/boost_v9b6_3/checkpoints-119999.index" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect4/checkpoints/boost_v9b6_3/checkpoints-119999.meta" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect4/checkpoints/boost_v9b6_3/checkpoints-129999.data-00000-of-00001" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect4/checkpoints/boost_v9b6_3/checkpoints-129999.index" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect4/checkpoints/boost_v9b6_3/checkpoints-129999.meta" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect4/checkpoints/boost_v9b6_3/checkpoints-139999.data-00000-of-00001" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect4/checkpoints/boost_v9b6_3/checkpoints-139999.index" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect4/checkpoints/boost_v9b6_3/checkpoints-139999.meta" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect4/checkpoints/boost_v9b6_3/checkpoints-99999.data-00000-of-00001" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect4/checkpoints/boost_v9b6_3/checkpoints-99999.index" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect4/checkpoints/boost_v9b6_3/checkpoints-99999.meta" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect4/checkpoints/boost_v9b6_3/controller.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect4/checkpoints/boost_v9b6_3/test/events.out.tfevents.1522886201.eu-c7-021-04" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect4/checkpoints/boost_v9b6_3/train/events.out.tfevents.1522885802.eu-c7-021-04" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect4/lsf.o60468198" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect4/lsf.o60480324" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect4/lsf.o60505614" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect4/lsf.o60509922" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect4/lsf.o60510113" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect4/lsf.o60510192" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect4/lsf.o60510626" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect4/lsf.o60517330" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect4/lsf.o60528363" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect4/lsf.o60529048" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect4/lsf.o60529094" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect4/lsf.o60529101" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect_mobile/checkpoints/cnnv3l3_mobilehtc/config.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect_mobile/checkpoints/cnnv3l3_mobilehtc/cv1/checkpoint" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect_mobile/checkpoints/cnnv3l3_mobilehtc/cv1/checkpoint-100001.data-00000-of-00001" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect_mobile/checkpoints/cnnv3l3_mobilehtc/cv1/checkpoint-100001.index" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect_mobile/checkpoints/cnnv3l3_mobilehtc/cv1/checkpoint-100001.meta" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect_mobile/checkpoints/cnnv3l3_mobilehtc/cv1/checkpoint-24999.data-00000-of-00001" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect_mobile/checkpoints/cnnv3l3_mobilehtc/cv1/checkpoint-24999.index" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect_mobile/checkpoints/cnnv3l3_mobilehtc/cv1/checkpoint-24999.meta" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect_mobile/checkpoints/cnnv3l3_mobilehtc/cv1/checkpoint-49999.data-00000-of-00001" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect_mobile/checkpoints/cnnv3l3_mobilehtc/cv1/checkpoint-49999.index" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect_mobile/checkpoints/cnnv3l3_mobilehtc/cv1/checkpoint-49999.meta" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect_mobile/checkpoints/cnnv3l3_mobilehtc/cv1/checkpoint-74999.data-00000-of-00001" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect_mobile/checkpoints/cnnv3l3_mobilehtc/cv1/checkpoint-74999.index" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect_mobile/checkpoints/cnnv3l3_mobilehtc/cv1/checkpoint-74999.meta" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect_mobile/checkpoints/cnnv3l3_mobilehtc/cv1/checkpoint-99999.data-00000-of-00001" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect_mobile/checkpoints/cnnv3l3_mobilehtc/cv1/checkpoint-99999.index" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect_mobile/checkpoints/cnnv3l3_mobilehtc/cv1/checkpoint-99999.meta" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect_mobile/checkpoints/cnnv3l3_mobilehtc/test_1/events.out.tfevents.1549153765.eu-c7-058-04" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect_mobile/checkpoints/cnnv3l3_mobilehtc/train_1/events.out.tfevents.1549153765.eu-c7-058-04" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect_mobile/checkpoints/cnnv3l3_mobileiphone/config.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect_mobile/checkpoints/cnnv3l3_mobileiphone/cv1/checkpoint" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect_mobile/checkpoints/cnnv3l3_mobileiphone/cv1/checkpoint-100001.data-00000-of-00001" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect_mobile/checkpoints/cnnv3l3_mobileiphone/cv1/checkpoint-100001.index" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect_mobile/checkpoints/cnnv3l3_mobileiphone/cv1/checkpoint-100001.meta" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect_mobile/checkpoints/cnnv3l3_mobileiphone/cv1/checkpoint-24999.data-00000-of-00001" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect_mobile/checkpoints/cnnv3l3_mobileiphone/cv1/checkpoint-24999.index" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect_mobile/checkpoints/cnnv3l3_mobileiphone/cv1/checkpoint-24999.meta" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect_mobile/checkpoints/cnnv3l3_mobileiphone/cv1/checkpoint-49999.data-00000-of-00001" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect_mobile/checkpoints/cnnv3l3_mobileiphone/cv1/checkpoint-49999.index" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect_mobile/checkpoints/cnnv3l3_mobileiphone/cv1/checkpoint-49999.meta" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect_mobile/checkpoints/cnnv3l3_mobileiphone/cv1/checkpoint-74999.data-00000-of-00001" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect_mobile/checkpoints/cnnv3l3_mobileiphone/cv1/checkpoint-74999.index" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect_mobile/checkpoints/cnnv3l3_mobileiphone/cv1/checkpoint-74999.meta" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect_mobile/checkpoints/cnnv3l3_mobileiphone/cv1/checkpoint-99999.data-00000-of-00001" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect_mobile/checkpoints/cnnv3l3_mobileiphone/cv1/checkpoint-99999.index" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect_mobile/checkpoints/cnnv3l3_mobileiphone/cv1/checkpoint-99999.meta" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect_mobile/checkpoints/cnnv3l3_mobileiphone/test_1/events.out.tfevents.1549128929.eu-c7-058-04" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect_mobile/checkpoints/cnnv3l3_mobileiphone/train_1/events.out.tfevents.1549128929.eu-c7-058-04" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect_mobile/checkpoints/cnnv3l3_mobilesamsung/config.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect_mobile/checkpoints/cnnv3l3_mobilesamsung/cv1/checkpoint" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect_mobile/checkpoints/cnnv3l3_mobilesamsung/cv1/checkpoint-100001.data-00000-of-00001" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect_mobile/checkpoints/cnnv3l3_mobilesamsung/cv1/checkpoint-100001.index" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect_mobile/checkpoints/cnnv3l3_mobilesamsung/cv1/checkpoint-100001.meta" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect_mobile/checkpoints/cnnv3l3_mobilesamsung/cv1/checkpoint-24999.data-00000-of-00001" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect_mobile/checkpoints/cnnv3l3_mobilesamsung/cv1/checkpoint-24999.index" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect_mobile/checkpoints/cnnv3l3_mobilesamsung/cv1/checkpoint-24999.meta" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect_mobile/checkpoints/cnnv3l3_mobilesamsung/cv1/checkpoint-49999.data-00000-of-00001" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect_mobile/checkpoints/cnnv3l3_mobilesamsung/cv1/checkpoint-49999.index" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect_mobile/checkpoints/cnnv3l3_mobilesamsung/cv1/checkpoint-49999.meta" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect_mobile/checkpoints/cnnv3l3_mobilesamsung/cv1/checkpoint-74999.data-00000-of-00001" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect_mobile/checkpoints/cnnv3l3_mobilesamsung/cv1/checkpoint-74999.index" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect_mobile/checkpoints/cnnv3l3_mobilesamsung/cv1/checkpoint-74999.meta" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect_mobile/checkpoints/cnnv3l3_mobilesamsung/cv1/checkpoint-99999.data-00000-of-00001" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect_mobile/checkpoints/cnnv3l3_mobilesamsung/cv1/checkpoint-99999.index" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect_mobile/checkpoints/cnnv3l3_mobilesamsung/cv1/checkpoint-99999.meta" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect_mobile/checkpoints/cnnv3l3_mobilesamsung/test_1/events.out.tfevents.1549141357.eu-c7-058-04" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect_mobile/checkpoints/cnnv3l3_mobilesamsung/train_1/events.out.tfevents.1549141356.eu-c7-058-04" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect_mobile/checkpoints/cnnv3l3_mobilestudio/cv1/checkpoint-100001.data-00000-of-00001" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect_mobile/checkpoints/cnnv3l3_mobilestudio/cv1/checkpoint-100001.index" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect_mobile/checkpoints/cnnv3l3_mobilestudio/cv1/checkpoint-100001.meta" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect_mobile/checkpoints/cnnv3l3_mobilestudio/cv1/checkpoint-49999.data-00000-of-00001" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect_mobile/checkpoints/cnnv3l3_mobilestudio/cv1/checkpoint-49999.index" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect_mobile/checkpoints/cnnv3l3_mobilestudio/cv1/checkpoint-49999.meta" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect_mobile/checkpoints/cnnv3l3_mobilestudio/cv1/checkpoint-74999.data-00000-of-00001" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect_mobile/checkpoints/cnnv3l3_mobilestudio/cv1/checkpoint-74999.index" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect_mobile/checkpoints/cnnv3l3_mobilestudio/cv1/checkpoint-74999.meta" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect_mobile/checkpoints/cnnv3l3_mobilestudio/cv1/checkpoint-99999.data-00000-of-00001" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect_mobile/checkpoints/cnnv3l3_mobilestudio/cv1/checkpoint-99999.index" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect_mobile/checkpoints/cnnv3l3_mobilestudio/cv1/checkpoint-99999.meta" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect_mobile/checkpoints/cnnv3l3_mobilestudio/test_1/events.out.tfevents.1549116370.eu-c7-058-04" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect_mobile/checkpoints/cnnv3l3_mobilestudio/train_1/events.out.tfevents.1549116370.eu-c7-058-04" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect_mobile/checkpoints/cnnv3l3_mobiletablet/config.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect_mobile/checkpoints/cnnv3l3_mobiletablet/cv1/checkpoint" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect_mobile/checkpoints/cnnv3l3_mobiletablet/cv1/checkpoint-24999.data-00000-of-00001" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect_mobile/checkpoints/cnnv3l3_mobiletablet/cv1/checkpoint-24999.index" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect_mobile/checkpoints/cnnv3l3_mobiletablet/cv1/checkpoint-24999.meta" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect_mobile/checkpoints/cnnv3l3_mobiletablet/cv1/checkpoint-49999.data-00000-of-00001" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect_mobile/checkpoints/cnnv3l3_mobiletablet/cv1/checkpoint-49999.index" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect_mobile/checkpoints/cnnv3l3_mobiletablet/cv1/checkpoint-49999.meta" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect_mobile/checkpoints/cnnv3l3_mobiletablet/test_1/events.out.tfevents.1549166160.eu-c7-058-04" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect_mobile/checkpoints/cnnv3l3_mobiletablet/train_1/events.out.tfevents.1549166159.eu-c7-058-04" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect_mobile/htc.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect_mobile/iphone.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect_mobile/samsung.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect_mobile/studio.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect_mobile/tablet.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cough_detect_mobile/tot.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/nn/checkpoints/rnn_v1.0/checkpoint" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/nn/checkpoints/rnn_v1.0/checkpoints-24000.data-00000-of-00001" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/nn/checkpoints/rnn_v1.0/checkpoints-24000.index" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/nn/checkpoints/rnn_v1.0/checkpoints-24000.meta" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/nn/checkpoints/rnn_v1.0/checkpoints-26000.data-00000-of-00001" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/nn/checkpoints/rnn_v1.0/checkpoints-26000.index" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/nn/checkpoints/rnn_v1.0/checkpoints-26000.meta" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/nn/checkpoints/rnn_v1.0/checkpoints-28000.data-00000-of-00001" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/nn/checkpoints/rnn_v1.0/checkpoints-28000.index" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/nn/checkpoints/rnn_v1.0/checkpoints-28000.meta" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/nn/checkpoints/rnn_v1.0/checkpoints-30000.data-00000-of-00001" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/nn/checkpoints/rnn_v1.0/checkpoints-30000.index" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/nn/checkpoints/rnn_v1.0/checkpoints-30000.meta" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/nn/checkpoints/rnn_v1.0/checkpoints-32000.data-00000-of-00001" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/nn/checkpoints/rnn_v1.0/checkpoints-32000.index" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/nn/checkpoints/rnn_v1.0/checkpoints-32000.meta" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/nn/checkpoints/rnn_v1.0/test/events.out.tfevents.1516379597.eu-c7-004-06" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/nn/checkpoints/rnn_v1.0/train/events.out.tfevents.1516379061.eu-c7-004-06" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/nn/lsf.o55946661" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/baseline3/cnn_roc_curve_ensemble.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/baseline3/cnn_roc_curve_single.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/baseline3/knn_roc_curve_rf2.csv" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/baseline2/config.json" beforeDir="false" afterPath="$PROJECT_DIR$/baseline2/config.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/baseline2/create_db2.py" beforeDir="false" afterPath="$PROJECT_DIR$/baseline2/create_db2.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/baseline2/device_cv.py" beforeDir="false" afterPath="$PROJECT_DIR$/baseline2/device_cv.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/baseline2/run_baseline.py" beforeDir="false" afterPath="$PROJECT_DIR$/baseline2/run_baseline.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/baseline3/baseline.py" beforeDir="false" afterPath="$PROJECT_DIR$/baseline3/baseline.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/baseline3/knn_roc_curve.csv" beforeDir="false" afterPath="$PROJECT_DIR$/baseline3/knn_roc_curve_knn.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/baseline3/create_db.py" beforeDir="false" afterPath="$PROJECT_DIR$/baseline3/create_db.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/baseline3/device_cv.py" beforeDir="false" afterPath="$PROJECT_DIR$/baseline3/device_cv.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/baseline3/knn_roc_curve_knn.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/baseline3/knn_roc_curve_rf.csv" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/baseline3/plot_roc_auc_curve.py" beforeDir="false" afterPath="$PROJECT_DIR$/baseline3/plot_roc_auc_curve.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/baseline3/run_baseline.py" beforeDir="false" afterPath="$PROJECT_DIR$/baseline3/run_baseline.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cough_detect_mobile/checkpoints/cnnv3l3_mobilestudio/cv1/checkpoint" beforeDir="false" afterPath="$PROJECT_DIR$/cough_detect_mobile/checkpoints/cnnv3l3_mobilestudio/cv1/checkpoint" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cough_detect_mobile/checkpoints/cnnv3l3_mobilestudio/cv1/checkpoint-24999.data-00000-of-00001" beforeDir="false" afterPath="$PROJECT_DIR$/cough_detect_mobile/checkpoints/cnnv3l3_mobilestudio/cv1/checkpoint-24999.data-00000-of-00001" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cough_detect_mobile/checkpoints/cnnv3l3_mobilestudio/cv1/checkpoint-24999.index" beforeDir="false" afterPath="$PROJECT_DIR$/cough_detect_mobile/checkpoints/cnnv3l3_mobilestudio/cv1/checkpoint-24999.index" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cough_detect_mobile/checkpoints/cnnv3l3_mobilestudio/cv1/checkpoint-24999.meta" beforeDir="false" afterPath="$PROJECT_DIR$/cough_detect_mobile/checkpoints/cnnv3l3_mobilestudio/cv1/checkpoint-24999.meta" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cough_detect_mobile/config.json" beforeDir="false" afterPath="$PROJECT_DIR$/cough_detect_mobile/config.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cough_detect_mobile/configs/config_C3L3.json" beforeDir="false" afterPath="$PROJECT_DIR$/cough_detect_mobile/configs/config_C3L3.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cough_detect_mobile/controller.py" beforeDir="false" afterPath="$PROJECT_DIR$/cough_detect_mobile/controller.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cough_detect_mobile/create_db2.py" beforeDir="false" afterPath="$PROJECT_DIR$/cough_detect_mobile/create_db2.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cough_detect_mobile/evaluate.py" beforeDir="false" afterPath="$PROJECT_DIR$/cough_detect_mobile/evaluate.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cough_detect_mobile/htc.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cough_detect_mobile/iphone.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cough_detect_mobile/samsung.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cough_detect_mobile/studio.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cough_detect_mobile/tablet.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cough_detect_mobile/tot.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cough_detect_mobile/utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/cough_detect_mobile/utils.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -225,14 +37,62 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/cough_detect_mobile/evaluate.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="405">
-              <caret line="123" lean-forward="true" selection-start-line="123" selection-end-line="123" />
+            <state relative-caret-position="509">
+              <caret line="601" column="69" lean-forward="true" selection-start-line="601" selection-start-column="69" selection-end-line="601" selection-end-column="69" />
               <folding>
                 <element signature="e#58#73#0" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/cough_detect_mobile/exp2_cnn_ensemble_tablet.txt">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="563">
+              <caret line="1142" column="80" lean-forward="true" selection-start-line="1142" selection-start-column="80" selection-end-line="1142" selection-end-column="80" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/baseline2/exp2.txt">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="-1851" />
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/baseline3/exp2.txt">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="-1551" />
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/baseline3/plot_roc_auc_curve.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="390">
+              <caret line="41" column="38" selection-start-line="41" selection-start-column="38" selection-end-line="41" selection-end-column="38" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/baseline2/exp1.txt">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="-1080" />
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/cough_detect_mobile/exp2_cnn_single_tablet.txt">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="579">
+              <caret line="62" column="13" lean-forward="true" selection-start-line="62" selection-start-column="5" selection-end-line="62" selection-end-column="13" />
             </state>
           </provider>
         </entry>
@@ -254,6 +114,8 @@
       <find>db</find>
       <find>pd</find>
       <find>sess_config</find>
+      <find>get</find>
+      <find>paper</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -268,28 +130,30 @@
         <option value="$PROJECT_DIR$/baseline3/plot.py" />
         <option value="$PROJECT_DIR$/baseline3/utils.py" />
         <option value="$PROJECT_DIR$/baseline3/create_db2.py" />
-        <option value="$PROJECT_DIR$/baseline3/create_db.py" />
         <option value="$PROJECT_DIR$/baseline3/baseline.py" />
-        <option value="$PROJECT_DIR$/cough_detect_mobile/utils.py" />
-        <option value="$PROJECT_DIR$/cough_detect_mobile/create_db2.py" />
-        <option value="$PROJECT_DIR$/baseline3/device_cv.py" />
-        <option value="$PROJECT_DIR$/cough_detect_mobile/controller.py" />
-        <option value="$PROJECT_DIR$/cough_detect_mobile/config.json" />
         <option value="$PROJECT_DIR$/cough_detect_mobile/iphone.txt" />
-        <option value="$PROJECT_DIR$/baseline3/run_baseline.py" />
-        <option value="$PROJECT_DIR$/baseline2/run_baseline.py" />
-        <option value="$PROJECT_DIR$/baseline3/plot_roc_auc_curve.py" />
-        <option value="$PROJECT_DIR$/baseline3/config.json" />
         <option value="$PROJECT_DIR$/baseline2/config.json" />
         <option value="$PROJECT_DIR$/baseline2/create_db2.py" />
+        <option value="$PROJECT_DIR$/cough_detect_mobile/create_db2.py" />
+        <option value="$PROJECT_DIR$/cough_detect_mobile/controller.py" />
+        <option value="$PROJECT_DIR$/cough_detect_mobile/lsf.o85352263" />
+        <option value="$PROJECT_DIR$/baseline3/config.json" />
+        <option value="$PROJECT_DIR$/baseline3/create_db.py" />
+        <option value="$PROJECT_DIR$/baseline3/run_baseline.py" />
+        <option value="$PROJECT_DIR$/baseline3/device_cv.py" />
+        <option value="$PROJECT_DIR$/baseline2/run_baseline.py" />
         <option value="$PROJECT_DIR$/baseline2/device_cv.py" />
+        <option value="$PROJECT_DIR$/cough_detect_mobile/utils.py" />
+        <option value="$PROJECT_DIR$/cough_detect_mobile/config.json" />
         <option value="$PROJECT_DIR$/cough_detect_mobile/evaluate.py" />
+        <option value="$PROJECT_DIR$/cough_detect_mobile/exp1_cnn_single.txt" />
+        <option value="$PROJECT_DIR$/baseline3/plot_roc_auc_curve.py" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="2146" />
-    <option name="y" value="42" />
+    <option name="x" value="65" />
+    <option name="y" value="-4" />
     <option name="width" value="1855" />
     <option name="height" value="1204" />
   </component>
@@ -298,7 +162,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -309,12 +172,23 @@
             <path>
               <item name="DL-Cough-Detection" type="b2602c69:ProjectViewProjectNode" />
               <item name="DL-Cough-Detection" type="462c0819:PsiDirectoryNode" />
+              <item name="baseline2" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="DL-Cough-Detection" type="b2602c69:ProjectViewProjectNode" />
+              <item name="DL-Cough-Detection" type="462c0819:PsiDirectoryNode" />
+              <item name="baseline3" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="DL-Cough-Detection" type="b2602c69:ProjectViewProjectNode" />
+              <item name="DL-Cough-Detection" type="462c0819:PsiDirectoryNode" />
               <item name="cough_detect_mobile" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
         </subPane>
       </pane>
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -322,11 +196,11 @@
     <property name="run.code.analysis.last.selected.profile" value="pProject Default" />
   </component>
   <component name="RecentsManager">
-    <key name="MoveFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$/baseline3" />
-    </key>
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/baseline3" />
       <recent name="$PROJECT_DIR$/baseline2" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/baseline3" />
     </key>
   </component>
@@ -342,28 +216,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.device_cv (1)">
-    <configuration name="device_cv (1)" type="PythonConfigurationType" factoryName="Python" temporary="true">
-      <module name="project" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/baseline2" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/baseline2/device_cv.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
+  <component name="RunManager" selected="Python.plot_roc_auc_curve">
     <configuration name="device_cv" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="project" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -377,6 +230,27 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/baseline3/device_cv.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="evaluate" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="project" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/cough_detect_mobile" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/cough_detect_mobile/evaluate.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -450,8 +324,8 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.device_cv (1)" />
         <item itemvalue="Python.plot_roc_auc_curve" />
+        <item itemvalue="Python.evaluate" />
         <item itemvalue="Python.run_baseline (1)" />
         <item itemvalue="Python.device_cv" />
         <item itemvalue="Python.run_baseline" />
@@ -472,23 +346,22 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="1985" y="-4" width="1855" height="1204" extended-state="6" />
-    <editor active="true" />
+    <frame x="65" y="-4" width="1855" height="1204" extended-state="6" />
     <layout>
       <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.38100436" />
       <window_info id="Structure" order="1" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" sideWeight="0.49945414" weight="0.22005571" />
-      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.4945415" weight="0.33937082" />
-      <window_info anchor="bottom" id="Debug" order="3" sideWeight="0.4978166" weight="0.45775303" />
+      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.4945415" visible="true" weight="0.41504177" />
+      <window_info anchor="bottom" id="Debug" order="3" sideWeight="0.4978166" weight="0.3259053" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" />
       <window_info anchor="bottom" id="Version Control" order="7" />
       <window_info anchor="bottom" id="Terminal" order="8" sideWeight="0.49836245" weight="0.2869081" />
       <window_info anchor="bottom" id="Event Log" order="9" sideWeight="0.50545853" side_tool="true" weight="0.15413184" />
-      <window_info anchor="bottom" id="Python Console" order="10" sideWeight="0.4978166" weight="0.21912721" />
+      <window_info anchor="bottom" id="Python Console" order="10" sideWeight="0.4978166" weight="0.25162488" />
       <window_info anchor="right" id="Commander" order="0" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
@@ -519,7 +392,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/baseline3/device_cv.py</url>
-          <line>70</line>
+          <line>72</line>
           <option name="timeStamp" value="19" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -529,7 +402,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/cough_detect_mobile/create_db2.py</url>
-          <line>158</line>
+          <line>159</line>
           <option name="timeStamp" value="24" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -539,13 +412,43 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/cough_detect_mobile/evaluate.py</url>
-          <line>105</line>
-          <option name="timeStamp" value="26" />
+          <line>248</line>
+          <option name="timeStamp" value="27" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/cough_detect_mobile/create_db2.py</url>
+          <line>179</line>
+          <option name="timeStamp" value="28" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/cough_detect_mobile/evaluate.py</url>
-          <line>251</line>
-          <option name="timeStamp" value="27" />
+          <line>579</line>
+          <option name="timeStamp" value="32" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/cough_detect_mobile/evaluate.py</url>
+          <line>89</line>
+          <option name="timeStamp" value="33" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/cough_detect_mobile/evaluate.py</url>
+          <line>202</line>
+          <option name="timeStamp" value="34" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/cough_detect_mobile/evaluate.py</url>
+          <line>627</line>
+          <option name="timeStamp" value="40" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/cough_detect_mobile/evaluate.py</url>
+          <line>103</line>
+          <option name="timeStamp" value="41" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/cough_detect_mobile/evaluate.py</url>
+          <line>572</line>
+          <option name="timeStamp" value="42" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
@@ -565,327 +468,329 @@
     </expressions>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/baseline3/lsf.o84090379" />
-    <entry file="file://$PROJECT_DIR$/baseline2/list_devices.py">
+    <entry file="file://$PROJECT_DIR$/cough_detect_mobile/lsf.o85352265">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="270">
-          <caret line="20" selection-start-line="20" selection-end-line="20" />
-          <folding>
-            <element signature="e#0#18#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="-15228" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/cough_detect_mobile/lsf.o85352451">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="480">
+          <caret line="1341" column="13" lean-forward="true" selection-start-line="1341" selection-start-column="13" selection-end-line="1341" selection-end-column="31" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/baseline3/lsf.o84173554" />
-    <entry file="file://$PROJECT_DIR$/baseline3/lsf.o84175561" />
-    <entry file="file://$PROJECT_DIR$/baseline/utils.py">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/baseline/baseline.py">
+    <entry file="file://$PROJECT_DIR$/cough_detect_mobile/lsf.o85352263">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-135" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/baseline2/utils.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="133">
-          <caret line="32" column="26" lean-forward="true" selection-start-line="32" selection-start-column="26" selection-end-line="32" selection-end-column="26" />
+        <state relative-caret-position="547">
+          <caret line="1053" column="31" selection-start-line="1053" selection-start-column="13" selection-end-line="1053" selection-end-column="31" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/baseline2/create_db.py">
+    <entry file="file://$PROJECT_DIR$/cough_detect_mobile/lsf.o85352262">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-495">
-          <folding>
-            <element signature="e#25#43#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="538">
+          <caret line="1157" column="13" lean-forward="true" selection-start-line="1157" selection-start-column="13" selection-end-line="1157" selection-end-column="31" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/baseline3/utils.py">
+    <entry file="file://$PROJECT_DIR$/cough_detect_mobile/lsf.o85352261">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1110">
-          <caret line="74" selection-start-line="74" selection-end-line="74" />
-          <folding>
-            <element signature="e#54#68#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="498">
+          <caret line="893" column="13" selection-start-line="893" selection-start-column="13" selection-end-line="893" selection-end-column="31" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/baseline3/output.txt">
+    <entry file="file://$PROJECT_DIR$/cough_detect_mobile/lsf.o85352248">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="487">
-          <caret line="289" column="38" lean-forward="true" selection-start-line="289" selection-start-column="38" selection-end-line="289" selection-end-column="38" />
+        <state relative-caret-position="507">
+          <caret line="1149" column="13" lean-forward="true" selection-start-line="1149" selection-start-column="13" selection-end-line="1149" selection-end-column="31" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/baseline3/lsf.o84186646" />
-    <entry file="file://$PROJECT_DIR$/cough_detect_mobile/model_cnn_v3_mobile.py">
+    <entry file="file://$PROJECT_DIR$/baseline3/lsf.o85335950">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1260">
-          <caret line="91" column="40" selection-start-line="91" selection-start-column="34" selection-end-line="91" selection-end-column="40" />
-        </state>
+        <state relative-caret-position="-307" />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/cough_detect_mobile/configs/config_C3L3.json">
+    <entry file="file://$PROJECT_DIR$/baseline3/lsf.o85336535">
       <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <caret selection-end-line="83" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/cough_detect_mobile/profile.py">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file:///usr/lib/python2.7/posixpath.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="246">
-          <caret line="65" selection-start-line="65" selection-end-line="65" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$USER_HOME$/.local/lib/python2.7/site-packages/sklearn/metrics/classification.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="263">
-          <caret line="459" column="4" selection-start-line="459" selection-start-column="4" selection-end-line="459" selection-end-column="4" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/baseline3/baseline.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="4755">
-          <caret line="324" selection-start-line="324" selection-end-line="325" selection-end-column="34" />
-          <folding>
-            <element signature="e#54#64#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/cough_detect_mobile/evaluate_all.sh">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file:///usr/lib/python2.7/abc.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="226">
-          <caret line="130" selection-start-line="130" selection-end-line="130" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$USER_HOME$/.local/lib/python2.7/site-packages/sklearn/utils/multiclass.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="226">
-          <caret line="238" selection-start-line="238" selection-end-line="238" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$USER_HOME$/.local/lib/python2.7/site-packages/sklearn/metrics/ranking.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="218">
-          <caret line="533" selection-start-line="533" selection-end-line="533" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$APPLICATION_HOME_DIR$/helpers/pydev/pydevd.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="574">
-          <caret line="1740" selection-start-line="1740" selection-end-line="1740" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file:///usr/local/lib/python2.7/dist-packages/tensorflow/python/ops/variable_scope.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="229">
-          <caret line="407" selection-start-line="407" selection-end-line="407" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file:///usr/local/lib/python2.7/dist-packages/tensorflow/core/protobuf/config_pb2.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="237">
-          <caret line="848" selection-start-line="848" selection-end-line="848" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file:///usr/lib/python2.7/importlib/__init__.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="285">
-          <caret line="19" column="4" selection-start-line="19" selection-start-column="4" selection-end-line="19" selection-end-column="4" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file:///usr/local/lib/python2.7/dist-packages/tensorflow/contrib/learn/python/learn/estimators/composable_model.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="552">
-          <caret line="89" column="6" selection-start-line="89" selection-start-column="6" selection-end-line="89" selection-end-column="6" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/cough_detect_mobile/lsf.o84416905" />
-    <entry file="file:///usr/local/lib/python2.7/dist-packages/tensorflow/python/ops/array_ops.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-546">
-          <caret line="1737" column="4" selection-start-line="1737" selection-start-column="4" selection-end-line="1737" selection-end-column="4" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/cough_detect_mobile/lsf.o84429997" />
-    <entry file="file://$PROJECT_DIR$/cough_detect_mobile/tablet.txt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="420">
-          <caret line="61" column="41" selection-start-line="61" selection-start-column="25" selection-end-line="61" selection-end-column="41" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/cough_detect_mobile/samsung.txt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-502" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/cough_detect_mobile/iphone.txt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-502">
-          <caret column="2" selection-start-column="2" selection-end-column="2" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/cough_detect_mobile/htc.txt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="533">
-          <caret line="69" column="29" selection-start-line="69" selection-start-column="23" selection-end-line="69" selection-end-column="29" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/baseline3/run_baseline.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="335">
-          <caret line="82" lean-forward="true" selection-start-line="82" selection-end-line="82" />
-          <folding>
-            <element signature="e#24#35#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/cough_detect_mobile/tot.txt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1305" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/baseline3/device_cv.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="195">
-          <caret line="82" lean-forward="true" selection-start-line="93" selection-end-line="94" selection-end-column="95" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/cough_detect_mobile/studio.txt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-502" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/cough_detect_mobile/controller.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="4860">
-          <caret line="331" column="58" selection-start-line="331" selection-start-column="58" selection-end-line="331" selection-end-column="58" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/baseline2/run_baseline.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="945">
-          <caret line="70" column="13" selection-start-line="70" selection-start-column="13" selection-end-line="70" selection-end-column="13" />
-          <folding>
-            <element signature="e#24#35#0" expanded="true" />
-          </folding>
-        </state>
+        <state relative-caret-position="-247" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/cough_detect_mobile/create_db2.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1740">
-          <caret line="122" column="72" selection-start-line="122" selection-start-column="67" selection-end-line="122" selection-end-column="75" />
+        <state relative-caret-position="120">
+          <caret line="146" column="75" selection-start-line="146" selection-start-column="67" selection-end-line="146" selection-end-column="75" />
           <folding>
             <element signature="e#0#15#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/cough_detect_mobile/utils.py">
+    <entry file="file://$PROJECT_DIR$/baseline3/output.txt">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="5460">
-          <caret line="370" selection-start-line="370" selection-end-line="374" selection-end-column="83" />
-        </state>
+        <state relative-caret-position="-201" />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/baseline3/plot_roc_auc_curve.py">
+    <entry file="file://$PROJECT_DIR$/baseline3/config.json">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="375">
-          <caret line="28" selection-start-line="28" selection-end-line="28" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/cough_detect_mobile/config.json">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="75">
-          <caret line="5" column="2" lean-forward="true" selection-start-line="5" selection-start-column="2" selection-end-line="5" selection-end-column="21" />
+        <state relative-caret-position="270">
+          <caret line="18" column="22" selection-start-line="18" selection-start-column="22" selection-end-line="18" selection-end-column="22" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/baseline3/create_db.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-746">
-          <caret line="67" column="13" selection-start-line="67" selection-start-column="13" selection-end-line="67" selection-end-column="13" />
+        <state relative-caret-position="435">
+          <caret line="305" column="5" selection-start-line="305" selection-start-column="5" selection-end-line="305" selection-end-column="5" />
           <folding>
             <element signature="e#25#36#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/baseline3/config.json">
+    <entry file="file://$PROJECT_DIR$/baseline3/lsf.o85381704">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="60">
-          <caret line="4" column="27" lean-forward="true" selection-start-line="4" selection-start-column="27" selection-end-line="4" selection-end-column="27" />
+        <state relative-caret-position="-191" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/baseline3/lsf.o85381852">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-226" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/baseline3/lsf.o85381757">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="614">
+          <caret line="65" column="13" lean-forward="true" selection-start-line="65" selection-end-line="65" selection-end-column="13" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/baseline2/config.json">
+    <entry file="file://$PROJECT_DIR$/baseline2/run_baseline.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="225">
-          <caret line="15" column="18" selection-start-line="15" selection-start-column="5" selection-end-line="15" selection-end-column="18" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/baseline2/create_db2.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="495">
-          <caret line="309" column="56" selection-start-line="309" selection-start-column="56" selection-end-line="309" selection-end-column="56" />
+        <state relative-caret-position="285">
+          <caret line="192" selection-start-line="192" selection-end-line="201" selection-end-column="53" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/baseline2/device_cv.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="259">
-          <caret line="45" column="31" selection-start-line="45" selection-start-column="31" selection-end-line="45" selection-end-column="31" />
+        <state relative-caret-position="450">
+          <caret line="165" lean-forward="true" selection-start-line="165" selection-end-line="165" />
           <folding>
             <element signature="e#24#35#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/cough_detect4/lsf.o60529101">
+    <entry file="file://$PROJECT_DIR$/baseline3/device_cv.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="315">
+          <caret line="125" selection-start-line="125" selection-end-line="132" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/cough_detect_mobile/utils.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="525">
+          <caret line="377" column="16" selection-start-line="377" selection-start-column="16" selection-end-line="377" selection-end-column="16" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/cough_detect_mobile/controller.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-3045">
+          <caret line="125" lean-forward="true" selection-start-line="125" selection-end-line="125" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/cough_detect_mobile/lsf.o85393922">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-357" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/cough_detect_mobile/lsf.o85393929">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-4076" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/cough_detect_mobile/lsf.o85393770">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-365" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/cough_detect_mobile/lsf.o85394066">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-495" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/baseline3/run_baseline.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-450">
+          <caret line="86" selection-start-line="86" selection-end-line="96" selection-end-column="82" />
+          <folding>
+            <element signature="e#24#35#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/cough_detect_mobile/cnn_roc_curve_single.csv">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-450" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/cough_detect_mobile/lsf.o85397449">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-425" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/cough_detect_mobile/cnn_roc_curve_ensemble.csv">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/cough_detect4/evaluate.py">
+    <entry file="file://$PROJECT_DIR$/cough_detect_mobile/lsf.o85398735">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1755" />
+        <state relative-caret-position="-351" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/cough_detect_mobile/lsf.o85398874">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-225" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/cough_detect_mobile/config.json">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="90">
+          <caret line="6" column="23" selection-start-line="6" selection-start-column="23" selection-end-line="6" selection-end-column="23" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/cough_detect_mobile/lsf.o85403679">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-16722" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/cough_detect_mobile/exp2_cnn_single_studio.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="565">
+          <caret line="62" column="13" selection-start-line="62" selection-start-column="5" selection-end-line="62" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/cough_detect_mobile/exp2_cnn_single_htc.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="565">
+          <caret line="62" column="13" lean-forward="true" selection-start-line="62" selection-start-column="5" selection-end-line="62" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/cough_detect_mobile/exp2_cnn_single_iphone.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="565">
+          <caret line="62" column="13" lean-forward="true" selection-start-line="62" selection-start-column="5" selection-end-line="62" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/cough_detect_mobile/exp2_cnn_single_samsung.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="565">
+          <caret line="62" column="13" lean-forward="true" selection-start-line="62" selection-start-column="5" selection-end-line="62" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/cough_detect_mobile/exp2_cnn_ensemble_studio.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="295">
+          <caret line="1018" column="13" lean-forward="true" selection-start-line="1018" selection-start-column="5" selection-end-line="1018" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/cough_detect_mobile/exp2_cnn_ensemble_iphone.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="564">
+          <caret line="889" column="13" lean-forward="true" selection-start-line="889" selection-start-column="5" selection-end-line="889" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/cough_detect_mobile/exp2_cnn_ensemble_samsung.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="627">
+          <caret line="1324" column="13" selection-start-line="1324" selection-start-column="5" selection-end-line="1324" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/cough_detect_mobile/exp2_cnn_ensemble_htc.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="325">
+          <caret line="1156" column="5" lean-forward="true" selection-start-line="1156" selection-start-column="5" selection-end-line="1156" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/cough_detect_mobile/exp1_cnn_single.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="624">
+          <caret line="112" column="5" lean-forward="true" selection-start-line="112" selection-start-column="5" selection-end-line="112" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/cough_detect_mobile/exp1_cnn_ensemble.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-6">
+          <caret line="6730" column="13" lean-forward="true" selection-start-line="6730" selection-start-column="13" selection-end-line="6730" selection-end-column="13" />
+        </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/cough_detect_mobile/evaluate.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="405">
-          <caret line="123" lean-forward="true" selection-start-line="123" selection-end-line="123" />
+        <state relative-caret-position="509">
+          <caret line="601" column="69" lean-forward="true" selection-start-line="601" selection-start-column="69" selection-end-line="601" selection-end-column="69" />
           <folding>
             <element signature="e#58#73#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/cough_detect_mobile/exp2_cnn_single_tablet.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="579">
+          <caret line="62" column="13" lean-forward="true" selection-start-line="62" selection-start-column="5" selection-end-line="62" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/baseline3/exp1.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-1131" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/cough_detect_mobile/exp2_cnn_ensemble_tablet.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="563">
+          <caret line="1142" column="80" lean-forward="true" selection-start-line="1142" selection-start-column="80" selection-end-line="1142" selection-end-column="80" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/baseline2/exp2.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-1851" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/baseline3/cnn_roc_curve_single.csv">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/baseline3/exp2.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-1551" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/baseline2/exp1.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-1080" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/baseline3/plot_roc_auc_curve.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="390">
+          <caret line="41" column="38" selection-start-line="41" selection-start-column="38" selection-end-line="41" selection-end-column="38" />
         </state>
       </provider>
     </entry>

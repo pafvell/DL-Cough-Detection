@@ -279,7 +279,8 @@ def get_imgs(	split_id,
     		listOfParticipantsInValidationset,
 		listOfAllowedSources,
         device_cv = False,
-        device = ""
+        device = "",
+        second_device = ""
 	    ):
        '''
 	possible experiment splits:
@@ -367,9 +368,16 @@ def get_imgs(	split_id,
                                      trainListOther.remove(name)
 
 
-       if device_cv:
+       if device != "" and second_device == "":
            trainListCough = [kk for kk in trainListCough if get_device(kk) != device]
            trainListOther = [kk for kk in trainListOther if get_device(kk) != device]
+
+           testListCough = [ll for ll in testListCough if get_device(ll) == device]
+           testListOther = [ll for ll in testListOther if get_device(ll) == device]
+
+       if device != "" and second_device != "":
+           trainListCough = [kk for kk in trainListCough if get_device(kk) != device and get_device(kk) != second_device]
+           trainListOther = [kk for kk in trainListOther if get_device(kk) != device and get_device(kk) != second_device]
 
            testListCough = [ll for ll in testListCough if get_device(ll) == device]
            testListOther = [ll for ll in testListOther if get_device(ll) == device]

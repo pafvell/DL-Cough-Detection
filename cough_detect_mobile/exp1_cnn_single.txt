@@ -1,0 +1,166 @@
+Sender: LSF System <lsfadmin@eu-c7-056-01>
+Subject: Job 85394234: <python evaluate.py> in cluster <euler> Done
+
+Job <python evaluate.py> was submitted from host <eu-login-14-ng> by user <dfilipe> in cluster <euler> at Thu Feb 14 14:33:45 2019
+Job was executed on host(s) <8*eu-c7-056-01>, in queue <normal.24h>, as user <dfilipe> in cluster <euler> at Thu Feb 14 14:34:04 2019
+</cluster/home/dfilipe> was used as the home directory.
+</cluster/home/dfilipe/DL-Cough-Detection/cough_detect_mobile> was used as the working directory.
+Started at Thu Feb 14 14:34:04 2019
+Terminated at Thu Feb 14 14:37:50 2019
+Results reported at Thu Feb 14 14:37:50 2019
+
+Your job looked like:
+
+------------------------------------------------------------
+# LSBATCH: User input
+python evaluate.py
+------------------------------------------------------------
+
+Successfully completed.
+
+Resource usage summary:
+
+    CPU time :                                   224.00 sec.
+    Max Memory :                                 1494 MB
+    Average Memory :                             995.20 MB
+    Total Requested Memory :                     16384.00 MB
+    Delta Memory :                               14890.00 MB
+    Max Swap :                                   -
+    Max Processes :                              4
+    Max Threads :                                38
+    Run time :                                   254 sec.
+    Turnaround time :                            245 sec.
+
+The output (if any) follows:
+
+WARNING:tensorflow:From /cluster/home/dfilipe/.local/lib64/python3.6/site-packages/tensorflow/contrib/learn/python/learn/datasets/base.py:198: retry (from tensorflow.contrib.learn.python.learn.datasets.base) is deprecated and will be removed in a future version.
+Instructions for updating:
+Use the retry module or similar alternatives.
+2019-02-14 14:34:15.220790: I tensorflow/core/platform/cpu_feature_guard.cc:140] Your CPU supports instructions that this TensorFlow binary was not compiled to use: AVX2 FMA
+read checkpoints: ./checkpoints/cnnv3l3_mobile
+evaluate model:model_cnn_v3_mobile
+restore checkpoint:./checkpoints/cnnv3l3_mobile/cv1/checkpoint-100001
+input shape(1, 16, 64, 64)
+input shape(1, 16, 32, 64)
+input shape(1, 16, 16, 64)
+use data from root path ../../Audio_Data
+file ignored: %s../../Audio_Data/04_Coughing/Distant (cd)/p17_rode-108.wav
+file ignored: %s../../Audio_Data/04_Coughing/Distant (cd)/p17_htc-108.wav
+file ignored: %s../../Audio_Data/04_Coughing/Distant (cd)/p17_tablet-108.wav
+file ignored: %s../../Audio_Data/04_Coughing/Distant (cd)/p17_iphone-108.wav
+file ignored: %s../../Audio_Data/04_Coughing/Distant (cd)/p17_samsung-108.wav
+nr of samples coughing (test): 1866
+nr of samples NOT coughing (test): 2296
+class probs shape:  (4162,)
+
+********************************************************************************
+Evaluate over Everything:
+sen: 0.916629
+spec: 0.870016
+PPV: 0.890679
+NPV: 0.900322
+ACC: 0.895002
+MCC: 0.788820
+auc: 0.948494
+
+********************************************************************************
+Evaluate studio
+sen: 0.894144
+spec: 0.896657
+PPV: 0.921114
+NPV: 0.862573
+ACC: 0.895213
+MCC: 0.787236
+auc: 0.000000
+
+********************************************************************************
+Evaluate iphone
+sen: 0.957958
+spec: 0.833846
+PPV: 0.855228
+NPV: 0.950877
+ACC: 0.896657
+MCC: 0.798923
+auc: 0.000000
+
+********************************************************************************
+Evaluate samsung
+sen: 0.935798
+spec: 0.891540
+PPV: 0.905838
+NPV: 0.925676
+ACC: 0.914872
+MCC: 0.829423
+auc: 0.000000
+
+********************************************************************************
+Evaluate htc
+sen: 0.904328
+spec: 0.834158
+PPV: 0.855603
+NPV: 0.889182
+ACC: 0.870700
+MCC: 0.741629
+auc: 0.000000
+
+********************************************************************************
+Evaluate tablet
+sen: 0.895075
+spec: 0.877660
+PPV: 0.900862
+NPV: 0.870712
+ACC: 0.887307
+MCC: 0.772154
+auc: 0.000000
+
+********************************************************************************
+Evaluate audio track
+sen: 0.970588
+spec: 1.000000
+PPV: 1.000000
+NPV: 0.972973
+ACC: 0.985714
+MCC: 0.971780
+auc: 0.000000
+
+********************************************************************************
+Evaluate Close (cc)
+Confusion Matrix: 
+ [[  0   0]
+ [118 806]]
+accuracy:  0.8722943722943723
+
+********************************************************************************
+Evaluate Distant (cd)
+Confusion Matrix: 
+ [[  0   0]
+ [ 68 874]]
+accuracy:  0.9278131634819533
+
+********************************************************************************
+Evaluate 01_Throat Clearing
+Confusion Matrix: 
+ [[898 122]
+ [  0   0]]
+accuracy:  0.8803921568627451
+
+********************************************************************************
+Evaluate 02_Laughing
+Confusion Matrix: 
+ [[883 115]
+ [  0   0]]
+accuracy:  0.8847695390781564
+
+********************************************************************************
+Evaluate 03_Speaking
+Confusion Matrix: 
+ [[195   8]
+ [  0   0]]
+accuracy:  0.9605911330049262
+
+********************************************************************************
+Evaluate 04_Spirometer
+Confusion Matrix: 
+ [[69  6]
+ [ 0  0]]
+accuracy:  0.92

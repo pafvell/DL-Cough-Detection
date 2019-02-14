@@ -1,0 +1,164 @@
+Sender: LSF System <lsfadmin@eu-c7-043-11>
+Subject: Job 85391180: <python device_cv.py> in cluster <euler> Done
+
+Job <python device_cv.py> was submitted from host <eu-login-14-ng> by user <dfilipe> in cluster <euler> at Thu Feb 14 13:17:53 2019
+Job was executed on host(s) <8*eu-c7-043-11>, in queue <normal.24h>, as user <dfilipe> in cluster <euler> at Thu Feb 14 13:17:57 2019
+</cluster/home/dfilipe> was used as the home directory.
+</cluster/home/dfilipe/DL-Cough-Detection/baseline2> was used as the working directory.
+Started at Thu Feb 14 13:17:57 2019
+Terminated at Thu Feb 14 13:21:06 2019
+Results reported at Thu Feb 14 13:21:06 2019
+
+Your job looked like:
+
+------------------------------------------------------------
+# LSBATCH: User input
+python device_cv.py
+------------------------------------------------------------
+
+Successfully completed.
+
+Resource usage summary:
+
+    CPU time :                                   177.56 sec.
+    Max Memory :                                 350 MB
+    Average Memory :                             317.33 MB
+    Total Requested Memory :                     16384.00 MB
+    Delta Memory :                               16034.00 MB
+    Max Swap :                                   -
+    Max Processes :                              4
+    Max Threads :                                5
+    Run time :                                   212 sec.
+    Turnaround time :                            193 sec.
+
+The output (if any) follows:
+
+#################################################################################################### 
+
+Data used from ../../Audio_Data/data_v1.1studio.h5
+shape of train features: (9041, 14)
+shape of test features: (773, 14)
+#################################################################################################### 
+
+----------------- HYPERPARAMS -----------------
+
+N_TREES = 500
+MAX_FEATURES = 10
+MAX_DEPTH = 14
+
+----------------- devices trained: ['iphone' 'samsung' 'htc' 'tablet' 'audio track'] -----------------
+----------------- device tested: studio -----------------
+RESULTS:
+sen: 0.843137
+spec: 0.859873
+PPV: 0.897912
+NPV: 0.789474
+ACC: 0.849935
+MCC: 0.695154
+auc: 0.924078
+#################################################################################################### 
+
+Data used from ../../Audio_Data/data_v1.1iphone.h5
+shape of train features: (10065, 14)
+shape of test features: (658, 14)
+#################################################################################################### 
+
+----------------- HYPERPARAMS -----------------
+
+N_TREES = 500
+MAX_FEATURES = 10
+MAX_DEPTH = 14
+
+----------------- devices trained: ['studio' 'samsung' 'htc' 'tablet' 'audio track'] -----------------
+----------------- device tested: iphone -----------------
+RESULTS:
+sen: 0.956376
+spec: 0.755556
+PPV: 0.764075
+NPV: 0.954386
+ACC: 0.846505
+MCC: 0.715189
+auc: 0.917835
+#################################################################################################### 
+
+Data used from ../../Audio_Data/data_v1.1samsung.h5
+shape of train features: (7619, 14)
+shape of test features: (975, 14)
+#################################################################################################### 
+
+----------------- HYPERPARAMS -----------------
+
+N_TREES = 500
+MAX_FEATURES = 10
+MAX_DEPTH = 14
+
+----------------- devices trained: ['studio' 'iphone' 'htc' 'tablet' 'audio track'] -----------------
+----------------- device tested: samsung -----------------
+RESULTS:
+sen: 0.864662
+spec: 0.839729
+PPV: 0.866290
+NPV: 0.837838
+ACC: 0.853333
+MCC: 0.704259
+auc: 0.915133
+#################################################################################################### 
+
+Data used from ../../Audio_Data/data_v1.1htc.h5
+shape of train features: (10015, 14)
+shape of test features: (843, 14)
+#################################################################################################### 
+
+----------------- HYPERPARAMS -----------------
+
+N_TREES = 500
+MAX_FEATURES = 10
+MAX_DEPTH = 14
+
+----------------- devices trained: ['studio' 'iphone' 'samsung' 'tablet' 'audio track'] -----------------
+----------------- device tested: htc -----------------
+RESULTS:
+sen: 0.720137
+spec: 0.836576
+PPV: 0.909483
+NPV: 0.567282
+ACC: 0.755635
+MCC: 0.515190
+auc: 0.821189
+#################################################################################################### 
+
+Data used from ../../Audio_Data/data_v1.1tablet.h5
+shape of train features: (8948, 14)
+shape of test features: (843, 14)
+#################################################################################################### 
+
+----------------- HYPERPARAMS -----------------
+
+N_TREES = 500
+MAX_FEATURES = 10
+MAX_DEPTH = 14
+
+----------------- devices trained: ['studio' 'iphone' 'samsung' 'htc' 'audio track'] -----------------
+----------------- device tested: tablet -----------------
+RESULTS:
+sen: 0.780142
+spec: 0.680952
+PPV: 0.711207
+NPV: 0.754617
+ACC: 0.730724
+MCC: 0.463453
+auc: 0.813899
+#################################################################################################### 
+
+#################################################################################################### 
+
+SUMMARY RESULTS:
+test accuracy: (mean 0.807226, +/- SD 0.052928)
+aucroc score test: (mean 0.878427, +/- SD 0.049849)
+specificity: (mean 0.794537, +/- SD 0.067081)
+sensitivity: (mean 0.832891, +/- SD 0.079823)
+ppv: (mean 0.829793, +/- SD 0.078363)
+npv: (mean 0.780719, +/- SD 0.126282)
+mcc: (mean 0.618649, +/- SD 0.107043)
+####################################################################################################
+time elapsed:  174.75611972808838

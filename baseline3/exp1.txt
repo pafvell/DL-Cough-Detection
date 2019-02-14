@@ -1,0 +1,116 @@
+Sender: LSF System <lsfadmin@eu-c7-052-09>
+Subject: Job 85390741: <python run_baseline.py> in cluster <euler> Done
+
+Job <python run_baseline.py> was submitted from host <eu-login-14-ng> by user <dfilipe> in cluster <euler> at Thu Feb 14 12:58:44 2019
+Job was executed on host(s) <8*eu-c7-052-09>, in queue <normal.24h>, as user <dfilipe> in cluster <euler> at Thu Feb 14 12:58:55 2019
+</cluster/home/dfilipe> was used as the home directory.
+</cluster/home/dfilipe/DL-Cough-Detection/baseline3> was used as the working directory.
+Started at Thu Feb 14 12:58:55 2019
+Terminated at Thu Feb 14 12:59:14 2019
+Results reported at Thu Feb 14 12:59:14 2019
+
+Your job looked like:
+
+------------------------------------------------------------
+# LSBATCH: User input
+python run_baseline.py
+------------------------------------------------------------
+
+Successfully completed.
+
+Resource usage summary:
+
+    CPU time :                                   12.19 sec.
+    Max Memory :                                 196 MB
+    Average Memory :                             103.00 MB
+    Total Requested Memory :                     16384.00 MB
+    Delta Memory :                               16188.00 MB
+    Max Swap :                                   -
+    Max Processes :                              3
+    Max Threads :                                4
+    Run time :                                   31 sec.
+    Turnaround time :                            30 sec.
+
+The output (if any) follows:
+
+#################################################################################################### 
+
+Data used from ../../Audio_Data/data_hu_v1.1.h5
+shape of train features: (11216, 104)
+shape of test features: (4105, 104)
+#################################################################################################### 
+
+----------------- HYPERPARAMS -----------------
+
+NNEIGHBOURS = 3
+WEIGHT_METRIC = distance
+WEIGHT_TYPE = 2
+
+----------------- device: ['studio', 'iphone', 'samsung', 'htc', 'tablet', 'audio track'] -----------------
+RESULTS:
+sen: 0.803784
+spec: 0.658093
+PPV: 0.658547
+NPV: 0.803465
+ACC: 0.723752
+MCC: 0.461945
+auc: 0.792360
+----------------- device: studio -----------------
+RESULTS:
+sen: 0.858757
+spec: 0.703163
+PPV: 0.713615
+NPV: 0.852507
+ACC: 0.775163
+MCC: 0.564017
+auc: 0.847577
+----------------- device: iphone -----------------
+RESULTS:
+sen: 0.913534
+spec: 0.674479
+PPV: 0.660326
+NPV: 0.918440
+ACC: 0.772308
+MCC: 0.583371
+auc: 0.855092
+----------------- device: samsung -----------------
+RESULTS:
+sen: 0.823245
+spec: 0.666667
+PPV: 0.648855
+NPV: 0.834467
+ACC: 0.733679
+MCC: 0.486605
+auc: 0.816342
+----------------- device: htc -----------------
+RESULTS:
+sen: 0.707657
+spec: 0.614815
+PPV: 0.661605
+NPV: 0.664000
+ACC: 0.662679
+MCC: 0.324035
+auc: 0.702438
+----------------- device: tablet -----------------
+RESULTS:
+sen: 0.758333
+spec: 0.623094
+PPV: 0.612108
+NPV: 0.766756
+ACC: 0.682540
+MCC: 0.380143
+auc: 0.740013
+#################################################################################################### 
+
+#################################################################################################### 
+
+SUMMARY RESULTS:
+test accuracy: (mean 0.725274, +/- SD 0.045861)
+aucroc score test: (mean 0.792292, +/- SD 0.060639)
+specificity: (mean 0.656443, +/- SD 0.033038)
+sensitivity: (mean 0.812305, +/- SD 0.072648)
+ppv: (mean 0.659302, +/- SD 0.032535)
+npv: (mean 0.807234, +/- SD 0.086386)
+mcc: (mean 0.467634, +/- SD 0.101312)
+####################################################################################################
+time elapsed:  9.704631805419922

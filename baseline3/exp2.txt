@@ -1,0 +1,144 @@
+Sender: LSF System <lsfadmin@eu-c7-056-09>
+Subject: Job 85390891: <python device_cv.py> in cluster <euler> Done
+
+Job <python device_cv.py> was submitted from host <eu-login-14-ng> by user <dfilipe> in cluster <euler> at Thu Feb 14 13:06:24 2019
+Job was executed on host(s) <8*eu-c7-056-09>, in queue <normal.24h>, as user <dfilipe> in cluster <euler> at Thu Feb 14 13:06:55 2019
+</cluster/home/dfilipe> was used as the home directory.
+</cluster/home/dfilipe/DL-Cough-Detection/baseline3> was used as the working directory.
+Started at Thu Feb 14 13:06:55 2019
+Terminated at Thu Feb 14 13:07:22 2019
+Results reported at Thu Feb 14 13:07:22 2019
+
+Your job looked like:
+
+------------------------------------------------------------
+# LSBATCH: User input
+python device_cv.py
+------------------------------------------------------------
+
+Successfully completed.
+
+Resource usage summary:
+
+    CPU time :                                   21.67 sec.
+    Max Memory :                                 176 MB
+    Average Memory :                             56.00 MB
+    Total Requested Memory :                     16384.00 MB
+    Delta Memory :                               16208.00 MB
+    Max Swap :                                   -
+    Max Processes :                              3
+    Max Threads :                                4
+    Run time :                                   52 sec.
+    Turnaround time :                            58 sec.
+
+The output (if any) follows:
+
+#################################################################################################### 
+
+Data used from ../../Audio_Data/data_hu_v1.1.h5
+shape of train features: (11216, 104)
+shape of test features: (4105, 104)
+#################################################################################################### 
+
+----------------- HYPERPARAMS -----------------
+
+NNEIGHBOURS = 3
+WEIGHT_METRIC = distance
+WEIGHT_TYPE = 2
+
+----------------- devices trained: ['iphone' 'samsung' 'htc' 'tablet' 'audio track'] -----------------
+----------------- device tested: studio -----------------
+RESULTS:
+sen: 0.749415
+spec: 0.686391
+PPV: 0.751174
+NPV: 0.684366
+ACC: 0.721569
+MCC: 0.435672
+auc: 0.782230
+#################################################################################################### 
+
+----------------- HYPERPARAMS -----------------
+
+NNEIGHBOURS = 3
+WEIGHT_METRIC = distance
+WEIGHT_TYPE = 2
+
+----------------- devices trained: ['studio' 'samsung' 'htc' 'tablet' 'audio track'] -----------------
+----------------- device tested: iphone -----------------
+RESULTS:
+sen: 0.935223
+spec: 0.660050
+PPV: 0.627717
+NPV: 0.943262
+ACC: 0.764615
+MCC: 0.583000
+auc: 0.862550
+#################################################################################################### 
+
+----------------- HYPERPARAMS -----------------
+
+NNEIGHBOURS = 3
+WEIGHT_METRIC = distance
+WEIGHT_TYPE = 2
+
+----------------- devices trained: ['studio' 'iphone' 'htc' 'tablet' 'audio track'] -----------------
+----------------- device tested: samsung -----------------
+RESULTS:
+sen: 0.667311
+spec: 0.600446
+PPV: 0.658397
+NPV: 0.609977
+ACC: 0.636269
+MCC: 0.268066
+auc: 0.687603
+#################################################################################################### 
+
+----------------- HYPERPARAMS -----------------
+
+NNEIGHBOURS = 3
+WEIGHT_METRIC = distance
+WEIGHT_TYPE = 2
+
+----------------- devices trained: ['studio' 'iphone' 'samsung' 'tablet' 'audio track'] -----------------
+----------------- device tested: htc -----------------
+RESULTS:
+sen: 0.622711
+spec: 0.582759
+PPV: 0.737527
+NPV: 0.450667
+ACC: 0.608852
+MCC: 0.196642
+auc: 0.640914
+#################################################################################################### 
+
+----------------- HYPERPARAMS -----------------
+
+NNEIGHBOURS = 3
+WEIGHT_METRIC = distance
+WEIGHT_TYPE = 2
+
+----------------- devices trained: ['studio' 'iphone' 'samsung' 'htc' 'audio track'] -----------------
+----------------- device tested: tablet -----------------
+RESULTS:
+sen: 0.702997
+spec: 0.584071
+PPV: 0.578475
+NPV: 0.707775
+ACC: 0.637363
+MCC: 0.286659
+auc: 0.698653
+#################################################################################################### 
+
+#################################################################################################### 
+
+SUMMARY RESULTS:
+test accuracy: (mean 0.673734, +/- SD 0.059133)
+aucroc score test: (mean 0.734390, +/- SD 0.078635)
+specificity: (mean 0.622743, +/- SD 0.042507)
+sensitivity: (mean 0.735531, +/- SD 0.108176)
+ppv: (mean 0.670658, +/- SD 0.065492)
+npv: (mean 0.679209, +/- SD 0.159744)
+mcc: (mean 0.354008, +/- SD 0.138414)
+####################################################################################################
+time elapsed:  20.404911279678345

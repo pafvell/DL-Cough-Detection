@@ -74,19 +74,27 @@ probability_test = knn.predict_proba(test_features)
 probVec = probability_test[:, 1]
 fpr, tpr, thresholds = sklearn.metrics.roc_curve(test_labels, probVec)
 df = pd.DataFrame({'fpr': fpr, 'tpr': tpr, 'thresholds': thresholds})
-df.to_csv("knn_roc_curve_rf.csv")
+df.to_csv("knn_roc_curve_knn_New.csv")
 
 ## get figures for entire data set
 train_accuracy = sklearn.metrics.accuracy_score(y_true=train_labels, y_pred=train_pred)
 test_accuracy = sklearn.metrics.accuracy_score(y_true=test_labels, y_pred=test_pred)
 
+aucroc_score_test = sklearn.metrics.roc_auc_score(test_labels, probVec)
 
-
-mcc_test = sklearn.metrics.matthews_corrcoef(test_labels, test_pred)
 cm = sklearn.metrics.confusion_matrix(y_true=test_labels, y_pred=test_pred).astype(float)
-specificity = cm[0,0]/(cm[0,0]+cm[0,1])  
-sensitivity = cm[1,1]/(cm[1,0]+cm[1,1])
-precision = cm[1,1]/(cm[0,1]+cm[1,1])
+
+FP = cm[0, 1]
+FN = cm[1, 0]
+TP = cm[0, 0]
+TN = cm[1, 1]
+
+sen = TP / (TP + FN)
+spec = TN / (TN + FP)
+PPV = TP / (TP + FP)
+NPV = TN / (TN + FN)
+ACC = (TP + TN) / (TP + FP + FN + TN)
+MCC = (TP * TN - FP * FN) / np.sqrt((TP + FP) * (TP + FN) * (TN + FP) * (TN + FN))
 
 print('#'*100, "\n")
 
@@ -97,14 +105,22 @@ print('NNEIGHBOURS = %i\nWEIGHT_METRIC = %s\nWEIGHT_TYPE = %i\n'% (NNEIGHBOURS, 
 ## start printing results
 print('----------------- device: %s -----------------'%DEVICE_FILTER)
 print('RESULTS:')
-print('test accuracy: %f'%test_accuracy)
-print('train accuracy: %f'%train_accuracy)
-print('sensitivity: %f'%sensitivity)
-print('specificity: %f'%specificity)
-print('precision: %f'%precision)
-print('mcc: %f'%mcc_test)
-print('auc: %f'%aucroc_score_test)
+print('sen: %f' % sen)
+print('spec: %f' % spec)
+print('PPV: %f' % PPV)
+print('NPV: %f' % NPV)
+print('ACC: %f' % ACC)
+print('MCC: %f' % MCC)
+print('auc: %f' % aucroc_score_test)
 
+
+mother_acc = []
+mother_auc = []
+mother_spec = []
+mother_sen= []
+mother_mcc = []
+mother_ppv = []
+mother_npv = []
 ## get figures for each device
 for device in DEVICE_FILTER:
 
@@ -133,21 +149,68 @@ for device in DEVICE_FILTER:
 	aucroc_score_test = sklearn.metrics.roc_auc_score(test_labels_, probability_test_[:,1])
 
 
-	mcc_test = sklearn.metrics.matthews_corrcoef(test_labels_, test_pred_)
 	cm = sklearn.metrics.confusion_matrix(y_true=test_labels_, y_pred=test_pred_).astype(float)
-	specificity = cm[0,0]/(cm[0,0]+cm[0,1])
-	sensitivity = cm[1,1]/(cm[1,0]+cm[1,1])
-	precision = cm[1,1]/(cm[0,1]+cm[1,1])
-	
+
+
+	FP = cm[0,1]
+	FN = cm[1,0]
+	TP = cm[0,0]
+	TN = cm[1,1]
+
+
+
+	sen = TP/(TP+FN)
+	spec = TN/(TN+FP)
+	PPV = TP/(TP+FP)
+	NPV = TN / (TN + FN)
+	ACC = (TP + TN) / (TP + FP + FN + TN)
+	MCC = (TP * TN - FP * FN)/np.sqrt((TP + FP) * (TP + FN) * (TN + FP) * (TN + FN))
+
+
 	# print results
 	print('RESULTS:')
-	print('test accuracy: %f'%test_accuracy)
-	print('train accuracy: %f'%train_accuracy)
-	print('sensitivity: %f'%sensitivity)
-	print('specificity: %f'%specificity)
-	print('precision: %f'%precision)
-	print('mcc: %f' %mcc_test)
+	print('sen: %f' %sen)
+	print('spec: %f' % spec)
+	print('PPV: %f' % PPV)
+	print('NPV: %f' % NPV)
+	print('ACC: %f' % ACC)
+	print('MCC: %f' % MCC)
 	print('auc: %f' %aucroc_score_test)
+
+	mother_acc.append(ACC)
+	mother_sen.append(sen)
+	mother_spec.append(spec)
+	mother_ppv.append(PPV)
+	mother_npv.append(NPV)
+	mother_auc.append(aucroc_score_test)
+	mother_mcc.append(MCC)
+
+acc_av = np.mean(mother_acc)
+acc_sd = np.std(mother_acc)
+aucroc_av = np.mean(mother_auc)
+aucroc_sd = np.std(mother_auc)
+spec_av = np.mean(mother_spec)
+spec_sd = np.std(mother_spec)
+sens_av = np.mean(mother_sen)
+sens_sd = np.std(mother_sen)
+mcc_av = np.mean(mother_mcc)
+mcc_sd = np.std(mother_mcc)
+ppv_av = np.mean(mother_ppv)
+ppv_sd = np.std(mother_ppv)
+npv_av = np.mean(mother_npv)
+npv_sd = np.std(mother_npv)
+
+print('#' * 100, "\n")
+print('#' * 100, "\n")
+print('SUMMARY RESULTS:')
+print('test accuracy: (mean %f, +/- SD %f)' % (acc_av, acc_sd))
+print('aucroc score test: (mean %f, +/- SD %f)' % (aucroc_av, aucroc_sd))
+print('specificity: (mean %f, +/- SD %f)' % (spec_av, spec_sd))
+print('sensitivity: (mean %f, +/- SD %f)' % (sens_av, sens_sd))
+print('ppv: (mean %f, +/- SD %f)' % (ppv_av, ppv_sd))
+print('npv: (mean %f, +/- SD %f)' % (npv_av, npv_sd))
+print('mcc: (mean %f, +/- SD %f)' % (mcc_av, mcc_sd))
+
 
 print('#'*100)
 

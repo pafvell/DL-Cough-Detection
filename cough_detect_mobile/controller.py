@@ -111,11 +111,12 @@ def train(
          eval_every_n_steps=config_train["eval_every_n_steps"],
          save_every_n_steps=config_train["save_every_n_steps"],
          save_checkpoint=config_train["save_checkpoint"],
-         device = ""):
+         device_name_for_db ="",
+         device_name_for_test= ""):
 
 
-       if device:
-        checkpoint_dir = checkpoint_dir + device
+       if device_name_for_db:
+        checkpoint_dir = checkpoint_dir + device_name_for_db
 
        tf.set_random_seed(0)
 
@@ -134,7 +135,7 @@ def train(
 									size_cub=size_cub,
 									db_version=db_version,
 									root_dir=root_dir,
-                                    device = device
+                                    device = device_name_for_db
 								)
 
               #initialize
@@ -191,14 +192,14 @@ def train(
 
               #load Test Data
               with tf.device("/cpu:0"):
-                   test_batch, test_labels, test_op_init = get_imgs('test_%d'%split_id, 
-									batch_size=batch_size, 
-									buffer_size=test_capacity, 
-									num_epochs=num_epochs,
-									size_cub=size_cub,
-									db_version=db_version,
-									root_dir=root_dir,
-                                    device = device)
+                   test_batch, test_labels, test_op_init = get_imgs('test_%d' % split_id,
+                                                                    batch_size=batch_size,
+                                                                    buffer_size=test_capacity,
+                                                                    num_epochs=num_epochs,
+                                                                    size_cub=size_cub,
+                                                                    db_version=db_version,
+                                                                    root_dir=root_dir,
+                                                                    device = device_name_for_test)
 
 
               #Evaluation
@@ -321,19 +322,44 @@ def main(unused_args):
                 '''
                 train()
 
+# combinations
+# "studio", "iphone", "samsung", "htc", "tablet",
 
-def main_device_cv(device):
+# studio**
+# studioiphone
+# studiosamsung
+# studiohtc
+# studiotablet
 
-    train(device = device)
+# iphone**
+# iphonesamsung
+# iphonehtc
+# iphonetablet
+
+# samsung**
+# samsunghtc
+# samsungtablet
+
+# tablet**
+# tablethtc
+
+
+
+
+def main_device_cv(device_name_for_db, device_name_for_test):
+
+    train(device_name_for_db = device_name_for_db, device_name_for_test = device_name_for_test)
 
 
 if __name__ == '__main__':
     if config["DEVICE_CV"]:
-        for device in config["dataset"]["allowedSources"]:
-            if device == "audio track":
-                continue
+        # for device in config["dataset"]["allowedSources"]:
+        #
+        #         if device == "audio track" :
+        #             continue
 
-            main_device_cv(device)
+        main_device_cv(device_name_for_db = "samsungtablet", device_name_for_test= "samsung")
+
     else:
        tf.app.run()    
 

@@ -139,7 +139,7 @@ def main(unused_args):
         test_shape(trainListOther)
 
 
-def main_device_cv(device):
+def main_device_cv(device, second_device=""):
     tf.set_random_seed(0)
 
     # Store data to TFRECORDS
@@ -153,14 +153,16 @@ def main_device_cv(device):
                                                                             listOfAllowedSources=config_db[
                                                                                 "allowedSources"],
                                                                             device_cv = True,
-                                                                            device = device
+                                                                            device = device,
+                                                                            second_device = second_device
                                                                             )
     if config_db["CREATE_DB"]:
-        create_dataset(trainListCough, trainListOther, 'train_' + str(name), device_cv_name_extension = device)
-        create_dataset(testListCough, testListOther, 'test_' + str(name), device_cv_name_extension = device)
-        print_stats(testListCough, testListOther, trainListCough, trainListOther, name, device = device)
+        create_dataset(trainListCough, trainListOther, 'train_' + str(name), device_cv_name_extension = device+second_device)
+        if not second_device:
+            create_dataset(testListCough, testListOther, 'test_' + str(name), device_cv_name_extension = device+second_device)
+        print_stats(testListCough, testListOther, trainListCough, trainListOther, name, device = device+second_device)
     else:
-        print_stats(testListCough, testListOther, trainListCough, trainListOther, name, device = device)
+        print_stats(testListCough, testListOther, trainListCough, trainListOther, name, device = device+second_device)
         test_shape(trainListCough)
         test_shape(trainListOther)
 
@@ -173,5 +175,14 @@ if __name__ == '__main__':
             if device == "audio track":
                 continue
             main_device_cv(device)
+    elif config["DEVICE_CV_EXP2"]:
+
+        for device in config["dataset"]["allowedSources"]:
+            for device2 in config["dataset"]["allowedSources"]:
+                if device == "audio track" or device2 == "audio track" or device == device2:
+                    continue
+                main_device_cv(device, second_device = device2)
+
+
     else:
         tf.app.run()

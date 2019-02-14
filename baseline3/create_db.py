@@ -288,6 +288,13 @@ def main():
 	print("number of train samples:", len(train_list))
 	train_devices, train_labels, train_features = generate_cough_model(train_list)
 
+	#mean_train = np.mean(train_features, axis=0)
+	#std_train = np.std(train_features, axis=0)
+
+	#train_features -= mean_train
+	#train_features /= std_train
+
+
 	print("#"*10, "processing test data", "#"*10)
 	test_list = testListCough
 	test_list.extend(testListOther)
@@ -295,6 +302,8 @@ def main():
 	print("number of test samples:", len(test_list))
 	test_devices, test_labels, test_features = generate_cough_model(test_list)
 
+	#test_features -= mean_train
+	#test_features /= std_train
 
 	# store everything
 	with h5py.File(DB_ROOT_DIR + DB_FILENAME, 'w') as hf:

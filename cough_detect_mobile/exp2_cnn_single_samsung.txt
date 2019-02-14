@@ -1,0 +1,64 @@
+Sender: LSF System <lsfadmin@eu-c7-050-08>
+Subject: Job 85397486: <python evaluate.py> in cluster <euler> Done
+
+Job <python evaluate.py> was submitted from host <eu-login-14-ng> by user <dfilipe> in cluster <euler> at Thu Feb 14 15:49:45 2019
+Job was executed on host(s) <8*eu-c7-050-08>, in queue <normal.24h>, as user <dfilipe> in cluster <euler> at Thu Feb 14 15:50:08 2019
+</cluster/home/dfilipe> was used as the home directory.
+</cluster/home/dfilipe/DL-Cough-Detection/cough_detect_mobile> was used as the working directory.
+Started at Thu Feb 14 15:50:08 2019
+Terminated at Thu Feb 14 15:51:12 2019
+Results reported at Thu Feb 14 15:51:12 2019
+
+Your job looked like:
+
+------------------------------------------------------------
+# LSBATCH: User input
+python evaluate.py
+------------------------------------------------------------
+
+Successfully completed.
+
+Resource usage summary:
+
+    CPU time :                                   54.13 sec.
+    Max Memory :                                 748 MB
+    Average Memory :                             485.25 MB
+    Total Requested Memory :                     16384.00 MB
+    Delta Memory :                               15636.00 MB
+    Max Swap :                                   -
+    Max Processes :                              4
+    Max Threads :                                38
+    Run time :                                   88 sec.
+    Turnaround time :                            87 sec.
+
+The output (if any) follows:
+
+WARNING:tensorflow:From /cluster/home/dfilipe/.local/lib64/python3.6/site-packages/tensorflow/contrib/learn/python/learn/datasets/base.py:198: retry (from tensorflow.contrib.learn.python.learn.datasets.base) is deprecated and will be removed in a future version.
+Instructions for updating:
+Use the retry module or similar alternatives.
+2019-02-14 15:50:19.709566: I tensorflow/core/platform/cpu_feature_guard.cc:140] Your CPU supports instructions that this TensorFlow binary was not compiled to use: AVX2 FMA
+read checkpoints: ./checkpoints/cnnv3l3_mobilesamsung
+evaluate model:model_cnn_v3_mobile
+restore checkpoint:./checkpoints/cnnv3l3_mobilesamsung/cv1/checkpoint-100001
+input shape(1, 16, 64, 64)
+input shape(1, 16, 32, 64)
+input shape(1, 16, 16, 64)
+use data from root path ../../Audio_Data
+file ignored: %s../../Audio_Data/04_Coughing/Distant (cd)/p17_rode-108.wav
+file ignored: %s../../Audio_Data/04_Coughing/Distant (cd)/p17_htc-108.wav
+file ignored: %s../../Audio_Data/04_Coughing/Distant (cd)/p17_tablet-108.wav
+file ignored: %s../../Audio_Data/04_Coughing/Distant (cd)/p17_iphone-108.wav
+file ignored: %s../../Audio_Data/04_Coughing/Distant (cd)/p17_samsung-108.wav
+nr of samples coughing (test): 444
+nr of samples NOT coughing (test): 531
+class probs shape:  (975,)
+
+********************************************************************************
+Evaluate over Everything:
+sen: 0.894640
+spec: 0.891705
+PPV: 0.911488
+NPV: 0.871622
+ACC: 0.893333
+MCC: 0.784725
+auc: 0.947335

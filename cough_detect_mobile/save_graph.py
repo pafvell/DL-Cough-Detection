@@ -24,9 +24,9 @@ def main():
 
 	parser = build_parser()
 	options = parser.parse_args()
-	subdir = options.subdir
+	subdir = "cnnv3l3_mobile"#options.subdir
 
-	ckpt_dir = "checkpoints"
+	ckpt_dir = "checkpoints2"
 
 	model_ckpt_dir = os.path.join(ckpt_dir, subdir, 'cv1')
 

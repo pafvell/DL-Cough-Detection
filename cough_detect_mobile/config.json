@@ -4,7 +4,7 @@
   "ROOT_DIR" : "../../Audio_Data",
   "DB_version" : "650_112_final",
   "DEVICE_CV": false,
-  "DEVICE_CV_EXP2": true,
+  "DEVICE_CV_EXP2": false,
 
   "controller" : {
     "model" : "model_cnn_v3_mobile",
@@ -17,7 +17,7 @@
          "eta": 1e-3,
          "grad_noise" :9e-4,
          "clipper" :10.0,
-         "checkpoint_dir" :"./checkpoints/cnnv3l3_mobile",
+         "checkpoint_dir" :"./checkpoints2/cnnv3l3_mobile",
          "batch_size" : 64,
          "num_estimator" : 3,
          "num_filter" : 64,

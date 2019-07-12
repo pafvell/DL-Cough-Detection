@@ -2,7 +2,7 @@
 
 {
   "ROOT_DIR" : "../../Audio_Data",
-  "DB_version" : "650_112_final",
+  "DB_version" : "IMB_650_112_final",
   "DEVICE_CV": false,
   "DEVICE_CV_EXP2": false,
 
@@ -22,8 +22,8 @@
          "num_estimator" : 3,
          "num_filter" : 64,
          "trainable_scopes" : null,
-         "train_capacity"  : 9500,
-         "test_capacity" :5000,
+         "train_capacity"  : 50000,
+         "test_capacity" :20000,
          "num_epochs" : 100000,
          "max_num_steps" : 100000,
          "gpu_fraction" : 0.9,

@@ -388,7 +388,8 @@ def get_imgs(	split_id,
 def standardize(timeSignal):
          maxValue = np.max(timeSignal)
          minValue = np.min(timeSignal)
-         timeSignal = (timeSignal - minValue)/(maxValue - minValue) 
+         if maxValue != minValue:
+            timeSignal = (timeSignal - minValue)/(maxValue - minValue)
          return timeSignal
 
 

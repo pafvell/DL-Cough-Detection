@@ -1,0 +1,282 @@
+Sender: LSF System <lsfadmin@eu-c7-106-15>
+Subject: Job 95371233: <python controller.py> in cluster <euler> Done
+
+Job <python controller.py> was submitted from host <eu-login-23-ng> by user <dfilipe> in cluster <euler> at Thu Jul 11 15:00:09 2019
+Job was executed on host(s) <8*eu-c7-106-15>, in queue <normal.24h>, as user <dfilipe> in cluster <euler> at Thu Jul 11 15:00:16 2019
+</cluster/home/dfilipe> was used as the home directory.
+</cluster/home/dfilipe/DL-Cough-Detection/journal> was used as the working directory.
+Started at Thu Jul 11 15:00:16 2019
+Terminated at Thu Jul 11 17:11:25 2019
+Results reported at Thu Jul 11 17:11:25 2019
+
+Your job looked like:
+
+------------------------------------------------------------
+# LSBATCH: User input
+python controller.py
+------------------------------------------------------------
+
+Successfully completed.
+
+Resource usage summary:
+
+    CPU time :                                   65596.65 sec.
+    Max Memory :                                 6430 MB
+    Average Memory :                             5999.60 MB
+    Total Requested Memory :                     32768.00 MB
+    Delta Memory :                               26338.00 MB
+    Max Swap :                                   1 MB
+    Max Processes :                              4
+    Max Threads :                                60
+    Run time :                                   7878 sec.
+    Turnaround time :                            7876 sec.
+
+The output (if any) follows:
+
+WARNING:tensorflow:From controller.py:85: DatasetV1.make_one_shot_iterator (from tensorflow.python.data.ops.dataset_ops) is deprecated and will be removed in a future version.
+Instructions for updating:
+Use `for ... in dataset:` to iterate over a dataset. If using `tf.estimator`, return the `Dataset` object directly from your input function. As a last resort, you can use `tf.compat.v1.data.make_one_shot_iterator(dataset)`.
+WARNING:tensorflow:From /cluster/home/dfilipe/.local/lib64/python3.6/site-packages/tensorflow/python/framework/op_def_library.py:263: colocate_with (from tensorflow.python.framework.ops) is deprecated and will be removed in a future version.
+Instructions for updating:
+Colocations handled automatically by placer.
+WARNING:tensorflow:From /cluster/home/dfilipe/.local/lib64/python3.6/site-packages/tensorflow/contrib/layers/python/layers/layers.py:2557: to_int64 (from tensorflow.python.ops.math_ops) is deprecated and will be removed in a future version.
+Instructions for updating:
+Use tf.cast instead.
+WARNING:tensorflow:From /cluster/home/dfilipe/.local/lib64/python3.6/site-packages/tensorflow/contrib/layers/python/layers/layers.py:1624: flatten (from tensorflow.python.layers.core) is deprecated and will be removed in a future version.
+Instructions for updating:
+Use keras.layers.flatten instead.
+WARNING:tensorflow:From /cluster/home/dfilipe/.local/lib64/python3.6/site-packages/tensorflow/python/keras/layers/core.py:143: calling dropout (from tensorflow.python.ops.nn_ops) with keep_prob is deprecated and will be removed in a future version.
+Instructions for updating:
+Please use `rate` instead of `keep_prob`. Rate should be set to `rate = 1 - keep_prob`.
+WARNING:tensorflow:From /cluster/home/dfilipe/.local/lib64/python3.6/site-packages/tensorflow/python/ops/losses/losses_impl.py:209: to_float (from tensorflow.python.ops.math_ops) is deprecated and will be removed in a future version.
+Instructions for updating:
+Use tf.cast instead.
+WARNING:tensorflow:From /cluster/home/dfilipe/.local/lib64/python3.6/site-packages/tensorflow/python/ops/math_ops.py:3066: to_int32 (from tensorflow.python.ops.math_ops) is deprecated and will be removed in a future version.
+Instructions for updating:
+Use tf.cast instead.
+WARNING:tensorflow:From /cluster/home/dfilipe/.local/lib64/python3.6/site-packages/tensorflow/python/ops/math_grad.py:102: div (from tensorflow.python.ops.math_ops) is deprecated and will be removed in a future version.
+Instructions for updating:
+Deprecated in favor of operator or tf.math.divide.
+2019-07-11 15:00:28.238822: I tensorflow/core/platform/cpu_feature_guard.cc:141] Your CPU supports instructions that this TensorFlow binary was not compiled to use: AVX2 AVX512F FMA
+2019-07-11 15:00:28.247122: I tensorflow/core/platform/profile_utils/cpu_utils.cc:94] CPU Frequency: 2300000000 Hz
+2019-07-11 15:00:28.248109: I tensorflow/compiler/xla/service/service.cc:150] XLA service 0x4d63ff0 executing computations on platform Host. Devices:
+2019-07-11 15:00:28.248136: I tensorflow/compiler/xla/service/service.cc:158]   StreamExecutor device (0): <undefined>, <undefined>
+save checkpoints to: ./checkpoints2/cnnv3l3_mobile
+train model:model_cnn_v3_mobile
+use dataset location: ../../Audio_Data/train_1IMB_650_112_final.tfrecords
+input shape(?, 16, 64, 64)
+input shape(?, 16, 32, 64)
+input shape(?, 16, 16, 64)
+nr trainable vars: 17
+use dataset location: ../../Audio_Data/test_1IMB_650_112_final.tfrecords
+input shape(?, 16, 64, 64)
+input shape(?, 16, 32, 64)
+input shape(?, 16, 16, 64)
+start learning
+EVAL: step: 500, idx: 500, auc: 0.000000, accuracy: 0.000000
+EVAL: step: 1000, idx: 1000, auc: 0.500000, accuracy: 0.906250
+EVAL: step: 1500, idx: 1500, auc: 0.699713, accuracy: 0.929688
+EVAL: step: 2000, idx: 2000, auc: 0.859361, accuracy: 0.953125
+EVAL: step: 2500, idx: 2500, auc: 0.893990, accuracy: 0.953125
+EVAL: step: 3000, idx: 3000, auc: 0.903919, accuracy: 0.959375
+EVAL: step: 3500, idx: 3500, auc: 0.892639, accuracy: 0.955729
+EVAL: step: 4000, idx: 4000, auc: 0.904948, accuracy: 0.959821
+EVAL: step: 4500, idx: 4500, auc: 0.915967, accuracy: 0.962891
+EVAL: step: 5000, idx: 5000, auc: 0.918130, accuracy: 0.965278
+EVAL: step: 5500, idx: 5500, auc: 0.922049, accuracy: 0.967188
+EVAL: step: 6000, idx: 6000, auc: 0.927732, accuracy: 0.970170
+EVAL: step: 6500, idx: 6500, auc: 0.930126, accuracy: 0.971354
+EVAL: step: 7000, idx: 7000, auc: 0.929556, accuracy: 0.972356
+EVAL: step: 7500, idx: 7500, auc: 0.931701, accuracy: 0.973214
+EVAL: step: 8000, idx: 8000, auc: 0.934942, accuracy: 0.973958
+EVAL: step: 8500, idx: 8500, auc: 0.937576, accuracy: 0.975586
+EVAL: step: 9000, idx: 9000, auc: 0.941154, accuracy: 0.977022
+EVAL: step: 9500, idx: 9500, auc: 0.943660, accuracy: 0.978299
+EVAL: step: 10000, idx: 10000, auc: 0.944001, accuracy: 0.978618
+EVAL: step: 10500, idx: 10500, auc: 0.946069, accuracy: 0.978906
+EVAL: step: 11000, idx: 11000, auc: 0.942636, accuracy: 0.978423
+EVAL: step: 11500, idx: 11500, auc: 0.945224, accuracy: 0.978693
+EVAL: step: 12000, idx: 12000, auc: 0.943886, accuracy: 0.978940
+EVAL: step: 12500, idx: 12500, auc: 0.945137, accuracy: 0.979167
+EVAL: step: 13000, idx: 13000, auc: 0.943028, accuracy: 0.978750
+EVAL: step: 13500, idx: 13500, auc: 0.944384, accuracy: 0.979567
+EVAL: step: 14000, idx: 14000, auc: 0.943125, accuracy: 0.979167
+EVAL: step: 14500, idx: 14500, auc: 0.942410, accuracy: 0.978795
+EVAL: step: 15000, idx: 15000, auc: 0.944469, accuracy: 0.979526
+EVAL: step: 15500, idx: 15500, auc: 0.942539, accuracy: 0.979167
+EVAL: step: 16000, idx: 16000, auc: 0.941147, accuracy: 0.978831
+EVAL: step: 16500, idx: 16500, auc: 0.938092, accuracy: 0.978027
+EVAL: step: 17000, idx: 17000, auc: 0.939221, accuracy: 0.978693
+EVAL: step: 17500, idx: 17500, auc: 0.940135, accuracy: 0.978860
+EVAL: step: 18000, idx: 18000, auc: 0.941084, accuracy: 0.979018
+EVAL: step: 18500, idx: 18500, auc: 0.937817, accuracy: 0.978299
+EVAL: step: 19000, idx: 19000, auc: 0.936818, accuracy: 0.978041
+EVAL: step: 19500, idx: 19500, auc: 0.937199, accuracy: 0.978207
+EVAL: step: 20000, idx: 20000, auc: 0.937041, accuracy: 0.978365
+EVAL: step: 20500, idx: 20500, auc: 0.937171, accuracy: 0.978125
+EVAL: step: 21000, idx: 21000, auc: 0.938089, accuracy: 0.978659
+EVAL: step: 21500, idx: 21500, auc: 0.939138, accuracy: 0.979167
+EVAL: step: 22000, idx: 22000, auc: 0.936413, accuracy: 0.978561
+EVAL: step: 22500, idx: 22500, auc: 0.935446, accuracy: 0.978338
+EVAL: step: 23000, idx: 23000, auc: 0.934528, accuracy: 0.978125
+EVAL: step: 23500, idx: 23500, auc: 0.935802, accuracy: 0.978261
+EVAL: step: 24000, idx: 24000, auc: 0.936625, accuracy: 0.978723
+EVAL: step: 24500, idx: 24500, auc: 0.936207, accuracy: 0.978841
+save model (step 24999)
+EVAL: step: 25000, idx: 25000, auc: 0.934440, accuracy: 0.978316
+EVAL: step: 25500, idx: 25500, auc: 0.933191, accuracy: 0.978125
+EVAL: step: 26000, idx: 26000, auc: 0.933419, accuracy: 0.978248
+EVAL: step: 26500, idx: 26500, auc: 0.933496, accuracy: 0.978365
+EVAL: step: 27000, idx: 27000, auc: 0.934396, accuracy: 0.978774
+EVAL: step: 27500, idx: 27500, auc: 0.932307, accuracy: 0.977720
+EVAL: step: 28000, idx: 28000, auc: 0.932400, accuracy: 0.977841
+EVAL: step: 28500, idx: 28500, auc: 0.933145, accuracy: 0.978237
+EVAL: step: 29000, idx: 29000, auc: 0.933848, accuracy: 0.978344
+EVAL: step: 29500, idx: 29500, auc: 0.934509, accuracy: 0.978179
+EVAL: step: 30000, idx: 30000, auc: 0.933282, accuracy: 0.978019
+EVAL: step: 30500, idx: 30500, auc: 0.933959, accuracy: 0.978125
+EVAL: step: 31000, idx: 31000, auc: 0.934475, accuracy: 0.977971
+EVAL: step: 31500, idx: 31500, auc: 0.932647, accuracy: 0.976815
+EVAL: step: 32000, idx: 32000, auc: 0.933554, accuracy: 0.977183
+EVAL: step: 32500, idx: 32500, auc: 0.934412, accuracy: 0.977295
+EVAL: step: 33000, idx: 33000, auc: 0.934096, accuracy: 0.977163
+EVAL: step: 33500, idx: 33500, auc: 0.934593, accuracy: 0.977273
+EVAL: step: 34000, idx: 34000, auc: 0.936034, accuracy: 0.977379
+EVAL: step: 34500, idx: 34500, auc: 0.935849, accuracy: 0.977482
+EVAL: step: 35000, idx: 35000, auc: 0.936431, accuracy: 0.977808
+EVAL: step: 35500, idx: 35500, auc: 0.935050, accuracy: 0.977455
+EVAL: step: 36000, idx: 36000, auc: 0.935390, accuracy: 0.977553
+EVAL: step: 36500, idx: 36500, auc: 0.934798, accuracy: 0.977431
+EVAL: step: 37000, idx: 37000, auc: 0.935327, accuracy: 0.977526
+EVAL: step: 37500, idx: 37500, auc: 0.933753, accuracy: 0.977196
+EVAL: step: 38000, idx: 38000, auc: 0.934595, accuracy: 0.977500
+EVAL: step: 38500, idx: 38500, auc: 0.935227, accuracy: 0.977796
+EVAL: step: 39000, idx: 39000, auc: 0.936310, accuracy: 0.978084
+EVAL: step: 39500, idx: 39500, auc: 0.937153, accuracy: 0.978165
+EVAL: step: 40000, idx: 40000, auc: 0.937943, accuracy: 0.978046
+EVAL: step: 40500, idx: 40500, auc: 0.938313, accuracy: 0.978125
+EVAL: step: 41000, idx: 41000, auc: 0.938306, accuracy: 0.978202
+EVAL: step: 41500, idx: 41500, auc: 0.938584, accuracy: 0.978277
+EVAL: step: 42000, idx: 42000, auc: 0.937853, accuracy: 0.978163
+EVAL: step: 42500, idx: 42500, auc: 0.937198, accuracy: 0.977865
+EVAL: step: 43000, idx: 43000, auc: 0.935884, accuracy: 0.977574
+EVAL: step: 43500, idx: 43500, auc: 0.936515, accuracy: 0.977834
+EVAL: step: 44000, idx: 44000, auc: 0.936365, accuracy: 0.977910
+EVAL: step: 44500, idx: 44500, auc: 0.937061, accuracy: 0.978161
+EVAL: step: 45000, idx: 45000, auc: 0.935881, accuracy: 0.977879
+EVAL: step: 45500, idx: 45500, auc: 0.935821, accuracy: 0.977951
+EVAL: step: 46000, idx: 46000, auc: 0.936499, accuracy: 0.978194
+EVAL: step: 46500, idx: 46500, auc: 0.937316, accuracy: 0.978431
+EVAL: step: 47000, idx: 47000, auc: 0.936732, accuracy: 0.978159
+EVAL: step: 47500, idx: 47500, auc: 0.936907, accuracy: 0.978225
+EVAL: step: 48000, idx: 48000, auc: 0.937400, accuracy: 0.978454
+EVAL: step: 48500, idx: 48500, auc: 0.937402, accuracy: 0.978516
+EVAL: step: 49000, idx: 49000, auc: 0.937591, accuracy: 0.978737
+EVAL: step: 49500, idx: 49500, auc: 0.936406, accuracy: 0.978316
+save model (step 49999)
+EVAL: step: 50000, idx: 50000, auc: 0.936941, accuracy: 0.978378
+EVAL: step: 50500, idx: 50500, auc: 0.937071, accuracy: 0.978281
+EVAL: step: 51000, idx: 51000, auc: 0.936229, accuracy: 0.977877
+EVAL: step: 51500, idx: 51500, auc: 0.936556, accuracy: 0.978094
+EVAL: step: 52000, idx: 52000, auc: 0.937226, accuracy: 0.978307
+EVAL: step: 52500, idx: 52500, auc: 0.936060, accuracy: 0.978065
+EVAL: step: 53000, idx: 53000, auc: 0.936585, accuracy: 0.978274
+EVAL: step: 53500, idx: 53500, auc: 0.936730, accuracy: 0.978331
+EVAL: step: 54000, idx: 54000, auc: 0.936452, accuracy: 0.978242
+EVAL: step: 54500, idx: 54500, auc: 0.936945, accuracy: 0.978299
+EVAL: step: 55000, idx: 55000, auc: 0.937065, accuracy: 0.978211
+EVAL: step: 55500, idx: 55500, auc: 0.937005, accuracy: 0.978267
+EVAL: step: 56000, idx: 56000, auc: 0.936785, accuracy: 0.978041
+EVAL: step: 56500, idx: 56500, auc: 0.937047, accuracy: 0.978097
+EVAL: step: 57000, idx: 57000, auc: 0.936956, accuracy: 0.977876
+EVAL: step: 57500, idx: 57500, auc: 0.936492, accuracy: 0.977796
+EVAL: step: 58000, idx: 58000, auc: 0.936626, accuracy: 0.977853
+EVAL: step: 58500, idx: 58500, auc: 0.937157, accuracy: 0.978044
+EVAL: step: 59000, idx: 59000, auc: 0.937205, accuracy: 0.977965
+EVAL: step: 59500, idx: 59500, auc: 0.937268, accuracy: 0.978019
+EVAL: step: 60000, idx: 60000, auc: 0.937137, accuracy: 0.977941
+EVAL: step: 60500, idx: 60500, auc: 0.936502, accuracy: 0.977734
+EVAL: step: 61000, idx: 61000, auc: 0.936688, accuracy: 0.977660
+EVAL: step: 61500, idx: 61500, auc: 0.936637, accuracy: 0.977715
+EVAL: step: 62000, idx: 62000, auc: 0.936645, accuracy: 0.977769
+EVAL: step: 62500, idx: 62500, auc: 0.936595, accuracy: 0.977823
+EVAL: step: 63000, idx: 63000, auc: 0.937260, accuracy: 0.978000
+EVAL: step: 63500, idx: 63500, auc: 0.937674, accuracy: 0.978051
+EVAL: step: 64000, idx: 64000, auc: 0.937507, accuracy: 0.978100
+EVAL: step: 64500, idx: 64500, auc: 0.937819, accuracy: 0.978271
+EVAL: step: 65000, idx: 65000, auc: 0.936926, accuracy: 0.978077
+EVAL: step: 65500, idx: 65500, auc: 0.936807, accuracy: 0.978005
+EVAL: step: 66000, idx: 66000, auc: 0.936867, accuracy: 0.978053
+EVAL: step: 66500, idx: 66500, auc: 0.936750, accuracy: 0.977983
+EVAL: step: 67000, idx: 67000, auc: 0.937217, accuracy: 0.978149
+EVAL: step: 67500, idx: 67500, auc: 0.937083, accuracy: 0.978078
+EVAL: step: 68000, idx: 68000, auc: 0.937538, accuracy: 0.978241
+EVAL: step: 68500, idx: 68500, auc: 0.937699, accuracy: 0.978171
+EVAL: step: 69000, idx: 69000, auc: 0.937699, accuracy: 0.978216
+EVAL: step: 69500, idx: 69500, auc: 0.938089, accuracy: 0.978374
+EVAL: step: 70000, idx: 70000, auc: 0.938324, accuracy: 0.978530
+EVAL: step: 70500, idx: 70500, auc: 0.938269, accuracy: 0.978571
+EVAL: step: 71000, idx: 71000, auc: 0.938187, accuracy: 0.978391
+EVAL: step: 71500, idx: 71500, auc: 0.938282, accuracy: 0.978433
+EVAL: step: 72000, idx: 72000, auc: 0.938424, accuracy: 0.978475
+EVAL: step: 72500, idx: 72500, auc: 0.938189, accuracy: 0.978407
+EVAL: step: 73000, idx: 73000, auc: 0.937332, accuracy: 0.978125
+EVAL: step: 73500, idx: 73500, auc: 0.937527, accuracy: 0.978168
+EVAL: step: 74000, idx: 74000, auc: 0.937798, accuracy: 0.978316
+EVAL: step: 74500, idx: 74500, auc: 0.937688, accuracy: 0.978252
+save model (step 74999)
+EVAL: step: 75000, idx: 75000, auc: 0.938002, accuracy: 0.978398
+EVAL: step: 75500, idx: 75500, auc: 0.937376, accuracy: 0.978229
+EVAL: step: 76000, idx: 76000, auc: 0.937330, accuracy: 0.978270
+EVAL: step: 76500, idx: 76500, auc: 0.937826, accuracy: 0.978413
+EVAL: step: 77000, idx: 77000, auc: 0.938176, accuracy: 0.978554
+EVAL: step: 77500, idx: 77500, auc: 0.938205, accuracy: 0.978490
+EVAL: step: 78000, idx: 78000, auc: 0.938189, accuracy: 0.978427
+EVAL: step: 78500, idx: 78500, auc: 0.938319, accuracy: 0.978466
+EVAL: step: 79000, idx: 79000, auc: 0.938447, accuracy: 0.978503
+EVAL: step: 79500, idx: 79500, auc: 0.938956, accuracy: 0.978639
+EVAL: step: 80000, idx: 80000, auc: 0.938805, accuracy: 0.978577
+EVAL: step: 80500, idx: 80500, auc: 0.938712, accuracy: 0.978613
+EVAL: step: 81000, idx: 81000, auc: 0.938446, accuracy: 0.978455
+EVAL: step: 81500, idx: 81500, auc: 0.937939, accuracy: 0.978395
+EVAL: step: 82000, idx: 82000, auc: 0.938223, accuracy: 0.978528
+EVAL: step: 82500, idx: 82500, auc: 0.938177, accuracy: 0.978563
+EVAL: step: 83000, idx: 83000, auc: 0.938174, accuracy: 0.978598
+EVAL: step: 83500, idx: 83500, auc: 0.937720, accuracy: 0.978539
+EVAL: step: 84000, idx: 84000, auc: 0.938125, accuracy: 0.978668
+EVAL: step: 84500, idx: 84500, auc: 0.938555, accuracy: 0.978702
+EVAL: step: 85000, idx: 85000, auc: 0.939031, accuracy: 0.978828
+EVAL: step: 85500, idx: 85500, auc: 0.939177, accuracy: 0.978952
+EVAL: step: 86000, idx: 86000, auc: 0.938842, accuracy: 0.978801
+EVAL: step: 86500, idx: 86500, auc: 0.938795, accuracy: 0.978834
+EVAL: step: 87000, idx: 87000, auc: 0.938638, accuracy: 0.978775
+EVAL: step: 87500, idx: 87500, auc: 0.939217, accuracy: 0.978897
+EVAL: step: 88000, idx: 88000, auc: 0.938981, accuracy: 0.978839
+EVAL: step: 88500, idx: 88500, auc: 0.938725, accuracy: 0.978604
+EVAL: step: 89000, idx: 89000, auc: 0.938746, accuracy: 0.978549
+EVAL: step: 89500, idx: 89500, auc: 0.938962, accuracy: 0.978669
+EVAL: step: 90000, idx: 90000, auc: 0.939291, accuracy: 0.978788
+EVAL: step: 90500, idx: 90500, auc: 0.939507, accuracy: 0.978819
+EVAL: step: 91000, idx: 91000, auc: 0.939423, accuracy: 0.978850
+EVAL: step: 91500, idx: 91500, auc: 0.939583, accuracy: 0.978880
+EVAL: step: 92000, idx: 92000, auc: 0.939781, accuracy: 0.978825
+EVAL: step: 92500, idx: 92500, auc: 0.940131, accuracy: 0.978940
+EVAL: step: 93000, idx: 93000, auc: 0.940358, accuracy: 0.978970
+EVAL: step: 93500, idx: 93500, auc: 0.940260, accuracy: 0.978915
+EVAL: step: 94000, idx: 94000, auc: 0.940247, accuracy: 0.978944
+EVAL: step: 94500, idx: 94500, auc: 0.940221, accuracy: 0.978890
+EVAL: step: 95000, idx: 95000, auc: 0.940244, accuracy: 0.978919
+EVAL: step: 95500, idx: 95500, auc: 0.940533, accuracy: 0.978947
+EVAL: step: 96000, idx: 96000, auc: 0.940832, accuracy: 0.979058
+EVAL: step: 96500, idx: 96500, auc: 0.941026, accuracy: 0.979167
+EVAL: step: 97000, idx: 97000, auc: 0.940801, accuracy: 0.979113
+EVAL: step: 97500, idx: 97500, auc: 0.940715, accuracy: 0.979059
+EVAL: step: 98000, idx: 98000, auc: 0.940721, accuracy: 0.979006
+EVAL: step: 98500, idx: 98500, auc: 0.941011, accuracy: 0.979114
+EVAL: step: 99000, idx: 99000, auc: 0.941132, accuracy: 0.979220
+EVAL: step: 99500, idx: 99500, auc: 0.940934, accuracy: 0.979088
+save model (step 99999)
+EVAL: step: 100000, idx: 100000, auc: 0.941283, accuracy: 0.979193
+################################################################################
+Results - AUC:0.941283, accuracy:0.979193, precision:0.948342, recall:0.889886, loss:0.071679
+################################################################################

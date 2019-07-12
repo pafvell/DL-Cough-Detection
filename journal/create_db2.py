@@ -71,7 +71,7 @@ def create_dataset(files1,
                     'label': _int64_feature(label),
                 }))
                 writer.write(example.SerializeToString())
-            countCough = countCough + 1
+                countCough = countCough + 1
             print("CLASS COUGH %s: Amount of files %i:, Amount of samples: %i" %(db_name, len(files), countCough) )
 
         else:
@@ -103,9 +103,16 @@ def create_dataset(files1,
 
                     cutSignal = samples[startind_newcut:endind_newcut]
 
+                    if isSignalFlawed(cutSignal):
+                        print("Flawed :" +f)
+                        continue
 
+                    mfcc = preprocess_array(cutSignal, sample_rate =sample_rate, bands=bands, hop_length=hop_length, window=window, nfft=nfft)
 
-                    mfcc = preprocess_array(cutSignal, bands=bands, hop_length=hop_length, window=window, nfft=nfft)
+                    if not isShapeCorrect(mfcc):
+                        print("Shape is wrong :" + f)
+                        continue
+
                     example = tf.train.Example(features=tf.train.Features(feature={
                         'height': _int64_feature(bands),
                         'width': _int64_feature(mfcc.shape[1]),
@@ -138,7 +145,17 @@ def create_dataset(files1,
                                 sample_rate)
                             partCounter = partCounter + 1
 
+                        if isSignalFlawed(cutSignal):
+                            print("Flawed :" + f)
+                            continue
+
                         mfcc = preprocess_array(cutSignal, bands=bands, hop_length=hop_length, window=window, nfft=nfft, sample_rate = sample_rate)
+
+
+                        if not isShapeCorrect(mfcc):
+                            print("Shape is wrong :" + f)
+                            continue
+
                         example = tf.train.Example(features=tf.train.Features(feature={
                             'height': _int64_feature(bands),
                             'width': _int64_feature(mfcc.shape[1]),
@@ -157,6 +174,28 @@ def create_dataset(files1,
     store_example(files1, 1)
 
     writer.close()
+
+
+def isSignalFlawed(timeSignal):
+
+    result = False
+    maxValue = np.max(timeSignal)
+    minValue = np.min(timeSignal)
+    if maxValue == minValue:
+        result = True
+
+    return result
+
+
+def isShapeCorrect(mfcc):
+
+    result = True
+    (m,n) = np.shape(mfcc)
+
+    if m * n != 2048:
+        result = False
+
+    return result
 
 
 def test_shape(files1,

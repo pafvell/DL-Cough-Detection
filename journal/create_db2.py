@@ -46,7 +46,7 @@ def create_dataset(files1,
                    db_full_path=config["ROOT_DIR"],
                    version=config["DB_version"],
                    device_cv_name_extension = "",
-                   debug = True
+                   debug = False
                    ):
     """
      load, preprocess, normalize a sample

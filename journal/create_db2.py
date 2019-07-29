@@ -1,7 +1,7 @@
 import argparse
 import json
 import os.path
-
+from scipy.signal import butter, lfilter
 from tqdm import tqdm
 
 from utils import *
@@ -46,7 +46,7 @@ def create_dataset(files1,
                    db_full_path=config["ROOT_DIR"],
                    version=config["DB_version"],
                    device_cv_name_extension = "",
-                   debug = False
+                   debug = True
                    ):
     """
      load, preprocess, normalize a sample
@@ -106,6 +106,9 @@ def create_dataset(files1,
                     if isSignalFlawed(cutSignal):
                         print("Flawed :" +f)
                         continue
+                    hamming_window = np.hamming(len(cutSignal))
+                    cutSignal = np.multiply(cutSignal, hamming_window)
+                    cutSignal = butter_highpass_filter(cutSignal, 10, sample_rate)
 
                     mfcc = preprocess_array(cutSignal, sample_rate =sample_rate, bands=bands, hop_length=hop_length, window=window, nfft=nfft)
 
@@ -135,19 +138,24 @@ def create_dataset(files1,
                         if k + int(window * sample_rate) > len(samples) - 1:
                             cutSignal = samples[-int(window * sample_rate):]
 
+                        if isSignalFlawed(cutSignal):
+                            print("Flawed :" + f)
+                            continue
+
+                        hamming_window = np.hamming(len(cutSignal))
+                        cutSignal = np.multiply(cutSignal, hamming_window)
+                        cutSignal = butter_highpass_filter(cutSignal, 10, sample_rate)
+
                         if debug:
                             tmpFolder = config["ROOT_DIR"] + os.sep + "tmp"
                             if not os.path.exists(tmpFolder):
                                 os.makedirs(tmpFolder, 0o755)
 
                             librosa.output.write_wav(
-                                tmpFolder + os.sep + f.split(os.sep)[-1] + "Part" + str(partCounter) + ".wav", cutSignal,
+                                tmpFolder + os.sep + f.split(os.sep)[-1] + "Part" + str(partCounter) + ".wav",
+                                cutSignal,
                                 sample_rate)
                             partCounter = partCounter + 1
-
-                        if isSignalFlawed(cutSignal):
-                            print("Flawed :" + f)
-                            continue
 
                         mfcc = preprocess_array(cutSignal, bands=bands, hop_length=hop_length, window=window, nfft=nfft, sample_rate = sample_rate)
 
@@ -196,6 +204,21 @@ def isShapeCorrect(mfcc):
         result = False
 
     return result
+
+
+def butter_highpass(cutoff, fs, order=5):
+    nyq = 0.5 * fs
+    normal_cutoff = cutoff / nyq
+    b, a = butter(order, normal_cutoff, btype='high', analog=False)
+    return b, a
+
+
+
+def butter_highpass_filter(data, cutoff, fs, order=5):
+    b, a = butter_highpass(cutoff, fs, order=order)
+    y = lfilter(b, a, data)
+    return y
+
 
 
 def test_shape(files1,

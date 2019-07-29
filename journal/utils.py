@@ -8,7 +8,7 @@ import os, fnmatch, sys, random, glob
 
 from shutil import copyfile
 
-
+from scipy.signal import butter, lfilter
 
 
 def simple_arg_scope(weight_decay=0.0005, 
@@ -415,6 +415,19 @@ def extract_Signal_Of_Importance(signal, window, sample_rate ):
         return signal
 
 
+def butter_highpass(cutoff, fs, order=5):
+    nyq = 0.5 * fs
+    normal_cutoff = cutoff / nyq
+    b, a = butter(order, normal_cutoff, btype='high', analog=False)
+    return b, a
+
+
+
+def butter_highpass_filter(data, cutoff, fs, order=5):
+    b, a = butter_highpass(cutoff, fs, order=order)
+    y = lfilter(b, a, data)
+    return y
+
 
 
 
@@ -431,7 +444,9 @@ def preprocess(	sound_file,
                 except ValueError as e:
                        print ('!!!!!!! librosa failed to load file: %s !!!!!!!!!')
                        raise e
-
+                hamming_window = np.hamming(len(time_signal))
+                time_signal = np.multiply(time_signal, hamming_window)
+                time_signal = butter_highpass_filter(time_signal, 10, sample_rate)
                 time_signal = extract_Signal_Of_Importance(time_signal, window, sample_rate)
                 time_signal = standardize(time_signal)
                 mfcc = librosa.feature.melspectrogram(y=time_signal, sr=sample_rate, n_mels=bands, power=1, hop_length=hop_length, n_fft=nfft)

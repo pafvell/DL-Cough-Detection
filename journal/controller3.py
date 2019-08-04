@@ -9,6 +9,10 @@ import importlib
 import json
 import argparse
 from utils import *
+import bz2
+import pickle
+from sklearn.utils import safe_indexing
+from sklearn.utils import check_random_state
 
 # ******************************************************************************************************************
 # possible models
@@ -88,67 +92,76 @@ def tf_get_imgs(db_name,
 
 
 def load_dataset(db_name,
+                 root_dir,
+                 db_version,
+                 sampler_algo,
                  batch_size,
                  num_epochs,
                  buffer_size,
                  size_cub,
-                 db_version,
-                 root_dir,
-                 prefetch_batchs=3000,
+                 prefetch_batchs=2000,
+                 random_state=42,
                  device=""):
     # get data and predict
-    X_cough, X_other, _, _ = get_imgs(split_id=config_db["split_id"],
-                                      db_root_dir=config_db["DB_ROOT_DIR"],
-                                      listOfParticipantsInTestset=config_db["test"],
-                                      listOfParticipantsInValidationset=config_db["validation"],
-                                      listOfAllowedSources=config_db["allowedSources"]
-                                      )
-
-    print('nr of samples coughing (test): %d' % len(X_cough))
-    print('nr of samples NOT coughing (test): %d' % len(X_other))
-
-    if "NFFT" in config_db:
-        nfft = config_db["NFFT"]
+    if device:
+        db_filename = os.path.join(root_dir, '%s%s%s' % (db_name, db_version, device))
     else:
-        nfft = 2048
+        db_filename = os.path.join(root_dir, '%s%s' % (db_name, db_version))
+    print('use dataset location: ' + db_filename)
 
-    # preprocessing
-    X = X_cough + X_other
-    X = [preprocess(x, bands=config_db["BAND"], hop_length=config_db["HOP"], window=config_db["WINDOW"], nfft=nfft)
-         for x in X]
-    y = [1] * len(X_cough) + [0] * len(X_other)
+    with bz2.BZ2File(db_filename, 'r') as sfile:
+        data, labels = pickle.load(sfile)
 
-    # select sampling algorithm
-    if "sampler" not in config_db:
-        sampler_algo = None
-    else:
-        sampler_algo = config_db["sampler"]
+    print('nr of samples coughing: %d' % labels.count(1))
+    print('nr of samples NOT coughing: %d' % labels.count(0))
+    print('nr of samples in total: %d' % len(labels))
 
-    sampler = None
     if sampler_algo is not None:
         if sampler_algo == "randomOverSampling":
             from imblearn.over_sampling import RandomOverSampler
-            sampler = RandomOverSampler()
+            sampler = RandomOverSampler(random_state=random_state)
         elif sampler_algo == "randomUnderSampling":
-            from imblearn.over_sampling import RandomUnderSampler
-            sampler = RandomUnderSampler()
+            from imblearn.under_sampling import RandomUnderSampler
+            sampler = RandomUnderSampler(random_state=random_state)
         elif sampler_algo == "smote":
             from imblearn.over_sampling import SMOTE
-            sampler = SMOTE()
+            sampler = SMOTE(random_state=random_state)
         elif sampler_algo == "nearmiss":
             from imblearn.under_sampling import NearMiss
-            sampler = NearMiss()
+            sampler = NearMiss(random_state=random_state)
         elif sampler_algo == "tomek":
             from imblearn.under_sampling import TomekLinks
-            sampler = TomekLinks()
+            sampler = TomekLinks(random_state=random_state)
         elif sampler_algo == "enn":
             from imblearn.under_sampling import EditedNearestNeighbours
-            sampler = EditedNearestNeighbours()
+            sampler = EditedNearestNeighbours(random_state=random_state)
+        else:
+            raise Exception("unknown sampler %s" % sampler_algo)
 
-    # balancing
-    # TODO
+        data, labels = sampler.fit_sample(data, labels)
 
-    return X, y
+    data = tf.convert_to_tensor(np.asarray(data, np.float32))
+    labels = tf.convert_to_tensor(np.asarray(labels, np.int32).reshape((-1, 1)))
+
+    # feed data
+    print("build data pipeline")
+    dataset = tf.data.Dataset.from_tensor_slices((data, labels))
+    print("cache")
+    dataset = dataset.cache(filename='./'+db_name+'cache.tf-data')
+    print("shuffle")
+    dataset = dataset.shuffle(buffer_size=buffer_size)
+    print("repeat", num_epochs)
+    dataset = dataset.repeat(count=num_epochs)
+    print("batch")
+    dataset = dataset.batch(batch_size)
+    print("prefetch")
+    dataset = dataset.prefetch(prefetch_batchs)
+    iterator = dataset.make_one_shot_iterator()
+    print("get next batch")
+    features, labels = iterator.get_next()
+    features = tf.reshape(features, [-1, 16, size_cub])
+    labels = tf.reshape(labels, [-1])
+    return features, labels, iterator
 
 
 def train(
@@ -187,20 +200,36 @@ def train(
     print('save checkpoints to: %s' % checkpoint_dir)
     print('train model:' + model_name)
 
+    # select sampling algorithm
+    if "sampler" not in config_train:
+        sampler_algo = None
+    else:
+        sampler_algo = config_train["sampler"]
+
+    # select loss function
+    if "loss" not in config_train:
+        loss_algo = None
+    else:
+        loss_algo = config_train["loss"]
+
+    # build graph
     graph = tf.Graph()
     with graph.as_default():
         # load training data
+        print("fetch data")
         with tf.device("/cpu:0"):
-            train_batch, train_labels, train_op_init = tf_get_imgs('train_%d' % split_id,
-                                                                   batch_size=batch_size,
-                                                                   buffer_size=train_capacity,
-                                                                   num_epochs=num_epochs,
-                                                                   size_cub=size_cub,
-                                                                   db_version=db_version,
-                                                                   root_dir=root_dir,
-                                                                   device=device_name_for_db
-                                                                   )
+            train_batch, train_labels, train_op_init = load_dataset(db_name='train_%d' % split_id,
+                                                                    root_dir=root_dir,
+                                                                    db_version=db_version,
+                                                                    sampler_algo=sampler_algo,
+                                                                    batch_size=batch_size,
+                                                                    buffer_size=train_capacity,
+                                                                    num_epochs=num_epochs,
+                                                                    size_cub=size_cub,
+                                                                    device=device_name_for_db
+                                                                    )
 
+        print("build model")
         # initialize
         global_step = tf.Variable(0, name='global_step', trainable=False)
         eta = tf.train.exponential_decay(eta, global_step, 80000, 0.96, staircase=False)
@@ -211,7 +240,7 @@ def train(
         eta = train_op._lr
 
         train_loss, preds = model.build_model(train_batch, train_labels, num_estimator=num_estimator,
-                                              num_filter=num_filter)
+                                              num_filter=num_filter, loss_algo=loss_algo)
         tf.summary.scalar('training/loss', train_loss)
         train_acc, train_acc_update = tf.metrics.accuracy(predictions=preds, labels=train_labels)
         tf.summary.scalar('training/accuracy', train_acc)
@@ -257,14 +286,16 @@ def train(
 
         # load Test Data
         with tf.device("/cpu:0"):
-            test_batch, test_labels, test_op_init = get_imgs('test_%d' % split_id,
-                                                             batch_size=batch_size,
-                                                             buffer_size=test_capacity,
-                                                             num_epochs=num_epochs,
-                                                             size_cub=size_cub,
-                                                             db_version=db_version,
-                                                             root_dir=root_dir,
-                                                             device=device_name_for_test)
+            test_batch, test_labels, test_op_init = load_dataset(db_name='test_%d' % split_id,
+                                                                 root_dir=root_dir,
+                                                                 db_version=db_version,
+                                                                 sampler_algo=None,
+                                                                 batch_size=batch_size,
+                                                                 buffer_size=test_capacity,
+                                                                 num_epochs=num_epochs,
+                                                                 size_cub=size_cub,
+                                                                 device=device_name_for_db
+                                                                 )
 
         # Evaluation
         test_batch = tf.placeholder_with_default(test_batch, shape=test_batch.get_shape(), name='Input')
@@ -310,7 +341,7 @@ def train(
             saver = load_model(sess, checkpoint_dir + '/cv%d' % split_id, checkpoint_dir, args.config)  # 'config.json')
 
             # wait for the queues to be filled
-            time.sleep(20)
+            time.sleep(10)
 
             train_writer = tf.summary.FileWriter(checkpoint_dir + '/train_%d' % split_id)  # , sess.graph)
             test_writer = tf.summary.FileWriter(checkpoint_dir + '/test_%d' % split_id)
@@ -325,6 +356,7 @@ def train(
                     i += 1
                     # training
                     _, step, train_loss_ = sess.run([train_op, global_step, train_loss])
+
                     # logging: update training summary
                     if i >= 500 and i % log_every_n_steps == 0:
                         summary = sess.run([summary_op])[0]
@@ -332,9 +364,10 @@ def train(
 
                     # logging: update testing summary
                     if i >= 500 and i % eval_every_n_steps == 0:
-                        summary, auc_, accuracy_, loss_, prec_, rec_, _ = sess.run(
-                            [test_summary_op, auc, accuracy, test_loss, precision, recall, test_summary_update])
-                        print('EVAL: step: %d, idx: %d, auc: %f, accuracy: %f' % (step, i, auc_, accuracy_))
+                        for j in range(5):
+                            summary, mpc_, auc_, accuracy_, loss_, prec_, rec_, _ = sess.run(
+                                [test_summary_op, mpc, auc, accuracy, test_loss, precision, recall, test_summary_update])
+                        print('EVAL: step: %d, idx: %d, auc: %f, accuracy: %f' % (step, i, auc_, mpc_))
                         test_writer.add_summary(summary, step)
 
                     # save checkpoint
@@ -348,11 +381,21 @@ def train(
                 print("End of Dataset: it ran for %d epochs" % num_epochs)
 
             print('################################################################################')
-            print('Results - AUC:%f, accuracy:%f, precision:%f, recall:%f, loss:%f' % (
-                auc_, accuracy_, prec_, rec_, loss_))
+            print('Results - AUC:%f, accuracy:%f, MPC:%f, precision:%f, recall:%f, loss:%f' % (
+                auc_, accuracy_, mpc_, prec_, rec_, loss_))
             print('################################################################################')
             saver.save(sess, checkpoint_dir + '/cv%d/checkpoint' % split_id, global_step=step)
             sess.close()
+
+            # get a recursive list of cache files
+            cache_file_list = glob.glob('./*cache.tf-data.*')
+
+            # Iterate over the list of filepaths & remove each file.
+            for filePath in cache_file_list:
+                try:
+                    os.remove(filePath)
+                except OSError:
+                    print("Error while deleting file")
 
             return auc_, accuracy_, prec_, rec_
 

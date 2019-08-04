@@ -1,10 +1,13 @@
 import argparse
 import json
 import os.path
-from scipy.signal import butter, lfilter
 from tqdm import tqdm
-
+import bz2
+import pickle
 from utils import *
+
+ROLLBACK_PUBLICATION = False  # use the old data, that we used in the last publication
+
 
 # loading config file
 parser = argparse.ArgumentParser()
@@ -55,22 +58,17 @@ def create_dataset(files1,
     """
 
     print('save %s samples' % db_name)
-    db_filename = os.path.join(db_full_path, db_name + version + device_cv_name_extension+'.tfrecords')
-    writer = tf.python_io.TFRecordWriter(db_filename)
+    db_filename = os.path.join(db_full_path, db_name + version + device_cv_name_extension)
+    dataset_x = []
+    labels_y = []
 
     def store_example(files, label):
-        if label:
+        if label or ROLLBACK_PUBLICATION:
             countCough = 0
             for f in tqdm(files):
                 mfcc = preprocess(f, bands=bands, hop_length=hop_length, window=window, nfft=nfft)
-                example = tf.train.Example(features=tf.train.Features(feature={
-                    'height': _int64_feature(bands),
-                    'width': _int64_feature(mfcc.shape[1]),
-                    'depth': _int64_feature(1),
-                    'data': _floats_feature(mfcc),
-                    'label': _int64_feature(label),
-                }))
-                writer.write(example.SerializeToString())
+                dataset_x.append(np.reshape(mfcc, -1))
+                labels_y.append(label)
                 countCough = countCough + 1
             print("CLASS COUGH %s: Amount of files %i:, Amount of samples: %i" %(db_name, len(files), countCough) )
 
@@ -86,7 +84,7 @@ def create_dataset(files1,
 
                     ###############################################################################################################
 
-                if len(samples) <  2 * window * sample_rate:
+                if len(samples) < 2 * window * sample_rate:
 
 
                     indMax = np.argmax(np.abs(samples))
@@ -110,20 +108,15 @@ def create_dataset(files1,
                     cutSignal = np.multiply(cutSignal, hamming_window)
                     cutSignal = butter_highpass_filter(cutSignal, 10, sample_rate)
 
-                    mfcc = preprocess_array(cutSignal, sample_rate =sample_rate, bands=bands, hop_length=hop_length, window=window, nfft=nfft)
+                    mfcc = preprocess_array(cutSignal, sample_rate =sample_rate, bands=bands, hop_length=hop_length,
+                                            window=window, nfft=nfft)
 
                     if not isShapeCorrect(mfcc):
                         print("Shape is wrong :" + f)
                         continue
 
-                    example = tf.train.Example(features=tf.train.Features(feature={
-                        'height': _int64_feature(bands),
-                        'width': _int64_feature(mfcc.shape[1]),
-                        'depth': _int64_feature(1),
-                        'data': _floats_feature(mfcc),
-                        'label': _int64_feature(label),
-                    }))
-                    writer.write(example.SerializeToString())
+                    dataset_x.append(np.reshape(mfcc, -1))
+                    labels_y.append(label)
                     countOther = countOther + 1
 
                 ###############################################################################################################
@@ -157,31 +150,28 @@ def create_dataset(files1,
                                 sample_rate)
                             partCounter = partCounter + 1
 
-                        mfcc = preprocess_array(cutSignal, bands=bands, hop_length=hop_length, window=window, nfft=nfft, sample_rate = sample_rate)
-
+                        mfcc = preprocess_array(cutSignal, bands=bands, hop_length=hop_length, window=window, nfft=nfft,
+                                                sample_rate=sample_rate)
 
                         if not isShapeCorrect(mfcc):
                             print("Shape is wrong :" + f)
                             continue
 
-                        example = tf.train.Example(features=tf.train.Features(feature={
-                            'height': _int64_feature(bands),
-                            'width': _int64_feature(mfcc.shape[1]),
-                            'depth': _int64_feature(1),
-                            'data': _floats_feature(mfcc),
-                            'label': _int64_feature(label),
-                        }))
-                        writer.write(example.SerializeToString())
+                        dataset_x.append(np.reshape(mfcc, -1))
+                        labels_y.append(label)
 
                         countOther = countOther + 1
 
-            print("CLASS OTHER %s: Amount of files %i:, Amount of samples: %i" % (db_name, len(files), countOther))
 
+            print("CLASS OTHER %s: Amount of files %i:, Amount of samples: %i" % (db_name, len(files), countOther))
 
     store_example(files0, 0)
     store_example(files1, 1)
 
-    writer.close()
+    print_stats(dataset_x, labels_y, db_filename)
+
+    with bz2.BZ2File(db_filename, 'w') as sfile:
+        pickle.dump((dataset_x, labels_y), sfile)
 
 
 def isSignalFlawed(timeSignal):
@@ -213,12 +203,10 @@ def butter_highpass(cutoff, fs, order=5):
     return b, a
 
 
-
 def butter_highpass_filter(data, cutoff, fs, order=5):
     b, a = butter_highpass(cutoff, fs, order=order)
     y = lfilter(b, a, data)
     return y
-
 
 
 def test_shape(files1,
@@ -262,6 +250,19 @@ def print_stats(test_coughs, test_other, train_coughs, train_other, name='', dev
     print()
 
 
+def print_stats(data, labels, name='', device =''):
+    print()
+    if device:
+        print('----------------------------device: %s' % device)
+    print('------------------------------------------------------------------')
+    print('PARTITION: ' + str(name))
+    print('nr of samples coughing: %d' % labels.count(1))
+    print('nr of samples NOT coughing: %d' % labels.count(0))
+    print('nr of samples in total: %d' % len(labels))
+    print('------------------------------------------------------------------')
+    print()
+
+
 def main(unused_args):
     tf.set_random_seed(0)
 
@@ -276,10 +277,15 @@ def main(unused_args):
                                                                             listOfAllowedSources=config_db[
                                                                                 "allowedSources"]
                                                                             )
+
+    print("testCough files", len(testListCough))
+    print("testOther files", len(testListOther))
+    print("trainCough files", len(trainListCough))
+    print("trainOther files", len(trainListOther))
+
     if config_db["CREATE_DB"]:
         create_dataset(trainListCough, trainListOther, 'train_' + str(name))
         create_dataset(testListCough, testListOther, 'test_' + str(name))
-        print_stats(testListCough, testListOther, trainListCough, trainListOther, name)
     else:
         print_stats(testListCough, testListOther, trainListCough, trainListOther, name)
         test_shape(trainListCough)
@@ -292,7 +298,7 @@ def main_device_cv(device, second_device=""):
     # Store data to TFRECORDS
     name = config_db["split_id"]
     testListCough, testListOther, trainListCough, trainListOther = get_imgs(split_id=name,
-                                                                            db_root_dir= config_db["DB_ROOT_DIR"] ,
+                                                                            db_root_dir= config_db["DB_ROOT_DIR"],
                                                                             listOfParticipantsInTestset=config_db[
                                                                                 "test"],
                                                                             listOfParticipantsInValidationset=config_db[
@@ -312,7 +318,6 @@ def main_device_cv(device, second_device=""):
         print_stats(testListCough, testListOther, trainListCough, trainListOther, name, device = device+second_device)
         test_shape(trainListCough)
         test_shape(trainListOther)
-
 
 
 if __name__ == '__main__':
